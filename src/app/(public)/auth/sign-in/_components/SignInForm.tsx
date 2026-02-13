@@ -79,8 +79,7 @@ export function SignInForm() {
           Gerencie suas finanças de forma simples e inteligente.
         </p>
       </CardHeader>
-
-      <CardContent className="pt-6">
+      <CardContent>
         <form id="form-sign-in" onSubmit={form.handleSubmit(handleSubmit)}>
           <FieldGroup>
             <Controller
