@@ -1,6 +1,7 @@
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { inter, poppins } from "./fonts";
 import "./globals.css";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function RootLayout({
   children,
@@ -18,6 +19,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <Toaster />
           <main className="flex-1 px-6 py-6 sm:px-10 flex flex-col items-center">
             {children}
           </main>
