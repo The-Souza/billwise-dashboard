@@ -1,16 +1,20 @@
 import { redirect } from "next/navigation";
 import { createServerSupabase } from "@/lib/supabase/server";
 
-export default async function HomePage() {
+export default async function PublicLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const supabase = await createServerSupabase();
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (session) {
+  if (user) {
     redirect("/dashboard");
   }
 
-  redirect("/auth/sign-in");
+  return <>{children}</>;
 }
