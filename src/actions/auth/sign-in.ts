@@ -8,14 +8,10 @@ type SignInResult =
   | { success: true }
   | { success: false; error: string };
 
-
 export async function signInAction(data: z.infer<typeof formSchema>): Promise<SignInResult> {
   const supabase = await createServerSupabase();
 
-  const parsed = formSchema.safeParse({
-    email: data.email,
-    password: data.password,
-  });
+  const parsed = formSchema.safeParse(data);
 
   if (!parsed.success) {
     return { success: false, error: "Dados inválidos" };
