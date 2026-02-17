@@ -6,11 +6,9 @@ export default async function PrivateLayput({
 }: Readonly<{ children: React.ReactNode }>) {
   const supabase = await createServerSupabase();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data, error } = await supabase.auth.getUser();
 
-  if (!user) redirect("/auth/sign-in");
+  if (error || !data.user) redirect("/auth/sign-in");
 
   return (
     <main className="flex-1 px-6 py-6 sm:px-10 flex flex-col items-center">
