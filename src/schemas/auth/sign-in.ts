@@ -2,10 +2,10 @@ import { z } from "zod";
 
 export const formSchema = z.object({
   email: z
-    .string({ message: "Email é obrigatório" })
+    .string()
     .nonempty("Email é obrigatório")
     .email("Email inválido"),
   password: z
-    .string({ message: "Senha é obrigatória" })
+    .string()
     .nonempty("Senha é obrigatória")
 });

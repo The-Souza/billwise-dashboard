@@ -14,6 +14,7 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
 
 import { signInAction } from "@/actions/auth/sign-in";
 import { formSchema } from "@/schemas/auth/sign-in";
@@ -26,7 +27,6 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
-import { Spinner } from "@/components/ui/spinner";
 
 export function SignInForm() {
   const [isVisible, setIsVisible] = useState(false);
@@ -76,7 +76,7 @@ export function SignInForm() {
       <CardHeader className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-heading">Bem-vindo ao Billwise</h1>
         <p className="text-muted-foreground text-md">
-          Gerencie suas finanças de forma simples e inteligente.
+          Gerencie suas finanças de forma simples e inteligente
         </p>
       </CardHeader>
       <CardContent>
