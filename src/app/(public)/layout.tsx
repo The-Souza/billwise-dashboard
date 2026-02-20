@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createServerSupabase } from "@/lib/supabase/server";
+import { ToggleTheme } from "@/components/ui/toggle-theme";
 
 export default async function PublicLayout({
   children,
@@ -16,5 +17,12 @@ export default async function PublicLayout({
     redirect("/dashboard");
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      <div className="absolute top-6 right-6">
+        <ToggleTheme />
+      </div>
+      {children}
+    </>
+  );
 }
