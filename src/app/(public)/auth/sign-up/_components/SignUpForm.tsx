@@ -56,8 +56,12 @@ export function SignUpForm() {
       if (!result.success) {
         appToast.error(result.error);
 
-        if (result.field) form.setError(result.field, { type: "manual", message: result.error });
-        
+        if (result.field)
+          form.setError(result.field, {
+            type: "manual",
+            message: result.error,
+          });
+
         form.reset({ password: "", confirmPassword: "" });
         return;
       }

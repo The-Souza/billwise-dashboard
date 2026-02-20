@@ -88,10 +88,7 @@ export function VerifyEmail({ email }: VerifyEmailProps) {
           </Button>
         </span>
 
-        <Button
-          className="transition-transform active:scale-[0.97] text-md"
-          asChild
-        >
+        <Button className="text-md" variant="link" asChild>
           <Link href="/auth/sign-in">Voltar para login</Link>
         </Button>
       </CardFooter>
