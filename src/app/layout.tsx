@@ -12,7 +12,7 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${inter.variable} ${poppins.variable} antialiased`}
     >
-      <body className="min-h-screen flex flex-col font-sans">
+      <body className="min-h-screen font-sans">
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
@@ -20,9 +20,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Toaster />
-          <main className="flex-1 px-6 py-6 sm:px-10 flex flex-col items-center">
-            {children}
-          </main>
+          {children}
         </ThemeProvider>
       </body>
     </html>
