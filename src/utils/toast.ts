@@ -1,7 +1,7 @@
 import { toast } from "sonner";
 
 const baseOptions = {
-  position: "top-left" as const,
+  position: "top-right" as const,
 };
 
 export const appToast = {
