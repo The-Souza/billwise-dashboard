@@ -60,7 +60,7 @@ export function SignInForm() {
         return;
       }
 
-      appToast.success("Bem vindo!");
+      appToast.success(`Bem vindo!, ${result.user || "Usuário"}`);
 
       form.reset({ email: data.email, password: "" });
     } catch {

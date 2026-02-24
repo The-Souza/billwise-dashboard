@@ -4,12 +4,12 @@ import { createServerSupabase } from "@/lib/supabase/server";
 import { formSchema } from "@/schemas/auth/sign-in";
 import z from "zod";
 
-type SignInResult = { success: true } | { success: false; error: string };
+type SignInResult = { success: true, user?: string } | { success: false; error: string };
 
 export async function signInAction(
-  data: z.infer<typeof formSchema>,
+  formData: z.infer<typeof formSchema>,
 ): Promise<SignInResult> {
-  const parsed = formSchema.safeParse(data);
+  const parsed = formSchema.safeParse(formData);
 
   if (!parsed.success) {
     return { success: false, error: "Dados inválidos" };
@@ -17,11 +17,11 @@ export async function signInAction(
 
   const supabase = await createServerSupabase();
 
-  const { error } = await supabase.auth.signInWithPassword(parsed.data);
+  const { data , error } = await supabase.auth.signInWithPassword(parsed.data);
 
   if (error) {
     return { success: false, error: "Email ou senha incorretos" };
   }
 
-  return { success: true };
+  return { success: true, user: data.user.user_metadata.name };
 }
