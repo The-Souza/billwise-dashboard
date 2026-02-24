@@ -1,18 +1,24 @@
-import { createServerSupabase } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
+import { SideBarMenu } from "@/components/layout/SideBarMenu";
+import { cookies } from "next/headers";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { requireAuth } from "@/lib/auth/guards";
+import { Header } from "@/components/layout/Header";
 
-export default async function PrivateLayout({
+export default async function ProtectedLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const supabase = await createServerSupabase();
+  const cookieStore = await cookies();
+  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
 
-  const { data, error } = await supabase.auth.getUser();
-
-  if (error || !data.user) redirect("/auth/sign-in");
+  await requireAuth();
 
   return (
-    <main className="flex-1 px-6 py-6 sm:px-10 flex flex-col items-center">
-      {children}
-    </main>
+    <SidebarProvider defaultOpen={defaultOpen}>
+      <SideBarMenu variant="inset" />
+      <SidebarInset>
+        <Header />
+        <main className="flex flex-1 flex-col gap-4 p-4">{children}</main>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
