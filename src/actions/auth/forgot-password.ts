@@ -11,9 +11,9 @@ type ForgotPasswordResult =
   | { success: false; error: string; field?: Fields };
 
 export async function forgotPasswordAction(
-  data: z.infer<typeof formSchema>,
+  formData: z.infer<typeof formSchema>,
 ): Promise<ForgotPasswordResult> {
-  const parsed = formSchema.safeParse(data);
+  const parsed = formSchema.safeParse(formData);
   
   if (!parsed.success) {
     return {
