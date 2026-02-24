@@ -25,8 +25,8 @@ import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 import { formSchema } from "@/schemas/auth/update-password";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { updatePasswordAction } from "@/actions/auth/update-password";
+import { logoutAction } from "@/actions/auth/logout";
 
 export function UpdatePasswordForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -70,7 +70,9 @@ export function UpdatePasswordForm() {
     <div className="w-full">
       <CardHeader className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-heading">Redefinir senha</h1>
-        <p className="text-md text-muted-foreground">Insira sua nova senha para atualizar a segurança da sua conta</p>
+        <p className="text-md text-muted-foreground">
+          Insira sua nova senha para atualizar a segurança da sua conta
+        </p>
       </CardHeader>
       <CardContent>
         <form
@@ -184,14 +186,17 @@ export function UpdatePasswordForm() {
           </Button>
         </Field>
 
-        <nav className="flex w-full gap-2 text-md justify-center items-center">
-          <Link
-            href="/auth/sign-in"
-            className="text-primary underline-offset-4 hover:underline"
-          >
-            Voltar para login
-          </Link>
-        </nav>
+        <Button
+          type="button"
+          variant="link"
+          className="text-md"
+          onClick={async () => {
+            await logoutAction();
+            router.replace("/auth/sign-in");
+          }}
+        >
+          Voltar para login
+        </Button>
       </CardFooter>
     </div>
   );

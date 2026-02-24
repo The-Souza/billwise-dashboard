@@ -2,6 +2,7 @@
 
 import { createServerSupabase } from "@/lib/supabase/server";
 import { formSchema } from "@/schemas/auth/update-password";
+import { cookies } from "next/headers";
 import z from "zod";
 
 type Fields = keyof z.infer<typeof formSchema>;
@@ -14,6 +15,7 @@ export async function updatePasswordAction(
   data: z.infer<typeof formSchema>,
 ): Promise<Result> {
   const parsed = formSchema.safeParse(data);
+  const cookieStore = await cookies();
 
   if (!parsed.success) {
     return {
@@ -50,6 +52,7 @@ export async function updatePasswordAction(
   }
 
   await supabase.auth.signOut();
+  cookieStore.delete("recovery_session");
 
   return { success: true };
 }
