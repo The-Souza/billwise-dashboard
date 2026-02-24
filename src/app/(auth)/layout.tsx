@@ -1,18 +1,12 @@
-import { redirect } from "next/navigation";
-import { createServerSupabase } from "@/lib/supabase/server";
 import { AuthLayoutWrapper } from "@/components/layout/AuthLayoutWrapper";
+import { requireGuest } from "@/lib/auth/guards";
 
 export default async function PublicLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createServerSupabase();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (user) redirect("/dashboard");
+  await requireGuest();
 
   return <AuthLayoutWrapper>{children}</AuthLayoutWrapper>;
 }
