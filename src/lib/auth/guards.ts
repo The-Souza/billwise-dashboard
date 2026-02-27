@@ -6,8 +6,8 @@ import { getUserWithRole } from "./getUserWithRole";
 export async function requireAdmin() {
   const user = await getUserWithRole();
 
-  if (!user) redirect("/auth/sign-in");
-  if (user.role !== "admin") redirect("/admin/dashboard");
+  if (!user) redirect("/auth/sign-in")
+  if (user.role !== "admin") redirect("/dashboard");
 
   return user;
 }
@@ -26,8 +26,10 @@ export async function requireAuth() {
 }
 
 export async function requireGuest() {
-  const supabase = await createServerSupabase();
-  const { data } = await supabase.auth.getUser();
+  const user = await getUserWithRole();
 
-  if (data.user) redirect("/dashboard");
+  if (!user) return;
+  if (user.role === "admin") redirect("/admin/dashboard")
+
+  redirect("/dashboard");
 }
