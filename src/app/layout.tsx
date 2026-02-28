@@ -99,7 +99,7 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${inter.variable} ${poppins.variable} antialiased`}
     >
-      <body className="min-h-screen font-sans">
+      <body className="min-h-dvh font-sans">
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
