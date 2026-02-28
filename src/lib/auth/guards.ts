@@ -1,18 +1,12 @@
 import { redirect } from "next/navigation";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
-import { getUserWithRole } from "./getUserWithRole";
+import { getUserWithRole, UserRole, AuthUser } from "./getUserWithRole";
 
-export async function requireAdmin() {
-  const user = await getUserWithRole();
-
-  if (!user) redirect("/auth/sign-in")
-  if (user.role !== "admin") redirect("/dashboard");
-
-  return user;
-}
-
-export async function requireAuth() {
+export async function requireRole(
+  allowedRoles: UserRole | UserRole[],
+  fallback: string = "/dashboard"
+): Promise<AuthUser> {
   const supabase = await createServerSupabase();
   const { data, error } = await supabase.auth.getUser();
 
@@ -22,14 +16,35 @@ export async function requireAuth() {
   if (isRecovery) redirect("/auth/clear-recovery");
   if (error || !data.user) redirect("/auth/sign-in");
 
-  return data.user;
+  const user = await getUserWithRole();
+  if (!user) redirect("/auth/sign-in");
+
+  const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
+  if (!roles.includes(user.role)) {
+    redirect(fallback);
+  }
+
+  return user;
+}
+
+export async function requireAuth(): Promise<AuthUser> {
+  return requireRole(["admin", "user"], "/auth/sign-in");
+}
+
+export async function requireAdmin(): Promise<AuthUser> {
+  return requireRole("admin", "/dashboard");
+}
+
+export async function requireUser(): Promise<AuthUser> {
+  return requireRole("user", "/admin/dashboard");
 }
 
 export async function requireGuest() {
   const user = await getUserWithRole();
 
   if (!user) return;
-  if (user.role === "admin") redirect("/admin/dashboard")
+  if (user.role === "admin") redirect("/admin/dashboard");
 
   redirect("/dashboard");
 }
+
