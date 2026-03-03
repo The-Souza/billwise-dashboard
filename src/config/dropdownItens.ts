@@ -2,8 +2,8 @@ import { BadgeCheck, Bell, Settings, LogOut } from "lucide-react";
 
 export const dropdownItems = [
   {
-    id: "account",
-    navigation: "/account",
+    id: "profile",
+    navigation: "/profile",
     text: "Conta",
     icon: BadgeCheck,
   },
