@@ -8,6 +8,7 @@ export type AuthUser = {
   name: string;
   email: string;
   role: UserRole;
+  avatarUrl: string | null;
 };
 
 export const getUserWithRole = cache(async (): Promise<AuthUser | null> => {
@@ -22,7 +23,7 @@ export const getUserWithRole = cache(async (): Promise<AuthUser | null> => {
 
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
-    .select("role")
+    .select("role, avatar_url")
     .eq("id", user.id)
     .single();
 
@@ -33,5 +34,6 @@ export const getUserWithRole = cache(async (): Promise<AuthUser | null> => {
     name: user.user_metadata.name,
     email: user.email!,
     role: profile.role as UserRole,
+    avatarUrl: profile.avatar_url,
   };
 });
