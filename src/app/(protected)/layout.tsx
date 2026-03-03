@@ -1,8 +1,8 @@
-import { SideBarMenu } from "@/components/layout/SideBarMenu";
 import { cookies } from "next/headers";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { requireAuth } from "@/lib/auth/guards";
 import { Header } from "@/components/layout/Header";
+import { SidebarRoot } from "@/components/layout/sidebar/SidebarRoot";
 
 export default async function ProtectedLayout({
   children,
@@ -14,7 +14,7 @@ export default async function ProtectedLayout({
 
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
-      <SideBarMenu variant="inset" role={user.role} />
+      <SidebarRoot user={user} />
       <SidebarInset>
         <Header />
         {children}
