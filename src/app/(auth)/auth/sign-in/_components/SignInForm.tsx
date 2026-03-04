@@ -1,19 +1,25 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import {
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
-import { Button } from "@/components/ui/button";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 
 import { signInAction } from "@/actions/auth/sign-in";
@@ -21,10 +27,10 @@ import { formSchema } from "@/schemas/auth/sign-in";
 
 import { appToast } from "@/utils/toast";
 
-import Link from "next/link";
-import { EyeIcon, EyeOffIcon } from "lucide-react";
-import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 
@@ -74,10 +80,12 @@ export function SignInForm() {
   return (
     <div className="w-full">
       <CardHeader className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-heading">Bem-vindo ao Billwise</h1>
-        <p className="text-muted-foreground text-md">
+        <CardTitle className="text-2xl font-heading">
+          Bem-vindo ao Billwise
+        </CardTitle>
+        <CardDescription className="text-muted-foreground text-md">
           Gerencie suas finanças de forma simples e inteligente
-        </p>
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <form id="form-sign-in" onSubmit={form.handleSubmit(handleSubmit)}>
@@ -155,7 +163,7 @@ export function SignInForm() {
             type="submit"
             form="form-sign-in"
             disabled={!form.formState.isValid || isSubmitting}
-            className="flex items-center justify-center gap-2 transition-transform active:scale-[0.97] text-md"
+            className="flex items-center justify-center gap-2 transition-transform ease-in hover:scale-103 active:scale-97 text-md"
           >
             {isSubmitting ? (
               <>
@@ -169,7 +177,9 @@ export function SignInForm() {
         </Field>
 
         <nav className="flex w-full gap-2 text-md justify-center items-center">
-          <p>Não possui uma conta?</p>
+          <CardDescription className="text-foreground">
+            Não possui uma conta?
+          </CardDescription>
           <Link
             href="/auth/sign-up"
             className="text-primary underline-offset-4 hover:underline"

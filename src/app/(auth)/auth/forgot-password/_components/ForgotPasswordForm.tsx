@@ -1,25 +1,31 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import {
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
-import { Button } from "@/components/ui/button";
 import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
-import { CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 
 import { appToast } from "@/utils/toast";
 
-import { useState } from "react";
+import { forgotPasswordAction } from "@/actions/auth/forgot-password";
+import { formSchema } from "@/schemas/auth/forgot-password";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
-import { formSchema } from "@/schemas/auth/forgot-password";
-import Link from "next/link";
-import { forgotPasswordAction } from "@/actions/auth/forgot-password";
 
 export function ForgotPasswordForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -65,10 +71,12 @@ export function ForgotPasswordForm() {
   return (
     <div className="w-full">
       <CardHeader className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-heading">Esqueceu sua senha?</h1>
-        <p className="text-md text-muted-foreground">
+        <CardTitle className="text-2xl font-heading">
+          Esqueceu sua senha?
+        </CardTitle>
+        <CardDescription className="text-md text-muted-foreground">
           Insira seu email para redefinir sua senha
-        </p>
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <form
@@ -109,7 +117,7 @@ export function ForgotPasswordForm() {
             type="submit"
             form="form-forgot-password"
             disabled={!form.formState.isValid || isSubmitting}
-            className="flex items-center justify-center gap-2 transition-transform active:scale-[0.97] text-md"
+            className="flex items-center justify-center gap-2 transition-transform ease-in hover:scale-103 active:scale-97 text-md"
           >
             {isSubmitting ? (
               <>
@@ -117,7 +125,7 @@ export function ForgotPasswordForm() {
                 Carregando...
               </>
             ) : (
-              "Enviar email de redefinição"
+              "Enviar email"
             )}
           </Button>
         </Field>
