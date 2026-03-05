@@ -7,8 +7,8 @@ import {
   SidebarHeader,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
-import { SidebarUser, BillwiseLogo, SidebarNavigation } from "./index";
 import { AuthUser } from "@/lib/auth/getUserWithRole";
+import { BillwiseLogo, SidebarNavigation, SidebarUser } from "./index";
 
 export type User = {
   user: AuthUser;

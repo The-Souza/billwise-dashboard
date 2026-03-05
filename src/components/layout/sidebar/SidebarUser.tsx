@@ -1,5 +1,7 @@
 "use client";
 
+import { logoutAction } from "@/actions/auth/logout";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,12 +16,10 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { getInitials } from "@/utils/getInitials";
 import { dropdownItems } from "@/config/dropdownItens";
-import { useRouter } from "next/navigation";
-import { logoutAction } from "@/actions/auth/logout";
+import { getInitials } from "@/utils/getInitials";
 import { ChevronsUpDown } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { User } from "./SidebarRoot";
 
 export function SidebarUser({ user }: User) {
@@ -39,6 +39,7 @@ export function SidebarUser({ user }: User) {
                 <AvatarImage
                   src={user.avatarUrl ?? undefined}
                   alt={user.email}
+                  className="object-cover"
                 />
 
                 <AvatarFallback className="bg-primary text-primary-foreground rounded-lg">

@@ -9,9 +9,9 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { navigation } from "@/config/navigation";
-import { User } from "./SidebarRoot";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { User } from "./SidebarRoot";
 
 export function SidebarNavigation({ user }: User) {
   const pathname = usePathname();
