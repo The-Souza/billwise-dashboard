@@ -1,5 +1,5 @@
-import { cache } from "react";
 import { createServerSupabase } from "@/lib/supabase/server";
+import { cache } from "react";
 
 export type UserRole = "admin" | "user";
 
@@ -23,7 +23,7 @@ export const getUserWithRole = cache(async (): Promise<AuthUser | null> => {
 
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
-    .select("role, avatar_url")
+    .select("role, avatar_url, name")
     .eq("id", user.id)
     .single();
 
@@ -31,7 +31,7 @@ export const getUserWithRole = cache(async (): Promise<AuthUser | null> => {
 
   return {
     id: user.id,
-    name: user.user_metadata.name,
+    name: profile.name,
     email: user.email!,
     role: profile.role as UserRole,
     avatarUrl: profile.avatar_url,
