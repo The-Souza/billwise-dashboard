@@ -28,7 +28,7 @@ import {
 import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import { Spinner } from "@/components/ui/spinner";
 import { AuthUser } from "@/lib/auth/getUserWithRole";
-import { getInitials } from "@/utils/getInitials";
+import { getInitials } from "@/utils/get-initials";
 import { appToast } from "@/utils/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Lock, Pencil, Save } from "lucide-react";
@@ -116,7 +116,7 @@ export function ProfileForm({ user }: User) {
   }
 
   return (
-    <div className="p-4 flex flex-col gap-4 justify-center items-center h-full">
+    <div className="flex flex-col gap-4 justify-center items-center h-full">
       <div className="flex flex-col items-center gap-4">
         <div className="relative group">
           <Avatar className="h-30 w-30 border-4 border-border">
