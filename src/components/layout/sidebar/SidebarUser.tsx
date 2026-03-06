@@ -17,14 +17,14 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { dropdownItems } from "@/config/dropdownItens";
-import { getInitials } from "@/utils/getInitials";
+import { getInitials } from "@/utils/get-initials";
 import { ChevronsUpDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { User } from "./SidebarRoot";
 
 export function SidebarUser({ user }: User) {
   const router = useRouter();
-  const { isMobile } = useSidebar();
+  const { isMobile, setOpenMobile } = useSidebar();
 
   return (
     <SidebarMenu>
@@ -68,8 +68,11 @@ export function SidebarUser({ user }: User) {
                   <DropdownMenuItem
                     key={item.id}
                     onClick={() => {
-                      router.replace(item.navigation);
-                      router.refresh();
+                      if (isMobile) {
+                        setOpenMobile(false);
+                        router.replace(item.navigation);
+                        router.refresh();
+                      }
                     }}
                   >
                     <item.icon />
