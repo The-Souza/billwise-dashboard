@@ -129,4 +129,48 @@
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: oklch(0.712 0.194 13.428 / 0.5);
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+  }
+
+  /* Remover as setinhas */
+  ::-webkit-scrollbar-button {
+    display: none;
+  }
+
+  /* Hover thumb */
+  ::-webkit-scrollbar-thumb:hover {
+    background: oklch(0.712 0.194 13.428 / 0.75);
+  }
+
+  /* Dark mode */
+  .dark ::-webkit-scrollbar-thumb {
+    background: oklch(0.41 0.159 10.272 / 0.5);
+  }
+
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background: oklch(0.41 0.159 10.272 / 0.75);
+  }
+
+  /* Firefox */
+  * {
+    scrollbar-color: oklch(0.712 0.194 13.428 / 0.5) transparent;
+    scrollbar-width: thin;
+  }
+
+  .dark {
+    scrollbar-color: oklch(0.41 0.159 10.272 / 0.5) transparent;
+  }
 }
