@@ -35,14 +35,14 @@ export function SidebarUser({ user }: User) {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="h-8 w-8 rounded-lg">
+              <Avatar className="h-8 w-8 rounded-md">
                 <AvatarImage
                   src={user.avatarUrl ?? undefined}
                   alt={user.email}
                   className="object-cover"
                 />
 
-                <AvatarFallback className="bg-primary text-primary-foreground rounded-lg">
+                <AvatarFallback className="bg-primary text-primary-foreground rounded-md">
                   {getInitials(user.name)}
                 </AvatarFallback>
               </Avatar>
@@ -68,11 +68,10 @@ export function SidebarUser({ user }: User) {
                   <DropdownMenuItem
                     key={item.id}
                     onClick={() => {
-                      if (isMobile) {
-                        setOpenMobile(false);
-                        router.replace(item.navigation);
-                        router.refresh();
-                      }
+                      if (isMobile) setOpenMobile(false);
+
+                      router.replace(item.navigation);
+                      router.refresh();
                     }}
                   >
                     <item.icon />
