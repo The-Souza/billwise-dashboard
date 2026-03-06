@@ -95,7 +95,7 @@ export default function ChangePasswordForm() {
   }
 
   return (
-    <div className="flex flex-col gap-4 justify-center items-center h-full">
+    <div className="flex flex-col items-center justify-center min-h-full">
       <div className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Alterar Senha</CardTitle>

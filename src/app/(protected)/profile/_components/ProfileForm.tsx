@@ -116,7 +116,7 @@ export function ProfileForm({ user }: User) {
   }
 
   return (
-    <div className="flex flex-col gap-4 justify-center items-center h-full">
+    <div className="flex flex-col gap-4 justify-center items-center h-full w-full">
       <div className="flex flex-col items-center gap-4">
         <div className="relative group">
           <Avatar className="h-30 w-30 border-4 border-border">

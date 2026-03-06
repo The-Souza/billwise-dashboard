@@ -1,8 +1,8 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { Button } from "@/components/ui/button";
 
 export function ToggleTheme() {
   const { theme, setTheme } = useTheme();
@@ -10,8 +10,8 @@ export function ToggleTheme() {
 
   return (
     <Button
-      variant="outline"
-      size="icon"
+      variant="ghost"
+      size="icon-sm"
       aria-label="Toggle theme"
       onClick={() => setTheme(isDark ? "light" : "dark")}
       className="relative transition-transform ease-in hover:scale-103 active:scale-97"
