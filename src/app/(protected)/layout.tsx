@@ -1,8 +1,8 @@
-import { cookies } from "next/headers";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { requireAuth } from "@/lib/auth/guards";
 import { Header } from "@/components/layout/Header";
 import { SidebarRoot } from "@/components/layout/sidebar/SidebarRoot";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { requireAuth } from "@/lib/auth/guards";
+import { cookies } from "next/headers";
 
 export default async function ProtectedLayout({
   children,
@@ -15,9 +15,11 @@ export default async function ProtectedLayout({
   return (
     <SidebarProvider defaultOpen={defaultOpen}>
       <SidebarRoot user={user} />
-      <SidebarInset>
+      <SidebarInset className="flex flex-col h-screen overflow-hidden">
         <Header />
-        {children}
+        <section className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-4">
+          {children}
+        </section>
       </SidebarInset>
     </SidebarProvider>
   );
