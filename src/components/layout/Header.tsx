@@ -1,44 +1,22 @@
 "use client";
 
-import { ToggleTheme } from "@/components/ui/toggle-theme";
+import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { usePathname } from "next/navigation";
+import { ToggleTheme } from "@/components/ui/toggle-theme";
+import { UserRole } from "@/lib/auth/getUserWithRole";
+import { HeaderBreadcrumb } from "./HeaderBreadcrumb";
 
-const routeTitles: { path: string; title: string }[] = [
-  // Admin
-  { path: "/admin/dashboard", title: "Dashboard Administrativo" },
-  { path: "/admin/users", title: "Gerenciar Usuários" },
-  { path: "/admin/accounts", title: "Gerenciar Contas" },
-  { path: "/admin/budgets", title: "Gerenciar Orçamentos" },
-  { path: "/admin/metrics", title: "Visualizar Métricas" },
+interface HeaderProps {
+  userRole: UserRole;
+}
 
-  // User
-  { path: "/accounts", title: "Contas" },
-  { path: "/budgets", title: "Orçamentos" },
-  { path: "/dashboard", title: "Dashboard" },
-  
-  // Settings
-  { path: "/profile", title: "Meu Perfil" },
-  { path: "/settings", title: "Configurações" },
-  { path: "/notifications", title: "Notificações" },
-];
-
-export function Header() {
-  const pathname = usePathname();
-
-  function getHeaderTitle(pathname: string): string {
-    const match = routeTitles.find((route) => pathname.startsWith(route.path));
-
-    return match?.title ?? "Dashboard";
-  }
-
-  const headerTitle = getHeaderTitle(pathname);
-
+export function Header({ userRole }: HeaderProps) {
   return (
-    <header className="flex p-4 pb-0 items-center justify-between">
-      <div className="flex gap-2">
-        <SidebarTrigger />
-        <h1 className="text-lg font-heading">{headerTitle}</h1>
+    <header className="flex h-14 px-4 shrink-0 items-center justify-between gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+      <div className="flex items-center gap-2">
+        <SidebarTrigger className="-ml-1" />
+        <Separator orientation="vertical" className="mr-2 h-4" />
+        <HeaderBreadcrumb userRole={userRole} />
       </div>
 
       <ToggleTheme />

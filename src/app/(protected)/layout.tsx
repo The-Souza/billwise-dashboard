@@ -16,7 +16,7 @@ export default async function ProtectedLayout({
     <SidebarProvider defaultOpen={defaultOpen}>
       <SidebarRoot user={user} />
       <SidebarInset className="flex flex-col h-screen overflow-hidden">
-        <Header />
+        <Header userRole={user.role} />
         <section className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-4">
           {children}
         </section>
