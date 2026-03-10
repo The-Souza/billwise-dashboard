@@ -215,6 +215,7 @@ export function ProfileForm({ user }: User) {
               </Button>
               <Button
                 type="submit"
+                size={isSubmitting ? "icon" : "default"}
                 form="form-profile"
                 className="transition-transform ease-in hover:scale-103 active:scale-97"
               >
