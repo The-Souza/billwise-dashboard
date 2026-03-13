@@ -24,8 +24,8 @@ import {
 } from "@/components/ui/input-group";
 import { Spinner } from "@/components/ui/spinner";
 import { formSchema } from "@/schemas/profile/change-password";
+import { appToast } from "@/utils/app-toast";
 import { checkRequirements } from "@/utils/check-requirements";
-import { appToast } from "@/utils/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle2, Circle, EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";

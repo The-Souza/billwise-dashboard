@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/input-group";
 import { Spinner } from "@/components/ui/spinner";
 
-import { appToast } from "@/utils/toast";
+import { appToast } from "@/utils/app-toast";
 
 import { signUpAction } from "@/actions/auth/sign-up";
 import { formSchema } from "@/schemas/auth/sign-up";

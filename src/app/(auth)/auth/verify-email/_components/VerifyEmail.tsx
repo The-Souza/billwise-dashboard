@@ -1,18 +1,18 @@
 "use client";
 
+import { resendConfirmation } from "@/actions/auth/verify-email";
+import { Button } from "@/components/ui/button";
 import {
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { createClientSupabase } from "@/lib/supabase/client";
-import { appToast } from "@/utils/toast";
-import { Button } from "@/components/ui/button";
-import { resendConfirmation } from "@/actions/auth/verify-email";
+import { appToast } from "@/utils/app-toast";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface VerifyEmailProps {
   email?: string;

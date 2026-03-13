@@ -25,7 +25,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { signInAction } from "@/actions/auth/sign-in";
 import { formSchema } from "@/schemas/auth/sign-in";
 
-import { appToast } from "@/utils/toast";
+import { appToast } from "@/utils/app-toast";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeIcon, EyeOffIcon } from "lucide-react";

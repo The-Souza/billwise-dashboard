@@ -17,7 +17,7 @@ import {
 import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import { Spinner } from "@/components/ui/spinner";
 
-import { appToast } from "@/utils/toast";
+import { appToast } from "@/utils/app-toast";
 
 import { forgotPasswordAction } from "@/actions/auth/forgot-password";
 import { formSchema } from "@/schemas/auth/forgot-password";

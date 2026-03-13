@@ -28,8 +28,8 @@ import {
 import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import { Spinner } from "@/components/ui/spinner";
 import { AuthUser } from "@/lib/auth/getUserWithRole";
+import { appToast } from "@/utils/app-toast";
 import { getInitials } from "@/utils/get-initials";
-import { appToast } from "@/utils/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Lock, Pencil, Save } from "lucide-react";
 import Link from "next/link";
