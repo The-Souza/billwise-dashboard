@@ -1,4 +1,4 @@
-import { useMounted } from "@/hooks/useMounted";
+import { useMounted } from "@/hooks/use-mounted";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 
