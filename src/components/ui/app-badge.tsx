@@ -41,7 +41,7 @@ export function AppBadge({ variant, className }: AppBadgeProps) {
   const config = appBadgeConfig[variant];
 
   return (
-    <Badge className={cn(config.className, className)}>
+    <Badge variant="ghost" className={cn(config.className, className)}>
       <config.icon className="size-3 mr-1" />
       {config.label}
     </Badge>
