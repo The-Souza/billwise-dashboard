@@ -1,5 +1,6 @@
 "use server";
 
+import { Prisma } from "@/generated/prisma/client";
 import { requireAuth } from "@/lib/auth/guards";
 import { prisma } from "@/lib/prisma/client";
 
@@ -31,12 +32,11 @@ const MONTH_LABELS = [
 export async function getChartDataAction(
   currentMonth: number,
   currentYear: number,
-  periods: number, // 3, 6 ou 12
+  periods: number,
 ): Promise<GetChartDataResult> {
   try {
     const user = await requireAuth();
 
-    // Gera os pares { month, year } dos últimos N meses
     const monthsToFetch: { month: number; year: number }[] = [];
 
     for (let i = periods - 1; i >= 0; i--) {
@@ -66,12 +66,16 @@ export async function getChartDataAction(
         COALESCE(total_expense, 0)::float AS total_expense
       FROM public.income_vs_expense
       WHERE user_id = ${user.id}::uuid
-        AND (year, month) IN (
-          ${monthsToFetch.map((p) => `(${p.year}, ${p.month})`).join(",")}
+        AND (
+          ${Prisma.join(
+            monthsToFetch.map(
+              (p) => Prisma.sql`(year = ${p.year} AND month = ${p.month})`,
+            ),
+            " OR ",
+          )}
         )
     `;
 
-    // Mapeia garantindo ordem e meses sem dados como zero
     const data: ChartDataPoint[] = monthsToFetch.map(({ month, year }) => {
       const row = rows.find((r) => r.month === month && r.year === year);
       return {
