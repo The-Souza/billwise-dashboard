@@ -1,11 +1,11 @@
-import { redirect } from "next/navigation";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
-import { getUserWithRole, UserRole, AuthUser } from "./getUserWithRole";
+import { redirect } from "next/navigation";
+import { AuthUser, getUserWithRole, UserRole } from "./getUserWithRole";
 
 export async function requireRole(
   allowedRoles: UserRole | UserRole[],
-  fallback: string = "/dashboard"
+  fallback: string = "/dashboard",
 ): Promise<AuthUser> {
   const supabase = await createServerSupabase();
   const { data, error } = await supabase.auth.getUser();
@@ -47,4 +47,3 @@ export async function requireGuest() {
 
   redirect("/dashboard");
 }
-
