@@ -21,7 +21,7 @@ const CARD_CONFIG = [
   },
   {
     id: "receita",
-    title: "Total de receitas",
+    title: "Receitas",
     valueKey: "totalIncome" as const,
     trendKey: "incomeTrend" as const,
     isGood: true,
@@ -29,7 +29,7 @@ const CARD_CONFIG = [
   },
   {
     id: "despesas",
-    title: "Total de despesas",
+    title: "Despesas",
     valueKey: "totalExpense" as const,
     trendKey: "expenseTrend" as const,
     isGood: false,
@@ -64,7 +64,7 @@ export function SummaryCard({ data, isLoading }: SummaryCardProps) {
                 <TrendIndicator
                   trend={data[item.trendKey]}
                   isGood={item.isGood}
-                  label="vs. mês anterior"
+                  label="mês anterior"
                 />
               </>
             )}
