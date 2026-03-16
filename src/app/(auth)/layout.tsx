@@ -1,7 +1,7 @@
 import { AuthLayoutWrapper } from "@/components/layout/AuthLayoutWrapper";
 import { requireGuest } from "@/lib/auth/guards";
 
-export default async function PublicLayout({
+export default async function AuthLayout({
   children,
 }: {
   children: React.ReactNode;

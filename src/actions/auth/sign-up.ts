@@ -11,9 +11,9 @@ type SignUpResult =
   | { success: false; error: string; field?: Fields };
 
 export async function signUpAction(
-  data: z.infer<typeof formSchema>,
+  formData: z.infer<typeof formSchema>,
 ): Promise<SignUpResult> {
-  const parsed = formSchema.safeParse(data);
+  const parsed = formSchema.safeParse(formData);
 
   if (!parsed.success) {
     return {

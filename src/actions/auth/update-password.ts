@@ -12,9 +12,9 @@ type Result =
   | { success: false; error: string; field?: Fields };
 
 export async function updatePasswordAction(
-  data: z.infer<typeof formSchema>,
+  formData: z.infer<typeof formSchema>,
 ): Promise<Result> {
-  const parsed = formSchema.safeParse(data);
+  const parsed = formSchema.safeParse(formData);
   const cookieStore = await cookies();
 
   if (!parsed.success) {

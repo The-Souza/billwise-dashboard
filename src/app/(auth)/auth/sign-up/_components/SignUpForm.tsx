@@ -1,32 +1,38 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import {
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
-import { Button } from "@/components/ui/button";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
-import { CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 
-import { appToast } from "@/utils/toast";
+import { appToast } from "@/utils/app-toast";
 
-import { EyeIcon, EyeOffIcon } from "lucide-react";
-import { useState } from "react";
+import { signUpAction } from "@/actions/auth/sign-up";
+import { formSchema } from "@/schemas/auth/sign-up";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
-import { formSchema } from "@/schemas/auth/sign-up";
-import { signUpAction } from "@/actions/auth/sign-up";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
 
 export function SignUpForm() {
   const [visibleField, setVisibleField] = useState<
@@ -81,10 +87,10 @@ export function SignUpForm() {
   return (
     <div className="w-full">
       <CardHeader className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-heading">Crie sua conta</h1>
-        <p className="text-md text-muted-foreground">
+        <CardTitle className="text-2xl font-heading">Crie sua conta</CardTitle>
+        <CardDescription className="text-md text-muted-foreground">
           Comece a organizar suas finanças hoje mesmo
-        </p>
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <form id="form-sign-up" onSubmit={form.handleSubmit(handleSubmit)}>
@@ -229,7 +235,7 @@ export function SignUpForm() {
             type="submit"
             form="form-sign-up"
             disabled={!form.formState.isValid || isSubmitting}
-            className="flex items-center justify-center gap-2 transition-transform active:scale-[0.97] text-md"
+            className="flex items-center justify-center gap-2 transition-transform ease-in hover:scale-103 active:scale-97 text-md"
           >
             {isSubmitting ? (
               <>
@@ -243,7 +249,9 @@ export function SignUpForm() {
         </Field>
 
         <nav className="flex w-full gap-2 text-md justify-center items-center">
-          <p>Já possui uma conta?</p>
+          <CardDescription className="text-foreground">
+            Já possui uma conta?
+          </CardDescription>
           <Link
             href="/auth/sign-in"
             className="text-primary underline-offset-4 hover:underline"
