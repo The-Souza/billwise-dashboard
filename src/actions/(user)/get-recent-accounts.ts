@@ -8,6 +8,7 @@ export type RecentAccount = {
   id: string;
   title: string;
   category: string;
+  categoryIcon: string | null;
   categoryType: category_type;
   amount: number;
   dueDate: string | null;
@@ -37,6 +38,7 @@ export async function getRecentAccountsAction(
           select: {
             name: true,
             type: true,
+            icon: true,
           },
         },
       },
@@ -48,6 +50,7 @@ export async function getRecentAccountsAction(
       id: row.id,
       title: row.title,
       category: row.categories?.name ?? "Sem categoria",
+      categoryIcon: row.categories?.icon ?? null,
       categoryType: row.categories?.type ?? "expense",
       amount: Number(row.amount),
       dueDate: row.due_date?.toISOString() ?? null,

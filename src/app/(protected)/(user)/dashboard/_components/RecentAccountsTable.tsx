@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/table";
 import { formatCurrency } from "@/utils/format-currency";
 import { formatDate } from "@/utils/format-date";
-import { CircleDollarSign } from "lucide-react";
+import { ArrowRight, CircleDollarSign, icons } from "lucide-react";
 import Link from "next/link";
 
 interface RecentAccountTableProps {
@@ -37,7 +37,7 @@ export function RecentAccountTable({
     <Card className="flex flex-col flex-1">
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
-          <CardTitle className="text-md font-heading">
+          <CardTitle className="text-md font-heading capitalize">
             Contas recentes
           </CardTitle>
           <CardDescription className="capitalize">
@@ -45,8 +45,11 @@ export function RecentAccountTable({
           </CardDescription>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="text-xs" asChild>
-            <Link href="/accounts">Ver todas</Link>
+          <Button variant="ghost" size="sm" className="text-xs" asChild>
+            <Link href="/accounts">
+              Ver todas
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
           </Button>
           <div className="p-2 rounded-md bg-primary/10">
             <CircleDollarSign className="h-4 w-4 text-primary" />
@@ -66,7 +69,7 @@ export function RecentAccountTable({
           </TableHeader>
           <TableBody>
             {isLoading || !data ? (
-              Array.from({ length: 6 }).map((_, i) => (
+              Array.from({ length: 8 }).map((_, i) => (
                 <TableRow
                   key={i}
                   className="*:border-border [&>:not(:last-child)]:border-r hover:bg-transparent"
@@ -100,6 +103,11 @@ export function RecentAccountTable({
             ) : (
               data.map((account) => {
                 const isIncome = account.categoryType === "income";
+                const IconComponent = account.categoryIcon
+                  ? (icons[
+                      account.categoryIcon as keyof typeof icons
+                    ] as React.ElementType)
+                  : null;
                 return (
                   <TableRow
                     key={account.id}
@@ -109,7 +117,10 @@ export function RecentAccountTable({
                       {account.title}
                     </TableCell>
                     <TableCell>
-                      <span className="text-sm text-muted-foreground">
+                      <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                        {IconComponent && (
+                          <IconComponent className="h-3.5 w-3.5" />
+                        )}
                         {account.category}
                       </span>
                     </TableCell>
