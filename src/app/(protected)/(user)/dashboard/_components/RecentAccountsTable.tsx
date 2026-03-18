@@ -1,4 +1,4 @@
-import { RecentAccount } from "@/actions/(user)/get-recent-accounts";
+import { RecentAccount } from "@/actions/(user)/dashboard/get-recent-accounts";
 import { AppBadge, AppBadgeVariant } from "@/components/ui/app-badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -75,19 +75,19 @@ export function RecentAccountTable({
                   className="*:border-border [&>:not(:last-child)]:border-r hover:bg-transparent"
                 >
                   <TableCell>
-                    <Skeleton className="h-4 w-28" />
+                    <Skeleton className="h-5 w-32" />
                   </TableCell>
                   <TableCell>
-                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className="h-5 w-20" />
                   </TableCell>
                   <TableCell>
-                    <Skeleton className="h-4 w-16" />
+                    <Skeleton className="h-5 w-20" />
                   </TableCell>
                   <TableCell>
-                    <Skeleton className="h-5 w-16 rounded-md" />
+                    <Skeleton className="h-5 w-24" />
                   </TableCell>
                   <TableCell className="flex justify-end">
-                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className="h-5 w-26" />
                   </TableCell>
                 </TableRow>
               ))
