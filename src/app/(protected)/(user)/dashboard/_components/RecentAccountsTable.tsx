@@ -1,4 +1,4 @@
-import { RecentAccount } from "@/actions/(user)/get-recent-accounts";
+import { RecentAccount } from "@/actions/(user)/dashboard/get-recent-accounts";
 import { AppBadge, AppBadgeVariant } from "@/components/ui/app-badge";
 import { Button } from "@/components/ui/button";
 import {

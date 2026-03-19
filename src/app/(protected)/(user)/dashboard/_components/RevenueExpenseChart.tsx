@@ -1,6 +1,6 @@
 "use client";
 
-import { ChartDataPoint } from "@/actions/(user)/get-chart-data";
+import { ChartDataPoint } from "@/actions/(user)/dashboard/get-chart-data";
 import {
   Card,
   CardContent,

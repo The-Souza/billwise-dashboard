@@ -1,9 +1,9 @@
 "use client";
 
-import { getBudgetProgressAction } from "@/actions/(user)/get-budget-progress";
-import { getChartDataAction } from "@/actions/(user)/get-chart-data";
-import { getRecentAccountsAction } from "@/actions/(user)/get-recent-accounts";
-import { getSummaryAction } from "@/actions/(user)/get-summary";
+import { getBudgetProgressAction } from "@/actions/(user)/dashboard/get-budget-progress";
+import { getChartDataAction } from "@/actions/(user)/dashboard/get-chart-data";
+import { getRecentAccountsAction } from "@/actions/(user)/dashboard/get-recent-accounts";
+import { getSummaryAction } from "@/actions/(user)/dashboard/get-summary";
 import { MonthPicker } from "@/components/ui/month-picker";
 import { useDashboardMonth } from "@/hooks/use-dashboard-month";
 import useSWR from "swr";
