@@ -28,6 +28,14 @@ interface RecentAccountTableProps {
   isLoading?: boolean;
 }
 
+const skeletonCells = [
+  { width: "w-32" },
+  { width: "w-20" },
+  { width: "w-20" },
+  { width: "w-24" },
+  { width: "w-26", cellClass: "flex justify-end" },
+];
+
 export function RecentAccountTable({
   data,
   label,
@@ -74,21 +82,11 @@ export function RecentAccountTable({
                   key={i}
                   className="*:border-border [&>:not(:last-child)]:border-r hover:bg-transparent"
                 >
-                  <TableCell>
-                    <Skeleton className="h-5 w-32" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-5 w-20" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-5 w-20" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-5 w-24" />
-                  </TableCell>
-                  <TableCell className="flex justify-end">
-                    <Skeleton className="h-5 w-26" />
-                  </TableCell>
+                  {skeletonCells.map((cell, index) => (
+                    <TableCell key={index} className={cell.cellClass}>
+                      <Skeleton className={`h-5 ${cell.width}`} />
+                    </TableCell>
+                  ))}
                 </TableRow>
               ))
             ) : data.length === 0 ? (
