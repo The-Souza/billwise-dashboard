@@ -6,6 +6,7 @@ import {
   AccountRow,
   getAccountsAction,
 } from "@/actions/(user)/accounts/get-accounts";
+import { CategoryOption } from "@/actions/(user)/accounts/get-categories";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -36,6 +37,7 @@ interface AccountsDataTableProps {
     setMonth: (m: number) => void;
     setYear: (y: number) => void;
   };
+  categories: CategoryOption[];
 }
 
 const PAGE_SIZE = 10;
@@ -52,7 +54,10 @@ const skeletonWidths = [
   "w-16",
 ];
 
-export function AccountsDataTable({ dashboardMonth }: AccountsDataTableProps) {
+export function AccountsDataTable({
+  dashboardMonth,
+  categories,
+}: AccountsDataTableProps) {
   const { month, year } = dashboardMonth;
 
   const [filters, setFilters] = useState<AccountFilters>({
@@ -70,6 +75,11 @@ export function AccountsDataTable({ dashboardMonth }: AccountsDataTableProps) {
   }>({ open: false, accounts: [] });
   const [isDeleting, setIsDeleting] = useState(false);
 
+  useEffect(() => {
+    setFilters((prev) => ({ ...prev, month, year, page: 1 }));
+    setRowSelection({});
+  }, [month, year]);
+
   const {
     data: result,
     isLoading,
@@ -83,11 +93,6 @@ export function AccountsDataTable({ dashboardMonth }: AccountsDataTableProps) {
   const page = filters.page ?? 1;
   const totalPages = Math.ceil(total / PAGE_SIZE);
   const selectedCount = Object.keys(rowSelection).length;
-
-  useEffect(() => {
-    setFilters((prev) => ({ ...prev, month, year, page: 1 }));
-    setRowSelection({});
-  }, [month, year]);
 
   function handleFiltersChange(partial: Partial<AccountFilters>) {
     setFilters((prev) => ({ ...prev, ...partial }));
@@ -151,6 +156,7 @@ export function AccountsDataTable({ dashboardMonth }: AccountsDataTableProps) {
         <AccountsFilters
           filters={filters}
           selectedCount={selectedCount}
+          categories={categories}
           onFiltersChange={handleFiltersChange}
           onDelete={handleDeleteSelected}
         />

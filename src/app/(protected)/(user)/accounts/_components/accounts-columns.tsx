@@ -1,4 +1,3 @@
-// src/app/(protected)/(user)/accounts/_components/accounts-columns.tsx
 "use client";
 
 import { AccountRow } from "@/actions/(user)/accounts/get-accounts";
@@ -11,12 +10,10 @@ import { ColumnDef } from "@tanstack/react-table";
 import { icons, PencilIcon, RefreshCw, Trash2Icon } from "lucide-react";
 import Link from "next/link";
 
-// Recebe o handler de delete para conseguir passar a account completa ao dialog
 export function accountColumns(
   onDelete: (account: AccountRow) => void,
 ): ColumnDef<AccountRow>[] {
   return [
-    // ── Checkbox ────────────────────────────────────────────────────────────
     {
       id: "select",
       header: ({ table }) => (
@@ -42,7 +39,6 @@ export function accountColumns(
       enableHiding: false,
     },
 
-    // ── Título ──────────────────────────────────────────────────────────────
     {
       accessorKey: "title",
       header: "Título",
@@ -51,7 +47,6 @@ export function accountColumns(
       ),
     },
 
-    // ── Categoria ───────────────────────────────────────────────────────────
     {
       accessorKey: "category",
       header: "Categoria",
@@ -70,7 +65,6 @@ export function accountColumns(
       },
     },
 
-    // ── Vencimento ──────────────────────────────────────────────────────────
     {
       accessorKey: "dueDate",
       header: "Vencimento",
@@ -84,7 +78,6 @@ export function accountColumns(
       },
     },
 
-    // ── Status ──────────────────────────────────────────────────────────────
     {
       accessorKey: "status",
       header: "Status",
@@ -93,7 +86,6 @@ export function accountColumns(
       ),
     },
 
-    // ── Recorrente ──────────────────────────────────────────────────────────
     {
       accessorKey: "isRecurring",
       header: "Recorrente",
@@ -108,7 +100,6 @@ export function accountColumns(
         ),
     },
 
-    // ── Parcelas ────────────────────────────────────────────────────────────
     {
       accessorKey: "installments",
       header: "Parcelas",
@@ -124,7 +115,6 @@ export function accountColumns(
       },
     },
 
-    // ── Valor ───────────────────────────────────────────────────────────────
     {
       accessorKey: "amount",
       header: () => <span className="block text-right">Valor</span>,
@@ -141,8 +131,6 @@ export function accountColumns(
         );
       },
     },
-
-    // ── Actions ─────────────────────────────────────────────────────────────
     {
       id: "actions",
       enableHiding: false,

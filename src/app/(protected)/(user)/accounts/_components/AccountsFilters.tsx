@@ -1,7 +1,7 @@
-// src/app/(protected)/(user)/accounts/_components/AccountsFilters.tsx
 "use client";
 
 import { AccountFilters } from "@/actions/(user)/accounts/get-accounts";
+import { CategoryOption } from "@/actions/(user)/accounts/get-categories";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -12,26 +12,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { account_status } from "@/generated/prisma/enums";
+import { STATUS_OPTIONS } from "@/utils/status-options";
 import { PlusIcon, Trash2Icon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
-// futuramente: buscar via action
-const SYSTEM_CATEGORIES = [
-  { id: "29f81f88-d604-4596-bc2f-24ec0d8d9378", name: "Lazer" },
-  { id: "382ecd26-bece-4932-87d1-a949808caf45", name: "Moradia" },
-  { id: "3f612a35-4425-46bc-9109-591b2b13ea21", name: "Transporte" },
-  { id: "47e01a23-6b6a-46f3-8d99-d87856f5e085", name: "Outros" },
-  { id: "926bb5c9-4df5-4e5b-b418-f371b5f94fa3", name: "Alimentação" },
-  { id: "b7f54fb7-c87e-4649-800a-305d634b3481", name: "Saúde" },
-  { id: "e2ae2e82-6f7b-4338-9d87-06f9a0401ecc", name: "Salário" },
-  { id: "eefcd5f6-b344-4f10-966b-cf277030e8f9", name: "Educação" },
-];
-
 interface AccountsFiltersProps {
   filters: AccountFilters;
   selectedCount: number;
+  categories: CategoryOption[];
   onFiltersChange: (filters: Partial<AccountFilters>) => void;
   onDelete: () => void;
 }
@@ -39,6 +29,7 @@ interface AccountsFiltersProps {
 export function AccountsFilters({
   filters,
   selectedCount,
+  categories,
   onFiltersChange,
   onDelete,
 }: AccountsFiltersProps) {
@@ -76,9 +67,11 @@ export function AccountsFilters({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos</SelectItem>
-            <SelectItem value="paid">Pago</SelectItem>
-            <SelectItem value="pending">Pendente</SelectItem>
-            <SelectItem value="overdue">Vencido</SelectItem>
+            {STATUS_OPTIONS.map((opt) => (
+              <SelectItem key={opt.value} value={opt.value}>
+                {opt.label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
 
@@ -96,7 +89,7 @@ export function AccountsFilters({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todas</SelectItem>
-            {SYSTEM_CATEGORIES.map((cat) => (
+            {categories.map((cat) => (
               <SelectItem key={cat.id} value={cat.id}>
                 {cat.name}
               </SelectItem>
