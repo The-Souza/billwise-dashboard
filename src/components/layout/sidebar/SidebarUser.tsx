@@ -16,7 +16,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { dropdownItems } from "@/config/dropdownItens";
+import { dropdownItems } from "@/config/dropdown-itens";
 import { getInitials } from "@/utils/get-initials";
 import { ChevronsUpDown } from "lucide-react";
 import { useRouter } from "next/navigation";
