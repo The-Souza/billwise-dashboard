@@ -84,13 +84,13 @@ export function MonthPicker({
           <PopoverTrigger asChild>
             <Button
               variant="outline"
-              className="h-8 px-3 gap-1.5 text-xs font-medium capitalize min-w-36 justify-between"
+              className="h-8 px-3 gap-1.5 text-xs font-medium capitalize min-w-40 justify-between"
             >
               <CalendarIcon className="text-muted-foreground shrink-0" />
               <span className="flex-1 text-center">{label}</span>
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-40 p-3" align="center">
+          <PopoverContent className="w-50 sm:w-40 p-3" align="center">
             <div className="flex items-center justify-between mb-3">
               <Button
                 variant="ghost"
