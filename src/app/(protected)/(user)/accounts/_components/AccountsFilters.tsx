@@ -3,7 +3,7 @@
 import { AccountFilters } from "@/actions/(user)/accounts/get-accounts";
 import { CategoryOption } from "@/actions/(user)/accounts/get-categories";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import {
   Select,
   SelectContent,
@@ -46,12 +46,13 @@ export function AccountsFilters({
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-2 w-full lg:w-auto">
       <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full sm:w-auto">
-        <Input
-          placeholder="Buscar por título..."
-          value={titleInput}
-          onChange={(e) => setTitleInput(e.target.value)}
-          className="h-8 col-span-2 sm:w-44 text-xs"
-        />
+        <InputGroup className="h-8 col-span-2 sm:w-44 text-xs">
+          <InputGroupInput
+            placeholder="Buscar por título..."
+            value={titleInput}
+            onChange={(e) => setTitleInput(e.target.value)}
+          />
+        </InputGroup>
 
         <Select
           value={filters.status ?? "all"}
