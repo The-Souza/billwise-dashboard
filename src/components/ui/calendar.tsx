@@ -1,5 +1,8 @@
 "use client";
 
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { ptBR } from "date-fns/locale";
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
@@ -7,9 +10,6 @@ import {
 } from "lucide-react";
 import * as React from "react";
 import { DayButton, DayPicker, getDefaultClassNames } from "react-day-picker";
-
-import { Button, buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 function Calendar({
   className,
@@ -28,8 +28,9 @@ function Calendar({
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
+      locale={ptBR}
       className={cn(
-        "bg-background group/calendar p-3 [--cell-size:3rem] in-data-[slot=card-content]:bg-transparent in-data-[slot=popover-content]:bg-transparent",
+        "bg-card group/calendar p-3 [--cell-size:3rem] in-data-[slot=card-content]:bg-transparent in-data-[slot=popover-content]:bg-transparent",
         String.raw`rtl:**:[.rdp-button\_next>svg]:rotate-180`,
         String.raw`rtl:**:[.rdp-button\_previous>svg]:rotate-180`,
         className,
@@ -46,7 +47,10 @@ function Calendar({
           "relative flex flex-col gap-4 md:flex-row",
           defaultClassNames.months,
         ),
-        month: cn("flex w-full flex-col gap-4", defaultClassNames.month),
+        month: cn(
+          "flex w-full flex-col gap-4 capitalize",
+          defaultClassNames.month,
+        ),
         nav: cn(
           "absolute inset-x-0 top-0 flex w-full items-center justify-between gap-1",
           defaultClassNames.nav,
