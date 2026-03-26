@@ -11,6 +11,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { AppAlert } from "@/components/ui/app-alert";
 import { Spinner } from "@/components/ui/spinner";
 import { AlertTriangleIcon } from "lucide-react";
 
@@ -51,30 +52,24 @@ export function DeleteAccountDialog({
             <div className="flex flex-col gap-3 text-sm text-muted-foreground">
               <p>Esta ação é permanente e não pode ser desfeita.</p>
               {(hasInstallments || hasRecurring) && (
-                <div className="flex flex-col gap-1.5 rounded-md border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/30 p-3">
-                  {hasInstallments && (
-                    <p className="text-amber-700 dark:text-amber-400 flex items-start gap-1.5">
-                      <span className="shrink-0">⚠</span>
-                      <span>
-                        {isSingle
-                          ? "Esta conta possui parcelas"
-                          : "Algumas contas possuem parcelas"}{" "}
-                        — todas serão excluídas junto.
-                      </span>
-                    </p>
-                  )}
-                  {hasRecurring && (
-                    <p className="text-amber-700 dark:text-amber-400 flex items-start gap-1.5">
-                      <span className="shrink-0">⚠</span>
-                      <span>
-                        {isSingle
-                          ? "Esta conta é recorrente"
-                          : "Algumas contas são recorrentes"}{" "}
-                        — a regra de recorrência também será excluída.
-                      </span>
-                    </p>
-                  )}
-                </div>
+                <AppAlert
+                  variant="alert"
+                  title="Atenção"
+                  items={
+                    [
+                      hasInstallments
+                        ? isSingle
+                          ? "Esta conta possui parcelas — todas serão excluídas junto."
+                          : "Algumas contas possuem parcelas — todas serão excluídas junto."
+                        : null,
+                      hasRecurring
+                        ? isSingle
+                          ? "Esta conta é recorrente — a regra também será excluída."
+                          : "Algumas contas são recorrentes — a regra também será excluída."
+                        : null,
+                    ].filter(Boolean) as string[]
+                  }
+                />
               )}
             </div>
           </AlertDialogDescription>
