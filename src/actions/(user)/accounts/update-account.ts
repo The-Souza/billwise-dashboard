@@ -124,14 +124,9 @@ export async function updateAccountAction(
                 amount: installmentAmount,
                 category_id: categoryId ?? null,
                 due_date: dueDate ? new Date(dueDate) : null,
-                status: status as account_status,
                 description: description ?? null,
                 consumption: consumption ?? null,
                 days: days ?? null,
-                paid_at:
-                  status === "paid" && !sibling.paid_at
-                    ? new Date()
-                    : sibling.paid_at,
               },
             });
 
