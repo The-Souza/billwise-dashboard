@@ -1,17 +1,18 @@
-// src/app/(protected)/(user)/accounts/add-account/page.tsx
+import { getCategoriesAction } from "@/actions/(user)/accounts/get-categories";
+import { AddAccountClient } from "./AddAccountClient";
 
-export default function AddAccountPage() {
+export default async function AddAccountPage() {
+  const categoriesResult = await getCategoriesAction();
+
   return (
     <div className="flex flex-col gap-4">
-      <div>
-        <h1 className="text-lg font-bold font-heading tracking-tight">
-          Nova conta
-        </h1>
-        <p className="text-xs text-muted-foreground">
-          Preencha os dados da nova conta
-        </p>
-      </div>
-      {/* futuramente: <AccountForm /> */}
+      <h1 className="text-lg font-bold font-heading tracking-tight capitalize">
+        Preencha os dados da nova conta
+      </h1>
+
+      <AddAccountClient
+        categories={categoriesResult.success ? categoriesResult.data : []}
+      />
     </div>
   );
 }
