@@ -110,7 +110,8 @@ export async function getAccountsAction(
     });
 
     return { success: true, data, total };
-  } catch {
+  } catch (error) {
+    console.error("Error in getAccountsAction:", error);
     return { success: false, error: "Erro ao buscar contas" };
   }
 }

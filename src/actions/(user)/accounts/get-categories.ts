@@ -37,7 +37,8 @@ export async function getCategoriesAction(): Promise<GetCategoriesResult> {
     }));
 
     return { success: true, data };
-  } catch {
+  } catch (error) {
+    console.error("Error in getCategoriesAction:", error);
     return { success: false, error: "Erro ao buscar categorias" };
   }
 }
