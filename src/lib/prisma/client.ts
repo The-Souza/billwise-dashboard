@@ -7,9 +7,16 @@ const globalForPrisma = globalThis as unknown as {
 
 function createPrismaClient() {
   const adapter = new PrismaPg({
-    connectionString: process.env.DATABASE_URL!,
+    connectionString: process.env.DIRECT_URL!,
   });
-  return new PrismaClient({ adapter });
+
+  return new PrismaClient({
+    adapter,
+    transactionOptions: {
+      maxWait: 10000,
+      timeout: 30000,
+    },
+  });
 }
 
 export const prisma = globalForPrisma.prisma ?? createPrismaClient();
