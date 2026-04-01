@@ -1,4 +1,4 @@
-import { RecentAccount } from "@/actions/(user)/get-recent-accounts";
+import { RecentAccount } from "@/actions/(user)/dashboard/get-recent-accounts";
 import { AppBadge, AppBadgeVariant } from "@/components/ui/app-badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,6 +27,14 @@ interface RecentAccountTableProps {
   label: string;
   isLoading?: boolean;
 }
+
+const skeletonCells = [
+  { width: "w-32" },
+  { width: "w-20" },
+  { width: "w-20" },
+  { width: "w-24" },
+  { width: "w-26", cellClass: "flex justify-end" },
+];
 
 export function RecentAccountTable({
   data,
@@ -74,21 +82,11 @@ export function RecentAccountTable({
                   key={i}
                   className="*:border-border [&>:not(:last-child)]:border-r hover:bg-transparent"
                 >
-                  <TableCell>
-                    <Skeleton className="h-4 w-28" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-20" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-16" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-5 w-16 rounded-md" />
-                  </TableCell>
-                  <TableCell className="flex justify-end">
-                    <Skeleton className="h-4 w-20" />
-                  </TableCell>
+                  {skeletonCells.map((cell, index) => (
+                    <TableCell key={index} className={cell.cellClass}>
+                      <Skeleton className={`h-5 ${cell.width}`} />
+                    </TableCell>
+                  ))}
                 </TableRow>
               ))
             ) : data.length === 0 ? (

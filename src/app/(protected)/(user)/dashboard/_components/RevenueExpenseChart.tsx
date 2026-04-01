@@ -1,6 +1,6 @@
 "use client";
 
-import { ChartDataPoint } from "@/actions/(user)/get-chart-data";
+import { ChartDataPoint } from "@/actions/(user)/dashboard/get-chart-data";
 import {
   Card,
   CardContent,
@@ -60,7 +60,7 @@ export function RevenueExpenseChart({
           </CardDescription>
         </div>
         <Select value={chartPeriod} onValueChange={setChartPeriod}>
-          <SelectTrigger className="w-26 text-xs">
+          <SelectTrigger className="w-26 h-8 text-xs">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

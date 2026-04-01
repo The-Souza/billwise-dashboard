@@ -1,4 +1,4 @@
-import { MonthlySummary } from "@/actions/(user)/get-summary";
+import { MonthlySummary } from "@/actions/(user)/dashboard/get-summary";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TrendIndicator } from "@/components/ui/trend-indicator";

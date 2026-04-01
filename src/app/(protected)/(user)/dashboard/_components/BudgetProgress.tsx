@@ -1,4 +1,4 @@
-import { BudgetProgressItem } from "@/actions/(user)/get-budget-progress";
+import { BudgetProgressItem } from "@/actions/(user)/dashboard/get-budget-progress";
 import {
   Card,
   CardContent,

@@ -9,6 +9,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { UserRole } from "@/lib/auth/getUserWithRole";
+import { isUuid } from "@/utils/is-uuid";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
@@ -23,6 +24,12 @@ const routeLabels: Record<string, string> = {
   settings: "Configurações",
   notifications: "Notificações",
   "change-password": "Alterar Senha",
+  "add-account": "Nova Conta",
+};
+
+const uuidContextLabels: Record<string, string> = {
+  accounts: "Editar Conta",
+  budgets: "Editar Orçamento",
 };
 
 const nonNavigableSegments = ["admin"];
@@ -58,7 +65,9 @@ export function HeaderBreadcrumb({ userRole }: BreadcrumbProps) {
             {segments.map((segment, index) => {
               const href = `/${segments.slice(0, index + 1).join("/")}`;
               const isLast = index === segments.length - 1;
-              const label = routeLabels[segment] || segment;
+              const label = isUuid(segment)
+                ? (uuidContextLabels[segments[index - 1]] ?? "Editar")
+                : (routeLabels[segment] ?? segment);
 
               if (
                 segment === "dashboard" ||
