@@ -111,18 +111,18 @@ export function RecentAccountTable({
                     key={account.id}
                     className="*:border-border [&>:not(:last-child)]:border-r odd:bg-muted/50 odd:hover:bg-muted/50 hover:bg-transparent"
                   >
-                    <TableCell className="font-medium">
+                    <TableCell className="font-medium capitalize">
                       {account.title}
                     </TableCell>
                     <TableCell>
-                      <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                      <span className="flex items-center gap-1.5 text-sm text-muted-foreground capitalize">
                         {IconComponent && (
                           <IconComponent className="h-3.5 w-3.5" />
                         )}
                         {account.category}
                       </span>
                     </TableCell>
-                    <TableCell className="text-muted-foreground text-sm">
+                    <TableCell className="text-muted-foreground text-sm capitalize">
                       {account.dueDate ? formatDate(account.dueDate) : "—"}
                     </TableCell>
                     <TableCell>
