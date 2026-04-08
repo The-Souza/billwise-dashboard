@@ -98,7 +98,7 @@ export function NotificationBell() {
           {notifications.length > 0 && (
             <Link
               href="/notifications"
-              className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1 capitalize"
             >
               Ver todas
               <ArrowRight className="h-3.5 w-3.5" />
