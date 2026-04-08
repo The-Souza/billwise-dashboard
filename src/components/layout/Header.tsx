@@ -5,6 +5,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { ToggleTheme } from "@/components/ui/toggle-theme";
 import { UserRole } from "@/lib/auth/getUserWithRole";
 import { HeaderBreadcrumb } from "./HeaderBreadcrumb";
+import { NotificationBell } from "./NotificationBell";
 
 interface HeaderProps {
   userRole: UserRole;
@@ -19,7 +20,10 @@ export function Header({ userRole }: HeaderProps) {
         <HeaderBreadcrumb userRole={userRole} />
       </div>
 
-      <ToggleTheme />
+      <div className="flex items-center gap-2">
+        <NotificationBell />
+        <ToggleTheme />
+      </div>
     </header>
   );
 }
