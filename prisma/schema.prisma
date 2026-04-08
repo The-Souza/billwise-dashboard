@@ -46,6 +46,7 @@ model accounts {
   categories           categories?            @relation(fields: [category_id], references: [id], onDelete: Restrict, onUpdate: NoAction, map: "accounts_category_fk")
   recurring_rules      recurring_rules?       @relation(fields: [recurring_rule_id], references: [id], onUpdate: NoAction, map: "accounts_recurring_rule_fkey")
   profiles             profiles               @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  notifications        notifications[]
 
   @@index([category_id], map: "idx_accounts_category_id")
   @@index([due_date], map: "idx_accounts_due_date")
@@ -99,6 +100,7 @@ model profiles {
   avatar_url      String?
   accounts        accounts[]
   budgets         budgets[]
+  notifications   notifications[]
   recurring_rules recurring_rules[]
 
   @@schema("public")
@@ -119,6 +121,23 @@ model recurring_rules {
   categories        categories @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   profiles          profiles   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
+  @@schema("public")
+}
+
+model notifications {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id    String    @db.Uuid
+  title      String
+  body       String?
+  type       String
+  account_id String?   @db.Uuid
+  read_at    DateTime? @db.Timestamptz(6)
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  accounts   accounts? @relation(fields: [account_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  profiles   profiles  @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([read_at], map: "idx_notifications_read_at")
+  @@index([user_id], map: "idx_notifications_user_id")
   @@schema("public")
 }
 
