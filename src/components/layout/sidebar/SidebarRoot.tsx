@@ -5,7 +5,6 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { AuthUser } from "@/lib/auth/getUserWithRole";
 import { BillwiseLogo, SidebarNavigation, SidebarUser } from "./index";
@@ -20,7 +19,6 @@ export function SidebarRoot({ user }: User) {
       <SidebarHeader>
         <BillwiseLogo />
       </SidebarHeader>
-      <SidebarSeparator />
       <SidebarContent>
         <SidebarNavigation user={user} />
       </SidebarContent>
