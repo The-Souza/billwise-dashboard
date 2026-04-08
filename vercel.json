@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/generate-recurring",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/process-due-dates",
+      "schedule": "0 4 * * *"
+    }
+  ]
+}
