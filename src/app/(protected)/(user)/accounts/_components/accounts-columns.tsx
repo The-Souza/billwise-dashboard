@@ -16,24 +16,31 @@ export function accountColumns(
   return [
     {
       id: "select",
+      meta: { className: "w-10 text-center" },
       header: ({ table }) => (
-        <Checkbox
-          className="bg-background"
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Selecionar tudo"
-        />
+        <div className="flex justify-center">
+          <Checkbox
+            className="bg-background"
+            checked={
+              table.getIsAllPageRowsSelected() ||
+              (table.getIsSomePageRowsSelected() && "indeterminate")
+            }
+            onCheckedChange={(value) =>
+              table.toggleAllPageRowsSelected(!!value)
+            }
+            aria-label="Selecionar tudo"
+          />
+        </div>
       ),
       cell: ({ row }) => (
-        <Checkbox
-          className="bg-background"
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Selecionar linha"
-        />
+        <div className="flex justify-center">
+          <Checkbox
+            className="bg-background"
+            checked={row.getIsSelected()}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            aria-label="Selecionar linha"
+          />
+        </div>
       ),
       enableSorting: false,
       enableHiding: false,
