@@ -15,18 +15,18 @@ export function AccountFormFooter() {
   const router = useRouter();
 
   return (
-    <div className="flex items-center justify-end gap-2">
+    <div className="flex items-center justify-end w-full gap-2">
       <Button
         type="button"
         variant="outline"
-        className="transition-transform ease-in hover:scale-103 active:scale-97"
+        className="transition-transform ease-in hover:scale-103 active:scale-97 w-full sm:w-auto"
         onClick={() => router.push("/accounts")}
       >
         Cancelar
       </Button>
       <Button
         type="submit"
-        className="transition-transform ease-in hover:scale-103 active:scale-97"
+        className="transition-transform ease-in hover:scale-103 active:scale-97 w-full sm:w-auto"
         disabled={isSubmitting}
       >
         {isSubmitting ? (

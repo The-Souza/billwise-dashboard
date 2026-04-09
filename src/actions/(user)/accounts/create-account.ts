@@ -1,6 +1,7 @@
 "use server";
 
 import { account_status } from "@/generated/prisma/enums";
+import { parseDateParts } from "@/helper/parse-date";
 import { requireAuth } from "@/lib/auth/guards";
 import { prisma } from "@/lib/prisma/client";
 import { accountFormSchema } from "@/schemas/accounts/account-form";
@@ -47,8 +48,7 @@ export async function createAccountAction(
     const hasInstallments = scheduleType === "installments";
     const installmentsCount = hasInstallments ? (installments ?? null) : null;
 
-    const [year, month, day] = accountDate.split("-").map(Number);
-    const accountDateObj = new Date(year, month - 1, day);
+    const { year, month, date: accountDateObj } = parseDateParts(accountDate);
 
     await prisma.$transaction(
       async (tx) => {

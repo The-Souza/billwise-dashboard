@@ -1,6 +1,7 @@
 "use server";
 
 import { account_status } from "@/generated/prisma/enums";
+import { parseDateParts } from "@/helper/parse-date";
 import { requireAuth } from "@/lib/auth/guards";
 import { prisma } from "@/lib/prisma/client";
 import { accountFormSchema } from "@/schemas/accounts/account-form";
@@ -14,11 +15,6 @@ function calcRecurringEndDate(startDate: Date, months: number): Date {
   const end = new Date(startDate);
   end.setMonth(end.getMonth() + months);
   return end;
-}
-
-function buildAccountDateParts(accountDate: string) {
-  const [year, month, day] = accountDate.split("-").map(Number);
-  return { year, month, date: new Date(year, month - 1, day) };
 }
 
 export async function updateAccountAction(
@@ -63,11 +59,7 @@ export async function updateAccountAction(
     const isRecurring = account.recurring_rule_id !== null;
     const hasInstallments = account.installment_group_id !== null;
 
-    const {
-      year,
-      month,
-      date: accountDateObj,
-    } = buildAccountDateParts(accountDate);
+    const { year, month, date: accountDateObj } = parseDateParts(accountDate);
 
     await prisma.$transaction(
       async (tx) => {

@@ -50,7 +50,7 @@ const skeletonWidths = [
   "w-24",
   "w-16",
   "w-16",
-  "w-24",
+  "w-24 ml-auto",
   "w-16",
 ];
 
@@ -194,7 +194,7 @@ export function AccountsDataTable({
                   className="*:border-border [&>:not(:last-child)]:border-r hover:bg-transparent"
                 >
                   {skeletonWidths.map((width, index) => (
-                    <TableCell key={index}>
+                    <TableCell key={index} className="h-11.25">
                       <Skeleton className={`h-5 ${width}`} />
                     </TableCell>
                   ))}

@@ -97,7 +97,7 @@ export async function getAccountsAction(
         categoryIcon: row.categories?.icon ?? null,
         categoryType: row.categories?.type ?? "expense",
         amount: Number(row.amount),
-        dueDate: row.due_date?.toISOString() ?? null,
+        dueDate: row.due_date ? row.due_date.toISOString() : null,
         status: row.status ?? "pending",
         isRecurring: row.recurring_rule_id !== null,
         installments: installment

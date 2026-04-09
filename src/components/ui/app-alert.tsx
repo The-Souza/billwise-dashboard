@@ -64,7 +64,7 @@ export function AppAlert({
       )}
     >
       <config.icon className="h-4 w-4 shrink-0" />
-      <AlertTitle>{title}</AlertTitle>
+      <AlertTitle className="text-start">{title}</AlertTitle>
       {items && items.length > 0 && (
         <AlertDescription className={config.description}>
           <ul className="mt-1 flex flex-col gap-2 list-disc list-inside">

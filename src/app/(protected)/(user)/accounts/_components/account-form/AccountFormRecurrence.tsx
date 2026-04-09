@@ -24,37 +24,42 @@ export function AccountFormRecurrence() {
           Ajuste por quantos meses esta conta deve continuar sendo gerada.
         </p>
       </div>
-      <Controller
-        name="recurrenceMonths"
-        control={form.control}
-        render={({ field, fieldState }) => (
-          <Field className="max-w-xs">
-            <FieldLabel htmlFor={field.name} className="text-md capitalize">
-              Gerar próximos meses
-            </FieldLabel>
-            <Select
-              value={field.value?.toString() ?? "none"}
-              onValueChange={(v) =>
-                field.onChange(v === "none" ? null : Number(v))
-              }
-              name={field.name}
-            >
-              <SelectTrigger aria-invalid={fieldState.invalid} id={field.name}>
-                <SelectValue placeholder="Selecione" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">Sem limite definido</SelectItem>
-                {[3, 6, 9, 12, 18, 24].map((months) => (
-                  <SelectItem key={months} value={months.toString()}>
-                    {months} meses
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-          </Field>
-        )}
-      />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <Controller
+          name="recurrenceMonths"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field>
+              <FieldLabel htmlFor={field.name} className="text-md capitalize">
+                Gerar próximos meses
+              </FieldLabel>
+              <Select
+                value={field.value?.toString() ?? "none"}
+                onValueChange={(v) =>
+                  field.onChange(v === "none" ? null : Number(v))
+                }
+                name={field.name}
+              >
+                <SelectTrigger
+                  aria-invalid={fieldState.invalid}
+                  id={field.name}
+                >
+                  <SelectValue placeholder="Selecione" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Sem limite definido</SelectItem>
+                  {[3, 6, 9, 12, 18, 24].map((months) => (
+                    <SelectItem key={months} value={months.toString()}>
+                      {months} meses
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+      </div>
     </>
   );
 }

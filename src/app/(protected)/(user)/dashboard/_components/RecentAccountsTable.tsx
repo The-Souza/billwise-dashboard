@@ -28,6 +28,14 @@ interface RecentAccountTableProps {
   isLoading?: boolean;
 }
 
+const tableHeaders = [
+  { label: "Título" },
+  { label: "Categoria" },
+  { label: "Vencimento" },
+  { label: "Status" },
+  { label: "Valor", align: "right" as const },
+];
+
 const skeletonCells = [
   { width: "w-32" },
   { width: "w-20" },
@@ -43,13 +51,13 @@ export function RecentAccountTable({
 }: RecentAccountTableProps) {
   return (
     <Card className="flex flex-col flex-1">
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className="flex flex-row items-start justify-between">
         <div>
           <CardTitle className="text-md font-heading capitalize">
             Contas recentes
           </CardTitle>
           <CardDescription className="capitalize">
-            Movimentações em {label}
+            Contas em {label}
           </CardDescription>
         </div>
         <div className="flex items-center gap-2">
@@ -68,11 +76,14 @@ export function RecentAccountTable({
         <Table>
           <TableHeader>
             <TableRow className="*:border-border [&>:not(:last-child)]:border-r hover:bg-transparent">
-              <TableHead>Título</TableHead>
-              <TableHead>Categoria</TableHead>
-              <TableHead>Vencimento</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Valor</TableHead>
+              {tableHeaders.map((header) => (
+                <TableHead
+                  key={header.label}
+                  className={`text-${header.align || "left"}`}
+                >
+                  {header.label}
+                </TableHead>
+              ))}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -111,18 +122,18 @@ export function RecentAccountTable({
                     key={account.id}
                     className="*:border-border [&>:not(:last-child)]:border-r odd:bg-muted/50 odd:hover:bg-muted/50 hover:bg-transparent"
                   >
-                    <TableCell className="font-medium">
+                    <TableCell className="font-medium capitalize">
                       {account.title}
                     </TableCell>
                     <TableCell>
-                      <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                      <span className="flex items-center gap-1.5 text-sm text-muted-foreground capitalize">
                         {IconComponent && (
                           <IconComponent className="h-3.5 w-3.5" />
                         )}
                         {account.category}
                       </span>
                     </TableCell>
-                    <TableCell className="text-muted-foreground text-sm">
+                    <TableCell className="text-muted-foreground text-sm capitalize">
                       {account.dueDate ? formatDate(account.dueDate) : "—"}
                     </TableCell>
                     <TableCell>
