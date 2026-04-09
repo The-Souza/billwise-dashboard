@@ -11,12 +11,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Controller } from "react-hook-form";
+import { Controller, useWatch } from "react-hook-form";
 import { useAccountForm } from "./AccountFormContext";
 
 export function AccountFormSchedule() {
   const { form } = useAccountForm();
-  const scheduleType = form.watch("scheduleType");
+  const { scheduleType } = useWatch({
+    control: form.control,
+  });
   const isRecurringForm = scheduleType === "recurring";
   const hasInstallmentsForm = scheduleType === "installments";
 
