@@ -5,7 +5,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { ToggleTheme } from "@/components/ui/toggle-theme";
 import { UserRole } from "@/lib/auth/getUserWithRole";
 import { HeaderBreadcrumb } from "./HeaderBreadcrumb";
-import { NotificationBell } from "./NotificationBell";
+import { NotificationBell } from "./notification/NotificationBell";
 
 interface HeaderProps {
   userRole: UserRole;
