@@ -38,7 +38,7 @@ export function DeleteAccountDialog({
 
   return (
     <AlertDialog open={open}>
-      <AlertDialogContent className="max-w-md">
+      <AlertDialogContent className="w-[calc(100vw-2rem)] rounded-md max-w-md">
         <AlertDialogHeader>
           <AlertDialogTitle className="font-heading flex gap-2 items-center">
             <div className="p-2 rounded-md bg-primary/10">
