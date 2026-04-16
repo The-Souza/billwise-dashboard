@@ -112,6 +112,15 @@ export async function createAccountAction(
             const installmentYear = installmentDate.getFullYear();
             const installmentMonth = installmentDate.getMonth() + 1;
 
+            // due_date avança o mesmo número de meses que a parcela
+            const installmentDueDate = dueDate
+              ? (() => {
+                  const d = new Date(dueDate);
+                  d.setMonth(d.getMonth() + index);
+                  return d;
+                })()
+              : null;
+
             const installmentStatus =
               index === 0 ? (status as account_status) : "pending";
 
@@ -122,7 +131,7 @@ export async function createAccountAction(
                 amount: installmentAmount,
                 account_date: installmentDate,
                 category_id: categoryId ?? null,
-                due_date: dueDate ? new Date(dueDate) : null,
+                due_date: installmentDueDate,
                 year: installmentYear,
                 month: installmentMonth,
                 status: installmentStatus,
@@ -130,7 +139,7 @@ export async function createAccountAction(
                 consumption: consumption ?? null,
                 days: days ?? null,
                 recurring_rule_id: null,
-                paid_at: status === "paid" ? new Date() : null,
+                paid_at: status === "paid" && index === 0 ? new Date() : null,
                 installment_group_id: groupId,
               },
             });
@@ -140,7 +149,7 @@ export async function createAccountAction(
                 account_id: account.id,
                 installment_number: index + 1,
                 total_installments: installmentsCount,
-                due_date: installmentDate,
+                due_date: installmentDueDate ?? installmentDate,
                 amount: installmentAmount,
               },
             });
