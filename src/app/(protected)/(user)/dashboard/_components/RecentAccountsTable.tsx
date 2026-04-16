@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/table";
 import { formatCurrency } from "@/utils/format-currency";
 import { formatDate } from "@/utils/format-date";
-import { ArrowRight, CircleDollarSign, icons } from "lucide-react";
+import { ArrowRight, icons } from "lucide-react";
 import Link from "next/link";
 
 interface RecentAccountTableProps {
@@ -60,17 +60,12 @@ export function RecentAccountTable({
             Contas em {label}
           </CardDescription>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" className="text-xs" asChild>
-            <Link href="/accounts">
-              Ver todas
-              <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </Button>
-          <div className="p-2 rounded-md bg-primary/10">
-            <CircleDollarSign className="h-4 w-4 text-primary" />
-          </div>
-        </div>
+        <Button variant="ghost" size="sm" className="text-xs" asChild>
+          <Link href="/accounts">
+            Ver todas
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </Button>
       </CardHeader>
       <CardContent className="flex-1">
         <Table>
