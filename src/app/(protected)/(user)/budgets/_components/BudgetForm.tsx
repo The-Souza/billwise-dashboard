@@ -32,6 +32,7 @@ interface BudgetFormProps {
   month: number;
   year: number;
   budget?: BudgetDetail;
+  categoryType?: "expense" | "income";
   expenseCategories: CategoryForBudget[];
   incomeCategories: CategoryForBudget[];
   onSuccess: () => void;
@@ -45,6 +46,7 @@ export function BudgetForm({
   month,
   year,
   budget,
+  categoryType,
   expenseCategories,
   incomeCategories,
   onSuccess,
@@ -78,8 +80,11 @@ export function BudgetForm({
     }
   }
 
-  const hasExpense = expenseCategories.length > 0;
-  const hasIncome = incomeCategories.length > 0;
+  const visibleExpense = categoryType === "income" ? [] : expenseCategories;
+  const visibleIncome = categoryType === "expense" ? [] : incomeCategories;
+
+  const hasExpense = visibleExpense.length > 0;
+  const hasIncome = visibleIncome.length > 0;
   const noCategories = !hasExpense && !hasIncome;
 
   return (
@@ -128,7 +133,7 @@ export function BudgetForm({
                         <SelectLabel className="text-muted-foreground text-xs">
                           Despesas
                         </SelectLabel>
-                        {expenseCategories.map((cat) => (
+                        {visibleExpense.map((cat) => (
                           <SelectItem key={cat.id} value={cat.id}>
                             {cat.name}
                           </SelectItem>
@@ -141,7 +146,7 @@ export function BudgetForm({
                         <SelectLabel className="text-muted-foreground text-xs">
                           Receitas
                         </SelectLabel>
-                        {incomeCategories.map((cat) => (
+                        {visibleIncome.map((cat) => (
                           <SelectItem key={cat.id} value={cat.id}>
                             {cat.name}
                           </SelectItem>

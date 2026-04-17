@@ -35,6 +35,7 @@ interface BudgetFormDialogProps {
   open: boolean;
   mode: "create" | "edit";
   budget?: BudgetRow;
+  categoryType?: "expense" | "income";
   month: number;
   year: number;
   onClose: () => void;
@@ -45,6 +46,7 @@ export function BudgetFormDialog({
   open,
   mode,
   budget,
+  categoryType,
   month,
   year,
   onClose,
@@ -87,12 +89,18 @@ export function BudgetFormDialog({
             <div className="p-2 rounded-md bg-primary/10">
               <WalletIcon className="h-4 w-4 text-primary" />
             </div>
-            {mode === "edit" ? "Editar orçamento" : "Novo orçamento"}
+            {mode === "edit"
+              ? "Editar orçamento"
+              : categoryType === "income"
+                ? "Nova meta de receita"
+                : "Novo orçamento de despesa"}
           </DialogTitle>
           <DialogDescription className="text-start">
             {mode === "edit"
               ? `Ajuste o limite para ${MONTH_NAMES[month - 1]} de ${year}.`
-              : `Defina um limite de gastos para ${MONTH_NAMES[month - 1]} de ${year}.`}
+              : categoryType === "income"
+                ? `Defina uma meta de receita para ${MONTH_NAMES[month - 1]} de ${year}.`
+                : `Defina um limite de gastos para ${MONTH_NAMES[month - 1]} de ${year}.`}
           </DialogDescription>
         </DialogHeader>
 
@@ -116,6 +124,7 @@ export function BudgetFormDialog({
             month={month}
             year={year}
             budget={budgetDetail}
+            categoryType={categoryType}
             expenseCategories={categories.success ? categories.expense : []}
             incomeCategories={categories.success ? categories.income : []}
             onSuccess={() => {

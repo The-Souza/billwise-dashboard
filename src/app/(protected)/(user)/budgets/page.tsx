@@ -1,17 +1,18 @@
 "use client";
 
 import { deleteBudgetAction } from "@/actions/(user)/budgets/delete-budget";
-import { BudgetRow, getBudgetsAction } from "@/actions/(user)/budgets/get-budgets";
-import { Button } from "@/components/ui/button";
+import {
+  BudgetRow,
+  getBudgetsAction,
+} from "@/actions/(user)/budgets/get-budgets";
 import { MonthPicker } from "@/components/ui/month-picker";
 import { useDashboardMonth } from "@/hooks/use-dashboard-month";
 import { appToast } from "@/utils/app-toast";
-import { PlusIcon } from "lucide-react";
 import { useState } from "react";
 import useSWR from "swr";
+import { AddBudgetCard } from "./_components/AddBudgetCard";
 import { BudgetCard } from "./_components/BudgetCard";
 import { BudgetFormDialog } from "./_components/BudgetFormDialog";
-import { BudgetsEmptyState } from "./_components/BudgetsEmptyState";
 import { BudgetsSkeleton } from "./_components/BudgetsSkeleton";
 import { DeleteBudgetDialog } from "./_components/DeleteBudgetDialog";
 
@@ -31,6 +32,7 @@ export default function BudgetsPage() {
     open: boolean;
     mode: "create" | "edit";
     budget?: BudgetRow;
+    categoryType?: "expense" | "income";
   }>({ open: false, mode: "create" });
 
   const [deleteDialog, setDeleteDialog] = useState<{
@@ -44,8 +46,8 @@ export default function BudgetsPage() {
     dashboardMonth.setYear(y);
   }
 
-  function openCreate() {
-    setFormDialog({ open: true, mode: "create" });
+  function openCreate(categoryType: "expense" | "income") {
+    setFormDialog({ open: true, mode: "create", categoryType });
   }
 
   function openEdit(budget: BudgetRow) {
@@ -74,61 +76,59 @@ export default function BudgetsPage() {
   const income = (budgets ?? []).filter((b) => b.categoryType === "income");
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 pb-8">
       <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
         <h1 className="text-lg font-bold font-heading tracking-tight">
           Orçamentos
         </h1>
-        <div className="flex items-center gap-2">
-          <MonthPicker {...dashboardMonth} onSelect={handleMonthSelect} />
-          <Button size="sm" onClick={openCreate}>
-            <PlusIcon className="h-4 w-4" />
-            Novo orçamento
-          </Button>
-        </div>
+        <MonthPicker {...dashboardMonth} onSelect={handleMonthSelect} />
       </div>
 
       {isLoading ? (
         <BudgetsSkeleton />
-      ) : !budgets || budgets.length === 0 ? (
-        <BudgetsEmptyState onCreateClick={openCreate} />
       ) : (
         <div className="flex flex-col gap-6">
-          {expense.length > 0 && (
-            <section className="flex flex-col gap-3">
-              <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
-                Despesas
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-                {expense.map((b) => (
-                  <BudgetCard
-                    key={b.id}
-                    budget={b}
-                    onEdit={openEdit}
-                    onDelete={openDelete}
-                  />
-                ))}
-              </div>
-            </section>
-          )}
+          <section className="flex flex-col gap-3">
+            <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+              Despesas
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+              {expense.map((b) => (
+                <BudgetCard
+                  key={b.id}
+                  budget={b}
+                  onEdit={openEdit}
+                  onDelete={openDelete}
+                />
+              ))}
+              <AddBudgetCard
+                label="Novo orçamento de despesa"
+                categoryType="expense"
+                onClick={openCreate}
+              />
+            </div>
+          </section>
 
-          {income.length > 0 && (
-            <section className="flex flex-col gap-3">
-              <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
-                Receitas
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-                {income.map((b) => (
-                  <BudgetCard
-                    key={b.id}
-                    budget={b}
-                    onEdit={openEdit}
-                    onDelete={openDelete}
-                  />
-                ))}
-              </div>
-            </section>
-          )}
+          <section className="flex flex-col gap-3">
+            <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+              Receitas
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+              {income.map((b) => (
+                <BudgetCard
+                  key={b.id}
+                  budget={b}
+                  onEdit={openEdit}
+                  onDelete={openDelete}
+                />
+              ))}
+              <AddBudgetCard
+                label="Nova meta de receita"
+                categoryType="income"
+                onClick={openCreate}
+              />
+            </div>
+          </section>
         </div>
       )}
 
@@ -136,6 +136,7 @@ export default function BudgetsPage() {
         open={formDialog.open}
         mode={formDialog.mode}
         budget={formDialog.budget}
+        categoryType={formDialog.categoryType}
         month={month}
         year={year}
         onClose={() => setFormDialog((prev) => ({ ...prev, open: false }))}
