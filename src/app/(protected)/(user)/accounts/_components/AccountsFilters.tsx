@@ -7,7 +7,10 @@ import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
+  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -88,13 +91,39 @@ export function AccountsFilters({
           <SelectTrigger className="h-8 w-full sm:w-35 text-xs">
             <SelectValue placeholder="Categoria" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todas</SelectItem>
-            {categories.map((cat) => (
-              <SelectItem key={cat.id} value={cat.id}>
-                {cat.name}
-              </SelectItem>
-            ))}
+          <SelectContent className="max-h-80">
+            <SelectGroup>
+              <SelectLabel className="text-muted-foreground text-xs">
+                Todas as categorias
+              </SelectLabel>
+              <SelectItem value="all">Todas</SelectItem>
+            </SelectGroup>
+            <SelectSeparator />
+            <SelectGroup>
+              <SelectLabel className="text-muted-foreground text-xs">
+                Despesas
+              </SelectLabel>
+              {categories
+                .filter((cat) => cat.type === "expense")
+                .map((cat) => (
+                  <SelectItem key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </SelectItem>
+                ))}
+            </SelectGroup>
+            <SelectSeparator />
+            <SelectGroup>
+              <SelectLabel className="text-muted-foreground text-xs">
+                Receitas
+              </SelectLabel>
+              {categories
+                .filter((cat) => cat.type === "income")
+                .map((cat) => (
+                  <SelectItem key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </SelectItem>
+                ))}
+            </SelectGroup>
           </SelectContent>
         </Select>
       </div>

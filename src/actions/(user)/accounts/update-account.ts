@@ -108,14 +108,25 @@ export async function updateAccountAction(
 
           const installmentAmount = Number(amount);
 
-          for (const sibling of siblings) {
+          for (let index = 0; index < siblings.length; index++) {
+            const sibling = siblings[index];
+
+            // due_date avança o mesmo número de meses que a posição da parcela
+            const installmentDueDate = dueDate
+              ? (() => {
+                  const d = new Date(dueDate);
+                  d.setMonth(d.getMonth() + index);
+                  return d;
+                })()
+              : null;
+
             await tx.accounts.update({
               where: { id: sibling.id },
               data: {
                 title,
                 amount: installmentAmount,
                 category_id: categoryId ?? null,
-                due_date: dueDate ? new Date(dueDate) : null,
+                due_date: installmentDueDate,
                 description: description ?? null,
                 consumption: consumption ?? null,
                 days: days ?? null,
@@ -124,7 +135,10 @@ export async function updateAccountAction(
 
             await tx.account_installments.updateMany({
               where: { account_id: sibling.id },
-              data: { amount: installmentAmount },
+              data: {
+                amount: installmentAmount,
+                ...(installmentDueDate && { due_date: installmentDueDate }),
+              },
             });
           }
 

@@ -1,11 +1,15 @@
 "use client";
 
 import { AppAlert } from "@/components/ui/app-alert";
+import { useWatch } from "react-hook-form";
 import { useAccountForm } from "./AccountFormContext";
 
 export function AccountFormAlerts() {
   const { form, isRecurring, hasInstallments } = useAccountForm();
-  const editScope = form.watch("editScope");
+  const editScope = useWatch({
+    control: form.control,
+    name: "editScope",
+  });
 
   return (
     <div className="flex flex-col gap-2">

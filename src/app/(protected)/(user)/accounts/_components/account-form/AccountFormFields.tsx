@@ -23,11 +23,14 @@ import {
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
+  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { formatDateLocal } from "@/helper/format-date";
+import { formatDateLocal } from "@/helper/format-date-local";
 import { parseDateLocal } from "@/helper/parse-date";
 import { STATUS_OPTIONS } from "@/utils/status-options";
 import { ChevronDownIcon } from "lucide-react";
@@ -74,6 +77,9 @@ export function AccountFormFields() {
                 Valor (R$)
               </FieldLabel>
               <InputGroup>
+                <InputGroupAddon className="text-muted-foreground text-sm font-medium">
+                  R$
+                </InputGroupAddon>
                 <InputGroupInput
                   id={field.name}
                   type="text"
@@ -111,13 +117,39 @@ export function AccountFormFields() {
               <SelectTrigger aria-invalid={fieldState.invalid} id={field.name}>
                 <SelectValue placeholder="Selecione uma categoria" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">Sem categoria</SelectItem>
-                {categories.map((cat) => (
-                  <SelectItem key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </SelectItem>
-                ))}
+              <SelectContent className="max-h-80">
+                <SelectGroup>
+                  <SelectLabel className="text-muted-foreground text-xs">
+                    Sem categoria
+                  </SelectLabel>
+                  <SelectItem value="none">Sem categoria</SelectItem>
+                </SelectGroup>
+                <SelectSeparator />
+                <SelectGroup>
+                  <SelectLabel className="text-muted-foreground text-xs">
+                    Despesas
+                  </SelectLabel>
+                  {categories
+                    .filter((cat) => cat.type === "expense")
+                    .map((cat) => (
+                      <SelectItem key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </SelectItem>
+                    ))}
+                </SelectGroup>
+                <SelectSeparator />
+                <SelectGroup>
+                  <SelectLabel className="text-muted-foreground text-xs">
+                    Receitas
+                  </SelectLabel>
+                  {categories
+                    .filter((cat) => cat.type === "income")
+                    .map((cat) => (
+                      <SelectItem key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </SelectItem>
+                    ))}
+                </SelectGroup>
               </SelectContent>
             </Select>
             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}

@@ -2,7 +2,7 @@
 
 import { AccountDetail } from "@/actions/(user)/accounts/get-account-by-id";
 import { CategoryOption } from "@/actions/(user)/accounts/get-categories";
-import { formatDateLocal } from "@/helper/format-date";
+import { formatDateLocal } from "@/helper/format-date-local";
 import { accountFormSchema } from "@/schemas/accounts/account-form";
 import { appToast } from "@/utils/app-toast";
 import { zodResolver } from "@hookform/resolvers/zod";

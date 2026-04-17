@@ -1,3 +1,4 @@
+import { formatDateBR } from "@/helper/format-date-br";
 import { prisma } from "@/lib/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -86,7 +87,7 @@ export async function GET(req: NextRequest) {
         data: newDueSoon.map((account) => ({
           user_id: account!.user_id,
           title: "Conta prestes a vencer",
-          body: `A conta "${account!.title}" vence em ${account!.due_date!.toLocaleDateString("pt-BR")}.`,
+          body: `A conta "${account!.title}" vence em ${formatDateBR(account!.due_date)}.`,
           type: "due_soon",
           account_id: account!.id,
         })),
