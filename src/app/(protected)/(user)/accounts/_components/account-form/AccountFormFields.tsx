@@ -77,6 +77,9 @@ export function AccountFormFields() {
                 Valor (R$)
               </FieldLabel>
               <InputGroup>
+                <InputGroupAddon className="text-muted-foreground text-sm font-medium">
+                  R$
+                </InputGroupAddon>
                 <InputGroupInput
                   id={field.name}
                   type="text"
