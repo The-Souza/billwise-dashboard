@@ -4,9 +4,9 @@ export function getStatusClasses(percentage: number, isIncome: boolean) {
       bar: "bg-green-500 dark:bg-green-400",
       accent: "border-l-green-500 dark:border-l-green-400",
       badge:
-        percentage >= 100
+        percentage >= 50
           ? "bg-green-500/10 text-green-600 dark:text-green-400"
-          : "bg-primary/10 text-primary",
+          : "bg-muted text-muted-foreground",
     };
   }
   if (percentage > 100)
