@@ -1,10 +1,11 @@
+import { isValidSecret } from "@/lib/auth/is-valid-secret";
 import { prisma } from "@/lib/prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
-  const secret = req.headers.get("authorization")?.replace("Bearer ", "");
+  const secret = req.headers.get("authorization")?.replace("Bearer ", "") ?? null;
 
-  if (secret !== process.env.CRON_SECRET) {
+  if (!isValidSecret(secret, process.env.CRON_SECRET)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
