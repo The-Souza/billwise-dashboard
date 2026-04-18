@@ -1,6 +1,7 @@
 "use server";
 
 import { category_type } from "@/generated/prisma/enums";
+import { requireAuth } from "@/lib/auth/guards";
 import { prisma } from "@/lib/prisma/client";
 
 export type CategoryOption = {
@@ -17,6 +18,8 @@ type GetCategoriesResult =
 
 export async function getCategoriesAction(): Promise<GetCategoriesResult> {
   try {
+    await requireAuth();
+
     const rows = await prisma.categories.findMany({
       select: {
         id: true,

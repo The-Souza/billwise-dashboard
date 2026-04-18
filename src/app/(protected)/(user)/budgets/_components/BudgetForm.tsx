@@ -205,7 +205,7 @@ export function BudgetForm({
         </Button>
         <Button
           type="submit"
-          disabled={form.formState.isSubmitting || noCategories}
+          disabled={form.formState.isSubmitting || (!isEditing && noCategories)}
           className="w-full sm:w-auto transition-transform ease-in hover:scale-103 active:scale-97"
         >
           {form.formState.isSubmitting ? (

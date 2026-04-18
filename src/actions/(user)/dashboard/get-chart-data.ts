@@ -3,6 +3,7 @@
 import { Prisma } from "@/generated/prisma/client";
 import { requireAuth } from "@/lib/auth/guards";
 import { prisma } from "@/lib/prisma/client";
+import { chartParamsSchema } from "@/schemas/dashboard/chart-params";
 
 export type ChartDataPoint = {
   month: string;
@@ -15,18 +16,8 @@ type GetChartDataResult =
   | { success: false; error: string };
 
 const MONTH_LABELS = [
-  "Jan",
-  "Fev",
-  "Mar",
-  "Abr",
-  "Mai",
-  "Jun",
-  "Jul",
-  "Ago",
-  "Set",
-  "Out",
-  "Nov",
-  "Dez",
+  "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
+  "Jul", "Ago", "Set", "Out", "Nov", "Dez",
 ];
 
 export async function getChartDataAction(
@@ -34,14 +25,19 @@ export async function getChartDataAction(
   currentYear: number,
   periods: number,
 ): Promise<GetChartDataResult> {
+  const parsed = chartParamsSchema.safeParse({ month: currentMonth, year: currentYear, periods });
+  if (!parsed.success) {
+    return { success: false, error: "Parâmetros inválidos" };
+  }
+
   try {
     const user = await requireAuth();
 
     const monthsToFetch: { month: number; year: number }[] = [];
 
-    for (let i = periods - 1; i >= 0; i--) {
-      let m = currentMonth - i;
-      let y = currentYear;
+    for (let i = parsed.data.periods - 1; i >= 0; i--) {
+      let m = parsed.data.month - i;
+      let y = parsed.data.year;
 
       if (m <= 0) {
         m += 12;
@@ -86,7 +82,8 @@ export async function getChartDataAction(
     });
 
     return { success: true, data };
-  } catch {
+  } catch (error) {
+    console.error("Error in getChartDataAction:", error);
     return { success: false, error: "Erro ao buscar dados do gráfico" };
   }
 }
