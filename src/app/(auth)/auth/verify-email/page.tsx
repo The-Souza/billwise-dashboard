@@ -1,3 +1,4 @@
+import { Card } from "@/components/ui/card";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { VerifyEmail } from "./_components/VerifyEmail";
@@ -25,8 +26,8 @@ export default async function VerifyEmailPage({
   }
 
   return (
-    <div className="min-h-[60vh] sm:min-h-[65vh] xl:min-h-[80vh] w-full max-w-2xl flex flex-col gap-4 flex-1 items-center justify-center">
+    <Card className="w-full max-w-lg border-none bg-transparent shadow-none">
       <VerifyEmail email={email} />
-    </div>
+    </Card>
   );
 }

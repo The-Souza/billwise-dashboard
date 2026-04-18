@@ -1,9 +1,10 @@
+import { Card } from "@/components/ui/card";
 import { SignInForm } from "./_components/SignInForm";
 
 export default function SignIn() {
   return (
-    <div className="min-h-[60vh] sm:min-h-[65vh] xl:min-h-[80vh] w-full max-w-md flex flex-col flex-1 items-center justify-center">
+    <Card className="w-full max-w-md border-none bg-transparent shadow-none">
       <SignInForm />
-    </div>
+    </Card>
   );
 }

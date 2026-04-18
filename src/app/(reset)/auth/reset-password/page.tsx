@@ -1,3 +1,4 @@
+import { Card } from "@/components/ui/card";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { UpdatePasswordForm } from "./_components/UpdatePasswordForm";
@@ -14,8 +15,8 @@ export default async function UpdatePasswordPage() {
   }
 
   return (
-    <div className="min-h-[60vh] sm:min-h-[65vh] xl:min-h-[80vh] w-full max-w-md flex flex-col flex-1 items-center justify-center">
+    <Card className="w-full max-w-md border-none bg-transparent shadow-none">
       <UpdatePasswordForm />
-    </div>
+    </Card>
   );
 }
