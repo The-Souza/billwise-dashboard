@@ -7,7 +7,7 @@ type ResendConfirmationResult =
   | { success: true }
   | { success: false; error: string };
 
-export async function resendConfirmation(
+export async function resendConfirmationAction(
   email: string,
 ): Promise<ResendConfirmationResult> {
   const parsed = resendConfirmationSchema.safeParse(email);
@@ -35,7 +35,7 @@ export async function resendConfirmation(
 
     return { success: true };
   } catch (error) {
-    console.error("Error in resendConfirmation:", error);
+    console.error("Error in resendConfirmationAction:", error);
     return { success: false, error: "Erro ao reenviar email de confirmação" };
   }
 }

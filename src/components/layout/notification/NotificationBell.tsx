@@ -18,7 +18,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useMobile } from "@/hooks/use-mobile";
 import { ArrowRight, BellIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -29,7 +29,7 @@ export function NotificationBell() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const isMobile = useIsMobile();
+  const isMobile = useMobile();
 
   async function load() {
     const result = await getNotificationsAction();

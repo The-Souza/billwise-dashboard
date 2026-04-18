@@ -1,5 +1,5 @@
 import { AppAlert } from "@/components/ui/app-alert";
-import { getUserWithRole } from "@/lib/auth/getUserWithRole";
+import { getUserWithRole } from "@/lib/auth/get-user-with-role";
 import { ProfileForm } from "./_components/ProfileForm";
 
 export default async function ProfilePage() {
