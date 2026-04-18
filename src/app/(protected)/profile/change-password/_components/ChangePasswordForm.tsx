@@ -3,7 +3,6 @@
 import { changePasswordAction } from "@/actions/profile/change-password";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
   CardContent,
   CardDescription,
   CardFooter,
@@ -247,33 +246,27 @@ export default function ChangePasswordForm() {
               />
             </FieldGroup>
           </form>
-          <Card className="p-4 flex flex-col gap-2">
-            <CardHeader className="p-0">
-              <CardTitle className="text-sm font-medium">
-                Requisitos da nova senha:
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <ul className="grid grid-cols-1 gap-2">
-                <RequirementItem
-                  met={requirements.minChar}
-                  text="No mínimo 6 caracteres"
-                />
-                <RequirementItem
-                  met={requirements.upperCase}
-                  text="Uma letra maiúscula"
-                />
-                <RequirementItem
-                  met={requirements.number}
-                  text="Pelo menos um número"
-                />
-                <RequirementItem
-                  met={requirements.specialChar}
-                  text="Um caractere especial"
-                />
-              </ul>
-            </CardContent>
-          </Card>
+          <div className="rounded-lg border border-border bg-muted/30 p-4 flex flex-col gap-2">
+            <p className="text-sm font-medium">Requisitos da nova senha:</p>
+            <ul className="grid grid-cols-1 gap-1.5">
+              <RequirementItem
+                met={requirements.minChar}
+                text="No mínimo 6 caracteres"
+              />
+              <RequirementItem
+                met={requirements.upperCase}
+                text="Uma letra maiúscula"
+              />
+              <RequirementItem
+                met={requirements.number}
+                text="Pelo menos um número"
+              />
+              <RequirementItem
+                met={requirements.specialChar}
+                text="Um caractere especial"
+              />
+            </ul>
+          </div>
         </CardContent>
         <CardFooter>
           <Field>

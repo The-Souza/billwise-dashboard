@@ -41,8 +41,8 @@ export function DeleteAccountDialog({
       <AlertDialogContent className="w-[calc(100vw-2rem)] rounded-md max-w-md">
         <AlertDialogHeader>
           <AlertDialogTitle className="font-heading flex gap-2 items-center">
-            <div className="p-2 rounded-md bg-primary/10">
-              <AlertTriangleIcon className="h-4 w-4 text-primary" />
+            <div className="p-2 rounded-md bg-destructive/10">
+              <AlertTriangleIcon className="h-4 w-4 text-destructive" />
             </div>
             {isSingle
               ? `Excluir "${accounts[0].title}"?`
@@ -75,13 +75,17 @@ export function DeleteAccountDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onCancel} disabled={isDeleting}>
+          <AlertDialogCancel
+            className="transition-transform ease-in hover:scale-103 active:scale-97"
+            onClick={onCancel}
+            disabled={isDeleting}
+          >
             Cancelar
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
             disabled={isDeleting}
-            className="bg-primary hover:bg-primary/90"
+            className="bg-destructive hover:bg-destructive/90 text-destructive-foreground transition-transform ease-in hover:scale-103 active:scale-97"
           >
             {isDeleting ? (
               <>

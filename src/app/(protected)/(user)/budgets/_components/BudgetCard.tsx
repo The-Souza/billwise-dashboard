@@ -31,8 +31,8 @@ export function BudgetCard({ budget, onEdit, onDelete }: BudgetCardProps) {
       <CardHeader className="flex flex-row items-center justify-between p-0 gap-2">
         <span className="flex items-center gap-2 text-sm font-medium min-w-0">
           {IconComponent && (
-            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-muted">
-              <IconComponent className="h-3.5 w-3.5 text-muted-foreground" />
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary/10">
+              <IconComponent className="h-3.5 w-3.5 text-primary" />
             </span>
           )}
           <span className="truncate">{budget.categoryName}</span>

@@ -116,7 +116,7 @@ export function BudgetFormDialog({
             </div>
             <div className="flex justify-end gap-2 pt-1">
               <Skeleton className="h-9 w-24" />
-              <Skeleton className="h-9 w-32" />
+              <Skeleton className="h-9 w-42" />
             </div>
           </div>
         ) : (

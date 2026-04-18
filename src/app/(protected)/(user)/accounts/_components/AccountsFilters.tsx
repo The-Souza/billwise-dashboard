@@ -132,7 +132,7 @@ export function AccountsFilters({
         <Button
           variant="outline"
           size="sm"
-          className="h-8 gap-1.5 hover:text-primary w-full sm:w-auto"
+          className="h-8 gap-1.5 hover:text-destructive hover:border-destructive/50 w-full sm:w-auto transition-transform ease-in hover:scale-103 active:scale-97"
           disabled={selectedCount === 0}
           onClick={onDelete}
         >
@@ -142,7 +142,7 @@ export function AccountsFilters({
 
         <Button
           size="sm"
-          className="h-8 gap-1.5 text-xs w-full sm:w-auto"
+          className="h-8 gap-1.5 text-xs w-full sm:w-auto transition-transform ease-in hover:scale-103 active:scale-97"
           asChild
         >
           <Link href="/accounts/add-account">

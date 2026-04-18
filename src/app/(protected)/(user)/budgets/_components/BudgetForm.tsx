@@ -199,14 +199,14 @@ export function BudgetForm({
           type="button"
           variant="outline"
           onClick={onCancel}
-          className="w-full sm:w-auto"
+          className="w-full sm:w-auto transition-transform ease-in hover:scale-103 active:scale-97"
         >
           Cancelar
         </Button>
         <Button
           type="submit"
           disabled={form.formState.isSubmitting || noCategories}
-          className="w-full sm:w-auto"
+          className="w-full sm:w-auto transition-transform ease-in hover:scale-103 active:scale-97"
         >
           {form.formState.isSubmitting ? (
             <Spinner data-icon="inline-start" />

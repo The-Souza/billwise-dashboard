@@ -6,9 +6,9 @@ import { updateAvatarAction } from "@/actions/profile/update-avatar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
+  Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -116,7 +116,7 @@ export function ProfileForm({ user }: User) {
   }
 
   return (
-    <div className="flex flex-col gap-4 justify-center items-center h-full w-full">
+    <div className="flex flex-col gap-6 items-center w-full max-w-4xl mx-auto pb-8">
       <div className="flex flex-col items-center gap-4">
         <div className="relative group">
           <Avatar className="h-30 w-30 border-4 border-border">
@@ -161,7 +161,7 @@ export function ProfileForm({ user }: User) {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                className="text-primary hover:bg-primary/20 focus:bg-primary/20 focus:text-primary"
+                className="text-destructive hover:bg-destructive/10 focus:bg-destructive/10 focus:text-destructive"
                 onClick={async () => {
                   const response = await removeAvatarAction();
 
@@ -186,123 +186,125 @@ export function ProfileForm({ user }: User) {
         </div>
       </div>
 
-      <div className="grid gap-2 w-full max-w-4xl">
-        <CardHeader className="flex flex-col sm:flex-row gap-2 items-start sm:items-center justify-between">
-          <CardContent className="p-0">
-            <CardTitle className="text-md">Dados Pessoais</CardTitle>
-            <CardDescription className="text-sm text-muted-foreground">
-              Informações básicas da sua conta.
-            </CardDescription>
-          </CardContent>
-          {!isEditing ? (
-            <Button
-              type="button"
-              variant="outline"
-              className="transition-transform ease-in hover:scale-103 active:scale-97"
-              onClick={() => setIsEditing(true)}
-            >
-              Editar <Pencil />
-            </Button>
-          ) : (
-            <div className="flex gap-2">
+      <div className="flex flex-col gap-4 w-full">
+        <Card className="border-none bg-transparent">
+          <CardHeader className="flex flex-col sm:flex-row gap-2 items-start sm:items-center justify-between">
+            <div>
+              <CardTitle className="text-md">Dados Pessoais</CardTitle>
+              <CardDescription className="text-sm">
+                Informações básicas da sua conta.
+              </CardDescription>
+            </div>
+            {!isEditing ? (
               <Button
                 type="button"
                 variant="outline"
-                className="transition-transform ease-in hover:scale-103 active:scale-97"
-                onClick={() => setIsEditing(false)}
+                className="transition-transform ease-in hover:scale-103 active:scale-97 shrink-0"
+                onClick={() => setIsEditing(true)}
               >
-                Cancelar
+                Editar <Pencil />
               </Button>
-              <Button
-                type="submit"
-                size={isSubmitting ? "icon" : "default"}
-                form="form-profile"
-                className="transition-transform ease-in hover:scale-103 active:scale-97"
-              >
-                {isSubmitting ? (
-                  <>
+            ) : (
+              <div className="flex gap-2 shrink-0">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="transition-transform ease-in hover:scale-103 active:scale-97"
+                  onClick={() => setIsEditing(false)}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  type="submit"
+                  size={isSubmitting ? "icon" : "default"}
+                  form="form-profile"
+                  className="transition-transform ease-in hover:scale-103 active:scale-97"
+                >
+                  {isSubmitting ? (
                     <Spinner data-icon="inline-start" />
-                  </>
-                ) : (
-                  <>
-                    Salvar <Save />
-                  </>
-                )}
-              </Button>
-            </div>
-          )}
-        </CardHeader>
-        <CardContent>
-          <form id="form-profile" onSubmit={form.handleSubmit(handleSubmit)}>
-            <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Controller
-                name="name"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field>
-                    <FieldLabel htmlFor={field.name} className="text-md">
-                      Nome Completo
-                    </FieldLabel>
-                    <InputGroup>
-                      <InputGroupInput
-                        {...field}
-                        id={field.name}
-                        type="text"
-                        aria-invalid={fieldState.invalid}
-                        disabled={!isEditing}
-                      />
-                    </InputGroup>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-              <Controller
-                name="email"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name} className="text-md">
-                      Email
-                    </FieldLabel>
-                    <InputGroup>
-                      <InputGroupInput
-                        {...field}
-                        id={field.name}
-                        type="email"
-                        aria-invalid={fieldState.invalid}
-                        disabled={!isEditing}
-                      />
-                    </InputGroup>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-            </FieldGroup>
-          </form>
-        </CardContent>
+                  ) : (
+                    <>
+                      Salvar <Save />
+                    </>
+                  )}
+                </Button>
+              </div>
+            )}
+          </CardHeader>
+          <CardContent>
+            <form id="form-profile" onSubmit={form.handleSubmit(handleSubmit)}>
+              <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Controller
+                  name="name"
+                  control={form.control}
+                  render={({ field, fieldState }) => (
+                    <Field>
+                      <FieldLabel htmlFor={field.name} className="text-md">
+                        Nome Completo
+                      </FieldLabel>
+                      <InputGroup>
+                        <InputGroupInput
+                          {...field}
+                          id={field.name}
+                          type="text"
+                          aria-invalid={fieldState.invalid}
+                          disabled={!isEditing}
+                        />
+                      </InputGroup>
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  )}
+                />
+                <Controller
+                  name="email"
+                  control={form.control}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor={field.name} className="text-md">
+                        Email
+                      </FieldLabel>
+                      <InputGroup>
+                        <InputGroupInput
+                          {...field}
+                          id={field.name}
+                          type="email"
+                          aria-invalid={fieldState.invalid}
+                          disabled={!isEditing}
+                        />
+                      </InputGroup>
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  )}
+                />
+              </FieldGroup>
+            </form>
+          </CardContent>
+        </Card>
 
-        <CardFooter className="flex flex-col gap-2 items-start">
-          <CardContent className="p-0">
+        <Card className="border-none bg-transparent">
+          <CardHeader>
             <CardTitle className="flex items-center gap-2 text-md">
-              <Lock /> Segurança
+              <Lock className="h-4 w-4" /> Segurança
             </CardTitle>
-            <CardDescription className="text-sm text-muted-foreground">
+            <CardDescription className="text-sm">
               Atualize sua senha para manter a conta segura.
             </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button variant="outline" asChild>
+              <Link
+                href="/profile/change-password"
+                className="transition-transform ease-in hover:scale-103 active:scale-97"
+              >
+                Alterar Senha
+              </Link>
+            </Button>
           </CardContent>
-          <Button variant="outline" asChild>
-            <Link
-              href="/profile/change-password"
-              className="transition-transform ease-in hover:scale-103 active:scale-97"
-            >
-              Alterar Senha
-            </Link>
-          </Button>
-        </CardFooter>
+        </Card>
       </div>
     </div>
   );

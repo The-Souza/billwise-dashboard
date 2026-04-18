@@ -83,15 +83,15 @@ export function NotificationBell() {
 
   const header = (
     <div className="flex items-center justify-between px-4 py-3 border-b">
-      <span className="text-sm font-medium">Notificações</span>
+      <span className="text-sm font-heading font-semibold">Notificações</span>
       {notifications.length > 0 && (
         <Link
           href="/notifications"
           onClick={() => setOpen(false)}
-          className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1 capitalize"
+          className="text-xs text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
         >
           Ver todas
-          <ArrowRight className="h-3.5 w-3.5" />
+          <ArrowRight className="h-3 w-3" />
         </Link>
       )}
     </div>
