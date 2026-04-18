@@ -2,6 +2,7 @@
 
 import { requireAuth } from "@/lib/auth/guards";
 import { prisma } from "@/lib/prisma/client";
+import { deleteAccountsSchema } from "@/schemas/accounts/delete-accounts";
 
 export type DeleteAccountsResult =
   | { success: true; deleted: number }
@@ -10,15 +11,16 @@ export type DeleteAccountsResult =
 export async function deleteAccountsAction(
   ids: string[],
 ): Promise<DeleteAccountsResult> {
-  try {
-    if (ids.length === 0) {
-      return { success: false, error: "Nenhuma conta selecionada" };
-    }
+  const parsed = deleteAccountsSchema.safeParse(ids);
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.issues[0].message };
+  }
 
+  try {
     const user = await requireAuth();
 
     const accounts = await prisma.accounts.findMany({
-      where: { id: { in: ids }, user_id: user.id },
+      where: { id: { in: parsed.data }, user_id: user.id },
       select: { id: true, recurring_rule_id: true, installment_group_id: true },
     });
 
@@ -43,7 +45,7 @@ export async function deleteAccountsAction(
           ).map((a) => a.id)
         : [];
 
-    const allIds = [...new Set([...ids, ...siblingIds])];
+    const allIds = [...new Set([...parsed.data, ...siblingIds])];
 
     const recurringRuleIds = accounts
       .map((a) => a.recurring_rule_id)
