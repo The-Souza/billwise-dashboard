@@ -9,16 +9,23 @@ interface AddBudgetCardProps {
   onClick: (type: "expense" | "income") => void;
 }
 
-export function AddBudgetCard({ label, categoryType, onClick }: AddBudgetCardProps) {
+export function AddBudgetCard({
+  label,
+  categoryType,
+  onClick,
+}: AddBudgetCardProps) {
   return (
     <Card
+      role="button"
+      tabIndex={0}
       onClick={() => onClick(categoryType)}
-      className="flex flex-col items-center justify-center gap-2 p-4 border-dashed border-2 cursor-pointer hover:bg-muted/50 hover:border-muted-foreground/30 transition-colors min-h-36"
+      onKeyDown={(e) => e.key === "Enter" && onClick(categoryType)}
+      className="group flex flex-col items-center justify-center gap-2.5 p-4 border-dashed border-2 cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all duration-200 min-h-36 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
-      <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-dashed border-muted-foreground/25">
-        <PlusIcon className="h-4 w-4 text-muted-foreground/50" />
+      <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-dashed border-muted-foreground/25 group-hover:border-primary/50 group-hover:bg-primary/10 transition-all duration-200">
+        <PlusIcon className="h-4 w-4 text-muted-foreground/50 group-hover:text-primary transition-colors duration-200" />
       </div>
-      <p className="text-sm text-muted-foreground/70 text-center leading-snug">
+      <p className="text-sm text-muted-foreground/70 group-hover:text-muted-foreground text-center leading-snug transition-colors duration-200">
         {label}
       </p>
     </Card>

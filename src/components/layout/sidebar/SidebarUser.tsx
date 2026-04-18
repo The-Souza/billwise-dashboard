@@ -85,7 +85,7 @@ export function SidebarUser({ user }: User) {
               .map((item) => (
                 <DropdownMenuItem
                   key={item.id}
-                  className="text-primary hover:bg-primary/20 focus:bg-primary/20 focus:text-primary"
+                  className="text-destructive hover:bg-destructive/10 focus:bg-destructive/10 focus:text-destructive"
                   onClick={async () => {
                     await logoutAction();
                     router.replace(item.navigation);
