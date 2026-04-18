@@ -36,7 +36,8 @@ export async function updateBudgetAction(
     });
 
     return { success: true };
-  } catch {
+  } catch (error) {
+    console.error("Error in updateBudgetAction:", error);
     return { success: false, error: "Erro ao atualizar orçamento" };
   }
 }

@@ -166,7 +166,7 @@ export function ProfileForm({ user }: User) {
                   const response = await removeAvatarAction();
 
                   if (!response.success) {
-                    appToast.error(response.message);
+                    appToast.error(response.error);
                     return;
                   }
 
@@ -187,7 +187,7 @@ export function ProfileForm({ user }: User) {
       </div>
 
       <div className="flex flex-col gap-4 w-full">
-        <Card className="border-none bg-transparent">
+        <Card className="border-none bg-transparent shadow-none">
           <CardHeader className="flex flex-col sm:flex-row gap-2 items-start sm:items-center justify-between">
             <div>
               <CardTitle className="text-md">Dados Pessoais</CardTitle>
@@ -285,7 +285,7 @@ export function ProfileForm({ user }: User) {
           </CardContent>
         </Card>
 
-        <Card className="border-none bg-transparent">
+        <Card className="border-none bg-transparent shadow-none">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-md">
               <Lock className="h-4 w-4" /> Segurança
