@@ -1,6 +1,6 @@
 "use client";
 
-import { resendConfirmation } from "@/actions/auth/verify-email";
+import { resendConfirmationAction } from "@/actions/auth/verify-email";
 import { Button } from "@/components/ui/button";
 import {
   CardContent,
@@ -40,7 +40,7 @@ export function VerifyEmail({ email }: VerifyEmailProps) {
     setIsResending(true);
 
     try {
-      const result = await resendConfirmation(email);
+      const result = await resendConfirmationAction(email);
 
       if (!result.success) {
         appToast.error(result.error);
