@@ -221,12 +221,17 @@ export function AccountsDataTable({
                 </TableRow>
               ))
             ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={accountColumns(handleDeleteSingle).length}
-                  className="text-center text-sm text-muted-foreground py-8"
-                >
-                  Nenhuma conta encontrada.
+              <TableRow className="hover:bg-transparent">
+                <TableCell colSpan={accountColumns(handleDeleteSingle).length}>
+                  <div className="flex flex-col items-center justify-center gap-2 py-10 text-center">
+                    <div className="p-3 rounded-full bg-muted">
+                      <ChevronRight className="h-5 w-5 text-muted-foreground opacity-50" />
+                    </div>
+                    <p className="text-sm font-medium">Nenhuma conta</p>
+                    <p className="text-xs text-muted-foreground">
+                      Nenhuma conta encontrada para este período ou filtro.
+                    </p>
+                  </div>
                 </TableCell>
               </TableRow>
             )}
@@ -244,7 +249,7 @@ export function AccountsDataTable({
           <Button
             variant="outline"
             size="icon"
-            className="h-7 w-7"
+            className="h-7 w-7 transition-transform ease-in hover:scale-103 active:scale-97"
             onClick={() => handleFiltersChange({ page: page - 1 })}
             disabled={page <= 1 || isLoading}
           >
@@ -256,7 +261,7 @@ export function AccountsDataTable({
           <Button
             variant="outline"
             size="icon"
-            className="h-7 w-7"
+            className="h-7 w-7 transition-transform ease-in hover:scale-103 active:scale-97"
             onClick={() => handleFiltersChange({ page: page + 1 })}
             disabled={page >= totalPages || isLoading}
           >

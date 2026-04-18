@@ -96,12 +96,17 @@ export function RecentAccountTable({
                 </TableRow>
               ))
             ) : data.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={5}
-                  className="text-center text-sm text-muted-foreground py-8"
-                >
-                  Nenhuma movimentação encontrada.
+              <TableRow className="hover:bg-transparent">
+                <TableCell colSpan={5}>
+                  <div className="flex flex-col items-center justify-center gap-2 py-10 text-center">
+                    <div className="p-3 rounded-full bg-muted">
+                      <ArrowRight className="h-5 w-5 text-muted-foreground opacity-50" />
+                    </div>
+                    <p className="text-sm font-medium">Sem movimentações</p>
+                    <p className="text-xs text-muted-foreground">
+                      Nenhuma conta registrada neste período.
+                    </p>
+                  </div>
                 </TableCell>
               </TableRow>
             ) : (

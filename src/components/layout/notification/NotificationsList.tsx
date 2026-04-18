@@ -41,9 +41,12 @@ export function NotificationsList({
 
   if (notifications.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center gap-2 py-8 text-muted-foreground">
-        <BellIcon className="h-6 w-6 opacity-40" />
-        <p className="text-xs">Nenhuma notificação</p>
+      <div className="flex flex-col items-center justify-center gap-2 py-8 text-center px-4">
+        <div className="p-3 rounded-full bg-muted">
+          <BellIcon className="h-4 w-4 text-muted-foreground opacity-50" />
+        </div>
+        <p className="text-xs font-medium text-foreground">Sem notificações</p>
+        <p className="text-xs text-muted-foreground">Você está em dia com tudo.</p>
       </div>
     );
   }

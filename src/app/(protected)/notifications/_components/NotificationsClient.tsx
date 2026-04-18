@@ -12,7 +12,7 @@ import { useNotifications } from "./NotificationsContext";
 
 const TYPE_CONFIG: Record<
   string,
-  { label: string; icon: React.ReactNode; badgeClass: string }
+  { label: string; icon: React.ReactNode; accentClass: string }
 > = {
   overdue: {
     label: "Vencida",
@@ -21,7 +21,7 @@ const TYPE_CONFIG: Record<
         <AlertTriangleIcon className="size-4 text-destructive" />
       </div>
     ),
-    badgeClass: "text-destructive",
+    accentClass: "border-l-destructive/60",
   },
   due_soon: {
     label: "Prestes a vencer",
@@ -30,7 +30,7 @@ const TYPE_CONFIG: Record<
         <AlertCircleIcon className="size-4 text-amber-500" />
       </div>
     ),
-    badgeClass: "text-amber-500",
+    accentClass: "border-l-amber-500/60",
   },
 };
 
@@ -44,9 +44,16 @@ export function NotificationsClient() {
 
   if (filtered.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center gap-3 py-16 text-muted-foreground">
-        <BellIcon className="h-8 w-8 opacity-40" />
-        <p className="text-sm">Nenhuma notificação por aqui.</p>
+      <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
+        <div className="p-4 rounded-full bg-muted">
+          <BellIcon className="h-6 w-6 text-muted-foreground opacity-50" />
+        </div>
+        <div className="flex flex-col gap-1">
+          <p className="text-sm font-medium">Nenhuma notificação</p>
+          <p className="text-xs text-muted-foreground">
+            Você está em dia com tudo por aqui.
+          </p>
+        </div>
       </div>
     );
   }
@@ -72,12 +79,17 @@ export function NotificationsClient() {
         return (
           <CardWrapper key={n.id}>
             <Card
-              className={`relative flex items-start gap-3 rounded-md border px-4 py-3 text-sm transition-colors ${
-                n.accountId ? "hover:border-primary/30 cursor-pointer" : ""
-              } ${isUnread ? "border-primary/50 bg-muted/50" : "border-border"}`}
+              className={`relative flex items-start gap-3 rounded-md border-l-2 px-4 py-3 text-sm transition-colors ${
+                config?.accentClass ?? "border-l-border"
+              } ${n.accountId ? "hover:bg-muted/50 cursor-pointer" : ""} ${
+                isUnread ? "bg-muted/40" : ""
+              }`}
             >
               {isUnread && (
-                <span className="absolute top-3 right-3 h-2 w-2 rounded-full bg-primary" />
+                <span
+                  aria-label="Não lida"
+                  className="absolute top-3 right-3 h-2 w-2 rounded-full bg-primary"
+                />
               )}
 
               {config?.icon ?? (
@@ -86,21 +98,19 @@ export function NotificationsClient() {
                 </div>
               )}
 
-              <div className="flex flex-col gap-1 flex-1 min-w-0">
-                <span
-                  className={`font-heading font-medium capitalize text-sm ${config?.badgeClass ?? "text-foreground"}`}
-                >
+              <div className="flex flex-col gap-1 flex-1 min-w-0 pr-4">
+                <span className="font-heading font-semibold capitalize text-sm">
                   {n.title}
                 </span>
 
                 {n.body && (
-                  <span className="text-muted-foreground text-sm">
+                  <span className="text-muted-foreground text-xs leading-relaxed">
                     {n.body}
                   </span>
                 )}
 
                 <div className="flex items-center justify-between gap-2 mt-1">
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-xs text-muted-foreground tabular-nums">
                     {new Date(n.createdAt).toLocaleDateString("pt-BR", {
                       day: "2-digit",
                       month: "long",
