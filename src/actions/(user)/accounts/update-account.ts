@@ -1,6 +1,7 @@
 "use server";
 
 import { account_status } from "@/generated/prisma/enums";
+import { calcRecurringEndDate } from "@/helper/calc-recurring-end-date";
 import { parseDateParts } from "@/helper/parse-date";
 import { requireAuth } from "@/lib/auth/guards";
 import { prisma } from "@/lib/prisma/client";
@@ -10,12 +11,6 @@ import { z } from "zod";
 type UpdateAccountResult =
   | { success: true }
   | { success: false; error: string };
-
-function calcRecurringEndDate(startDate: Date, months: number): Date {
-  const end = new Date(startDate);
-  end.setMonth(end.getMonth() + months);
-  return end;
-}
 
 export async function updateAccountAction(
   id: string,
