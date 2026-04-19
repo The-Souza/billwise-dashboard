@@ -12,6 +12,8 @@ import { Separator } from "@/components/ui/separator";
 import { Controller } from "react-hook-form";
 import { useAccountForm } from "./AccountFormContext";
 
+const RECURRENCE_MONTH_OPTIONS = [3, 6, 9, 12, 18, 24];
+
 export function AccountFormRecurrence() {
   const { form } = useAccountForm();
 
@@ -48,7 +50,7 @@ export function AccountFormRecurrence() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">Sem limite definido</SelectItem>
-                  {[3, 6, 9, 12, 18, 24].map((months) => (
+                  {RECURRENCE_MONTH_OPTIONS.map((months) => (
                     <SelectItem key={months} value={months.toString()}>
                       {months} meses
                     </SelectItem>
