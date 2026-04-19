@@ -86,6 +86,8 @@ export function AccountsDataTable({
     mutate,
   } = useSWR(["accounts", filters], () => getAccountsAction(filters), {
     keepPreviousData: true,
+    revalidateOnFocus: false,
+    dedupingInterval: 30000,
   });
 
   const accounts = result?.success ? result.data : [];

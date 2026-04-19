@@ -57,6 +57,7 @@ export function BudgetFormDialog({
   const { data: categories, isLoading } = useSWR(
     open ? ["budget-categories", month, year, excludeId] : null,
     () => getCategoriesForBudgetAction(month, year, excludeId),
+    { revalidateOnFocus: false, dedupingInterval: 30000 },
   );
 
   const budgetDetail =

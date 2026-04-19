@@ -24,8 +24,10 @@ export default function BudgetsPage() {
     data: budgets,
     isLoading,
     mutate,
-  } = useSWR(["budgets", month, year], () =>
-    getBudgetsAction(month, year).then((r) => (r.success ? r.data : [])),
+  } = useSWR(
+    ["budgets", month, year],
+    () => getBudgetsAction(month, year).then((r) => (r.success ? r.data : [])),
+    { revalidateOnFocus: false, dedupingInterval: 30000 },
   );
 
   const [formDialog, setFormDialog] = useState<{
