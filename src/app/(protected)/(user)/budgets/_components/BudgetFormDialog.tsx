@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { WalletIcon } from "lucide-react";
+import { SWR_DEFAULT_OPTIONS } from "@/config/swr";
 import useSWR from "swr";
 import { BudgetForm } from "./BudgetForm";
 
@@ -57,7 +58,7 @@ export function BudgetFormDialog({
   const { data: categories, isLoading } = useSWR(
     open ? ["budget-categories", month, year, excludeId] : null,
     () => getCategoriesForBudgetAction(month, year, excludeId),
-    { revalidateOnFocus: false, dedupingInterval: 30000 },
+    SWR_DEFAULT_OPTIONS,
   );
 
   const budgetDetail =

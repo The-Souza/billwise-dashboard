@@ -27,6 +27,7 @@ import {
 } from "@tanstack/react-table";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
+import { SWR_DEFAULT_OPTIONS } from "@/config/swr";
 import useSWR from "swr";
 import { AccountsFilters } from "./AccountsFilters";
 import { DeleteAccountDialog } from "./DeleteAccountDialog";
@@ -86,8 +87,7 @@ export function AccountsDataTable({
     mutate,
   } = useSWR(["accounts", filters], () => getAccountsAction(filters), {
     keepPreviousData: true,
-    revalidateOnFocus: false,
-    dedupingInterval: 30000,
+    ...SWR_DEFAULT_OPTIONS,
   });
 
   const accounts = result?.success ? result.data : [];

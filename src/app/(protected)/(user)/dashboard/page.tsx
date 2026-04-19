@@ -5,6 +5,7 @@ import { getChartDataAction } from "@/actions/(user)/dashboard/get-chart-data";
 import { getRecentAccountsAction } from "@/actions/(user)/dashboard/get-recent-accounts";
 import { getSummaryAction } from "@/actions/(user)/dashboard/get-summary";
 import { MonthPicker } from "@/components/ui/month-picker";
+import { SWR_DEFAULT_OPTIONS } from "@/config/swr";
 import { useDashboardMonth } from "@/hooks/use-dashboard-month";
 import useSWR from "swr";
 import { BudgetProgress } from "./_components/BudgetProgress";
@@ -16,7 +17,7 @@ export default function DashboardPage() {
   const dashboardMonth = useDashboardMonth();
   const { month, year, label } = dashboardMonth;
 
-  const swrOptions = { revalidateOnFocus: false, dedupingInterval: 30000 };
+  const swrOptions = SWR_DEFAULT_OPTIONS;
 
   const { data: summary, isLoading: loadingSummary } = useSWR(
     ["dashboard-summary", month, year],
