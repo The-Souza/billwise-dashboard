@@ -16,10 +16,13 @@ export default function DashboardPage() {
   const dashboardMonth = useDashboardMonth();
   const { month, year, label } = dashboardMonth;
 
+  const swrOptions = { revalidateOnFocus: false, dedupingInterval: 30000 };
+
   const { data: summary, isLoading: loadingSummary } = useSWR(
     ["dashboard-summary", month, year],
     () =>
       getSummaryAction(month, year).then((r) => (r.success ? r.data : null)),
+    swrOptions,
   );
 
   const { data: chartData, isLoading: loadingChart } = useSWR(
@@ -28,6 +31,7 @@ export default function DashboardPage() {
       getChartDataAction(month, year, 12).then((r) =>
         r.success ? r.data : [],
       ),
+    swrOptions,
   );
 
   const { data: budgets, isLoading: loadingBudgets } = useSWR(
@@ -36,6 +40,7 @@ export default function DashboardPage() {
       getBudgetProgressAction(month, year).then((r) =>
         r.success ? r.data : [],
       ),
+    swrOptions,
   );
 
   const { data: accounts, isLoading: loadingAccounts } = useSWR(
@@ -44,6 +49,7 @@ export default function DashboardPage() {
       getRecentAccountsAction(month, year).then((r) =>
         r.success ? r.data : [],
       ),
+    swrOptions,
   );
 
   function handleMonthSelect(m: number, y: number) {

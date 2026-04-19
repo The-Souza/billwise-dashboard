@@ -104,15 +104,16 @@ export async function createAccountAction(
         if (hasInstallments && installmentsCount && installmentsCount > 1) {
           const installmentAmount = Number(amount) / installmentsCount;
           const groupId = randomUUID();
+          const paidAt = status === "paid" ? new Date() : null;
+
+          const accountsData = [];
+          const installmentsData = [];
 
           for (let index = 0; index < installmentsCount; index++) {
+            const accountId = randomUUID();
             const installmentDate = new Date(accountDateObj);
             installmentDate.setMonth(installmentDate.getMonth() + index);
 
-            const installmentYear = installmentDate.getFullYear();
-            const installmentMonth = installmentDate.getMonth() + 1;
-
-            // due_date avança o mesmo número de meses que a parcela
             const installmentDueDate = dueDate
               ? (() => {
                   const d = new Date(dueDate);
@@ -121,39 +122,36 @@ export async function createAccountAction(
                 })()
               : null;
 
-            const installmentStatus =
-              index === 0 ? (status as account_status) : "pending";
-
-            const account = await tx.accounts.create({
-              data: {
-                user_id: user.id,
-                title,
-                amount: installmentAmount,
-                account_date: installmentDate,
-                category_id: categoryId ?? null,
-                due_date: installmentDueDate,
-                year: installmentYear,
-                month: installmentMonth,
-                status: installmentStatus,
-                description: description ?? null,
-                consumption: consumption ?? null,
-                days: days ?? null,
-                recurring_rule_id: null,
-                paid_at: status === "paid" && index === 0 ? new Date() : null,
-                installment_group_id: groupId,
-              },
+            accountsData.push({
+              id: accountId,
+              user_id: user.id,
+              title,
+              amount: installmentAmount,
+              account_date: installmentDate,
+              category_id: categoryId ?? null,
+              due_date: installmentDueDate,
+              year: installmentDate.getFullYear(),
+              month: installmentDate.getMonth() + 1,
+              status: (index === 0 ? status : "pending") as account_status,
+              description: description ?? null,
+              consumption: consumption ?? null,
+              days: days ?? null,
+              recurring_rule_id: null,
+              paid_at: index === 0 ? paidAt : null,
+              installment_group_id: groupId,
             });
 
-            await tx.account_installments.create({
-              data: {
-                account_id: account.id,
-                installment_number: index + 1,
-                total_installments: installmentsCount,
-                due_date: installmentDueDate ?? installmentDate,
-                amount: installmentAmount,
-              },
+            installmentsData.push({
+              account_id: accountId,
+              installment_number: index + 1,
+              total_installments: installmentsCount,
+              due_date: installmentDueDate ?? installmentDate,
+              amount: installmentAmount,
             });
           }
+
+          await tx.accounts.createMany({ data: accountsData });
+          await tx.account_installments.createMany({ data: installmentsData });
 
           return;
         }
