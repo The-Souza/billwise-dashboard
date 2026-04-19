@@ -53,6 +53,7 @@ export async function getCategoriesForBudgetAction(
           ? { id: { notIn: usedCategoryIds } }
           : undefined,
       orderBy: [{ type: "asc" }, { name: "asc" }],
+      select: { id: true, name: true, type: true, icon: true },
     });
 
     return {

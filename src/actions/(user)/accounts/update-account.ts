@@ -104,6 +104,7 @@ export async function updateAccountAction(
               user_id: user.id,
             },
             orderBy: { account_date: "asc" },
+            select: { id: true },
           });
 
           const installmentAmount = Number(amount);
