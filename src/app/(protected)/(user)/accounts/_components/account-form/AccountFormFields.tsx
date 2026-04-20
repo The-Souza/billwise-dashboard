@@ -1,7 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import {
   Field,
   FieldError,
@@ -16,11 +14,6 @@ import {
   InputGroupTextarea,
 } from "@/components/ui/input-group";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
   Select,
   SelectContent,
   SelectGroup,
@@ -30,13 +23,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { formatDateLocal } from "@/helper/format-date-local";
-import { parseDateLocal } from "@/helper/parse-date";
 import { STATUS_OPTIONS } from "@/utils/status-options";
-import { ChevronDownIcon } from "lucide-react";
-import { useState } from "react";
 import { Controller } from "react-hook-form";
 import { useAccountForm } from "./AccountFormContext";
+import { CurrencyInputField } from "./CurrencyInputField";
+import { DatePickerField } from "./DatePickerField";
 
 export function AccountFormFields() {
   const { form, categories } = useAccountForm();
@@ -67,38 +58,11 @@ export function AccountFormFields() {
       <Controller
         name="amount"
         control={form.control}
-        render={({ field, fieldState }) => {
-          // eslint-disable-next-line react-hooks/rules-of-hooks
-          const [raw, setRaw] = useState(field.value?.toString() ?? "");
-
-          return (
-            <Field>
-              <FieldLabel htmlFor={field.name} className="text-md capitalize">
-                Valor (R$)
-              </FieldLabel>
-              <InputGroup>
-                <InputGroupAddon className="text-muted-foreground text-sm font-medium">
-                  R$
-                </InputGroupAddon>
-                <InputGroupInput
-                  id={field.name}
-                  type="text"
-                  inputMode="decimal"
-                  placeholder="0,00"
-                  value={raw}
-                  aria-invalid={fieldState.invalid}
-                  onChange={(e) => {
-                    const text = e.target.value;
-                    setRaw(text);
-                    const val = parseFloat(text.replace(",", "."));
-                    field.onChange(isNaN(val) ? undefined : val);
-                  }}
-                />
-              </InputGroup>
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          );
-        }}
+        render={({ field, fieldState }) => (
+          <Field>
+            <CurrencyInputField field={field} fieldState={fieldState} />
+          </Field>
+        )}
       />
 
       <Controller
@@ -189,101 +153,29 @@ export function AccountFormFields() {
       <Controller
         name="accountDate"
         control={form.control}
-        render={({ field, fieldState }) => {
-          // eslint-disable-next-line react-hooks/rules-of-hooks
-          const [open, setOpen] = useState(false);
-          const dateValue = field.value
-            ? parseDateLocal(field.value)
-            : undefined;
-
-          return (
-            <Field>
-              <FieldLabel htmlFor={field.name} className="text-md capitalize">
-                Data da Conta
-              </FieldLabel>
-              <Popover open={open} onOpenChange={setOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    id={field.name}
-                    variant="outline"
-                    className="w-full justify-between font-normal hover:bg-transparent dark:bg-input/30 bg-transparent shadow-xs px-3"
-                    aria-invalid={fieldState.invalid}
-                  >
-                    {dateValue
-                      ? dateValue.toLocaleDateString("pt-BR")
-                      : "Selecione uma data"}
-                    <ChevronDownIcon className="h-4 w-4 text-muted-foreground" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent
-                  className="w-70 overflow-hidden p-0"
-                  align="start"
-                >
-                  <Calendar
-                    mode="single"
-                    selected={dateValue}
-                    defaultMonth={dateValue}
-                    onSelect={(date) => {
-                      field.onChange(date ? formatDateLocal(date) : null);
-                      setOpen(false);
-                    }}
-                  />
-                </PopoverContent>
-              </Popover>
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          );
-        }}
+        render={({ field, fieldState }) => (
+          <Field>
+            <DatePickerField
+              field={field}
+              fieldState={fieldState}
+              label="Data da Conta"
+            />
+          </Field>
+        )}
       />
 
       <Controller
         name="dueDate"
         control={form.control}
-        render={({ field, fieldState }) => {
-          // eslint-disable-next-line react-hooks/rules-of-hooks
-          const [open, setOpen] = useState(false);
-          const dateValue = field.value
-            ? parseDateLocal(field.value)
-            : undefined;
-
-          return (
-            <Field>
-              <FieldLabel htmlFor={field.name} className="text-md capitalize">
-                Vencimento
-              </FieldLabel>
-              <Popover open={open} onOpenChange={setOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    id={field.name}
-                    variant="outline"
-                    className="w-full justify-between font-normal hover:bg-transparent dark:bg-input/30 bg-transparent shadow-xs px-3"
-                    aria-invalid={fieldState.invalid}
-                  >
-                    {dateValue
-                      ? dateValue.toLocaleDateString("pt-BR")
-                      : "Selecione uma data"}
-                    <ChevronDownIcon className="h-4 w-4 text-muted-foreground" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent
-                  className="w-70 overflow-hidden p-0"
-                  align="start"
-                >
-                  <Calendar
-                    mode="single"
-                    defaultMonth={dateValue}
-                    selected={dateValue}
-                    onSelect={(date) => {
-                      field.onChange(date ? formatDateLocal(date) : null);
-                      setOpen(false);
-                    }}
-                  />
-                </PopoverContent>
-              </Popover>
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          );
-        }}
+        render={({ field, fieldState }) => (
+          <Field>
+            <DatePickerField
+              field={field}
+              fieldState={fieldState}
+              label="Vencimento"
+            />
+          </Field>
+        )}
       />
 
       <Controller

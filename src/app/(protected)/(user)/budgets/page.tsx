@@ -9,6 +9,7 @@ import { MonthPicker } from "@/components/ui/month-picker";
 import { useDashboardMonth } from "@/hooks/use-dashboard-month";
 import { appToast } from "@/utils/app-toast";
 import { useState } from "react";
+import { SWR_DEFAULT_OPTIONS } from "@/config/swr";
 import useSWR from "swr";
 import { AddBudgetCard } from "./_components/AddBudgetCard";
 import { BudgetCard } from "./_components/BudgetCard";
@@ -27,7 +28,7 @@ export default function BudgetsPage() {
   } = useSWR(
     ["budgets", month, year],
     () => getBudgetsAction(month, year).then((r) => (r.success ? r.data : [])),
-    { revalidateOnFocus: false, dedupingInterval: 30000 },
+    SWR_DEFAULT_OPTIONS,
   );
 
   const [formDialog, setFormDialog] = useState<{
