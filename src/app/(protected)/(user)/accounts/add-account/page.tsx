@@ -6,7 +6,7 @@ export default async function AddAccountPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-lg font-bold font-heading tracking-tight capitalize">
+      <h1 className="text-lg font-bold font-heading tracking-tight">
         Preencha os dados da nova conta
       </h1>
 

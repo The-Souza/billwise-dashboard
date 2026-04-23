@@ -46,7 +46,9 @@ export function NotificationsList({
           <BellIcon className="h-4 w-4 text-muted-foreground opacity-50" />
         </div>
         <p className="text-xs font-medium text-foreground">Sem notificações</p>
-        <p className="text-xs text-muted-foreground">Você está em dia com tudo.</p>
+        <p className="text-xs text-muted-foreground">
+          Você está em dia com tudo.
+        </p>
       </div>
     );
   }
@@ -66,15 +68,13 @@ export function NotificationsList({
             </div>
           )}
           <div className="flex flex-col gap-0.5 min-w-0">
-            <span className="font-medium capitalize leading-tight">
-              {n.title}
-            </span>
+            <span className="font-medium leading-tight">{n.title}</span>
             {n.body && (
               <span className="text-muted-foreground text-xs line-clamp-2">
                 {n.body}
               </span>
             )}
-            <span className="text-xs text-muted-foreground mt-0.5 capitalize">
+            <span className="text-xs text-muted-foreground mt-0.5">
               {new Date(n.createdAt).toLocaleDateString("pt-BR", {
                 day: "2-digit",
                 month: "short",

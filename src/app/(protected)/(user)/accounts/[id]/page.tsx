@@ -21,7 +21,7 @@ export default async function EditAccountPage({
 
   return (
     <div className="flex flex-col gap-6 w-full">
-      <h1 className="text-lg font-bold font-heading tracking-tight capitalize">
+      <h1 className="text-lg font-bold font-heading tracking-tight">
         Atualize os dados da conta
       </h1>
 
