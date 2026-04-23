@@ -3,6 +3,7 @@
 import { account_status, category_type } from "@/generated/prisma/enums";
 import { requireAuth } from "@/lib/auth/guards";
 import { prisma } from "@/lib/prisma/client";
+import { uuidSchema } from "@/schemas/shared/params";
 
 export type AccountDetail = {
   id: string;
@@ -47,6 +48,11 @@ type GetAccountByIdResult =
 export async function getAccountByIdAction(
   id: string,
 ): Promise<GetAccountByIdResult> {
+  const parsed = uuidSchema.safeParse(id);
+  if (!parsed.success) {
+    return { success: false, error: "ID inválido" };
+  }
+
   try {
     const user = await requireAuth();
 
@@ -60,6 +66,14 @@ export async function getAccountByIdAction(
           select: { end_date: true, recurrence_months: true },
         },
         account_installments: {
+          select: {
+            id: true,
+            installment_number: true,
+            total_installments: true,
+            due_date: true,
+            amount: true,
+            paid_at: true,
+          },
           orderBy: { installment_number: "asc" },
         },
       },
