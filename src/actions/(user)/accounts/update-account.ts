@@ -40,9 +40,15 @@ export async function updateAccountAction(
 
     const account = await prisma.accounts.findFirst({
       where: { id, user_id: user.id },
-      include: {
+      select: {
+        recurring_rule_id: true,
+        installment_group_id: true,
+        paid_at: true,
         account_installments: {
-          select: { installment_number: true, total_installments: true },
+          select: {
+            installment_number: true,
+            total_installments: true,
+          },
         },
       },
     });

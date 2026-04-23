@@ -18,6 +18,13 @@ export async function GET(req: NextRequest) {
       where: {
         OR: [{ end_date: null }, { end_date: { gte: today } }],
       },
+      select: {
+        id: true,
+        user_id: true,
+        title: true,
+        amount: true,
+        category_id: true,
+      },
     });
 
     let generated = 0;
