@@ -18,7 +18,7 @@ export function AccountFormUtility() {
     <>
       <Separator />
       <div className="flex flex-col gap-1">
-        <h3 className="text-md font-heading capitalize">Detalhes de consumo</h3>
+        <h3 className="text-md font-heading">Detalhes de consumo</h3>
         <p className="text-sm text-muted-foreground">
           Campos específicos para contas de água, energia, internet e gás.
         </p>
@@ -29,7 +29,7 @@ export function AccountFormUtility() {
           control={form.control}
           render={({ field, fieldState }) => (
             <Field>
-              <FieldLabel htmlFor={field.name} className="text-md capitalize">
+              <FieldLabel htmlFor={field.name} className="text-md">
                 Consumo
               </FieldLabel>
               <InputGroup>
@@ -59,7 +59,7 @@ export function AccountFormUtility() {
           control={form.control}
           render={({ field, fieldState }) => (
             <Field>
-              <FieldLabel htmlFor={field.name} className="text-md capitalize">
+              <FieldLabel htmlFor={field.name} className="text-md">
                 Dias do ciclo
               </FieldLabel>
               <InputGroup>

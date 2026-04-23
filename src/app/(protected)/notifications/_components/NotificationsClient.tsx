@@ -99,7 +99,7 @@ export function NotificationsClient() {
               )}
 
               <div className="flex flex-col gap-1 flex-1 min-w-0 pr-4">
-                <span className="font-heading font-semibold capitalize text-sm">
+                <span className="font-heading font-semibold text-sm">
                   {n.title}
                 </span>
 

@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/table";
 import { formatCurrency } from "@/utils/format-currency";
 import { formatDate } from "@/utils/format-date";
+import { capitalizeFirst } from "@/utils/format-text";
 import { ArrowRight, icons } from "lucide-react";
 import Link from "next/link";
 
@@ -53,12 +54,10 @@ export function RecentAccountTable({
     <Card className="flex flex-col flex-1">
       <CardHeader className="flex flex-row items-start justify-between">
         <div>
-          <CardTitle className="text-md font-heading capitalize">
+          <CardTitle className="text-md font-heading">
             Contas recentes
           </CardTitle>
-          <CardDescription className="capitalize">
-            Contas em {label}
-          </CardDescription>
+          <CardDescription>Contas em {label}</CardDescription>
         </div>
         <Button variant="ghost" size="sm" className="text-xs" asChild>
           <Link href="/accounts">
@@ -122,18 +121,18 @@ export function RecentAccountTable({
                     key={account.id}
                     className="*:border-border [&>:not(:last-child)]:border-r odd:bg-muted/50 odd:hover:bg-muted/50 hover:bg-transparent"
                   >
-                    <TableCell className="font-medium capitalize">
-                      {account.title}
+                    <TableCell className="font-medium">
+                      {capitalizeFirst(account.title)}
                     </TableCell>
                     <TableCell>
-                      <span className="flex items-center gap-1.5 text-sm text-muted-foreground capitalize">
+                      <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
                         {IconComponent && (
                           <IconComponent className="h-3.5 w-3.5" />
                         )}
                         {account.category}
                       </span>
                     </TableCell>
-                    <TableCell className="text-muted-foreground text-sm capitalize">
+                    <TableCell className="text-muted-foreground text-sm">
                       {account.dueDate ? formatDate(account.dueDate) : "—"}
                     </TableCell>
                     <TableCell>

@@ -88,7 +88,7 @@ function BudgetSkeleton() {
   return (
     <>
       {Array.from({ length: 6 }).map((_, i) => (
-        <div key={i} className="flex flex-col gap-2">
+        <div key={i} className="flex flex-col gap-2 h-17">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <Skeleton className="h-5 w-5 rounded" />
@@ -130,9 +130,7 @@ export function BudgetProgress({
       <CardHeader className="flex flex-row items-start justify-between">
         <div className="flex flex-col gap-1">
           <CardTitle className="font-heading text-base">Orçamentos</CardTitle>
-          <CardDescription className="capitalize">
-            Uso em {label}
-          </CardDescription>
+          <CardDescription>Uso em {label}</CardDescription>
         </div>
         <Button variant="ghost" size="sm" className="text-xs" asChild>
           <Link href="/budgets">

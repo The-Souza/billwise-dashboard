@@ -26,8 +26,8 @@ export function AccountFormSchedule() {
     <>
       <Separator />
       <div className="flex flex-col gap-1">
-        <h3 className="text-md font-heading capitalize">
-          Configurações da Conta
+        <h3 className="text-md font-heading">
+          Configurações da conta
         </h3>
         <p className="text-sm text-muted-foreground">
           Configure recorrência ou parcelamento
@@ -39,7 +39,7 @@ export function AccountFormSchedule() {
         control={form.control}
         render={({ field }) => (
           <Field>
-            <FieldLabel htmlFor={field.name} className="text-md capitalize">
+            <FieldLabel htmlFor={field.name} className="text-md">
               Tipo de configuração
             </FieldLabel>
             <RadioGroup
@@ -70,7 +70,7 @@ export function AccountFormSchedule() {
           control={form.control}
           render={({ field, fieldState }) => (
             <Field>
-              <FieldLabel htmlFor={field.name} className="text-md capitalize">
+              <FieldLabel htmlFor={field.name} className="text-md">
                 Gerar próximos meses
               </FieldLabel>
               <Select
@@ -105,7 +105,7 @@ export function AccountFormSchedule() {
           control={form.control}
           render={({ field, fieldState }) => (
             <Field>
-              <FieldLabel htmlFor={field.name} className="text-md capitalize">
+              <FieldLabel htmlFor={field.name} className="text-md">
                 Quantidade de parcelas
               </FieldLabel>
               <Select

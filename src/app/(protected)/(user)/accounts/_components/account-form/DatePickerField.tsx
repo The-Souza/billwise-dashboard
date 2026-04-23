@@ -12,7 +12,12 @@ import { formatDateLocal } from "@/helper/format-date-local";
 import { parseDateLocal } from "@/helper/parse-date";
 import { ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
-import type { ControllerFieldState, ControllerRenderProps, FieldValues, Path } from "react-hook-form";
+import type {
+  ControllerFieldState,
+  ControllerRenderProps,
+  FieldValues,
+  Path,
+} from "react-hook-form";
 
 interface DatePickerFieldProps<T extends FieldValues, N extends Path<T>> {
   field: ControllerRenderProps<T, N>;
@@ -30,7 +35,7 @@ export function DatePickerField<T extends FieldValues, N extends Path<T>>({
 
   return (
     <>
-      <FieldLabel htmlFor={field.name} className="text-md capitalize">
+      <FieldLabel htmlFor={field.name} className="text-md">
         {label}
       </FieldLabel>
       <Popover open={open} onOpenChange={setOpen}>

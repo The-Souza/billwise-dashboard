@@ -21,7 +21,7 @@ export function AccountFormRecurrence() {
     <>
       <Separator />
       <div className="flex flex-col gap-1">
-        <h3 className="text-md font-heading capitalize">Recorrência</h3>
+        <h3 className="text-md font-heading">Recorrência</h3>
         <p className="text-sm text-muted-foreground">
           Ajuste por quantos meses esta conta deve continuar sendo gerada.
         </p>
@@ -32,7 +32,7 @@ export function AccountFormRecurrence() {
           control={form.control}
           render={({ field, fieldState }) => (
             <Field>
-              <FieldLabel htmlFor={field.name} className="text-md capitalize">
+              <FieldLabel htmlFor={field.name} className="text-md">
                 Gerar próximos meses
               </FieldLabel>
               <Select
