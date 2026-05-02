@@ -44,7 +44,10 @@ export async function getNotificationsAction(): Promise<GetNotificationsResult> 
       data: notifications.map((n) => ({
         id: n.id,
         title: n.title,
-        body: n.body ?? null,
+        body:
+          n.type === "budget_exceeded" && n.body
+            ? n.body.replace(/\s*\[[0-9a-f-]{36}\]$/, "")
+            : (n.body ?? null),
         type: n.type,
         accountId: n.account_id ?? null,
         readAt: n.read_at?.toISOString() ?? null,
