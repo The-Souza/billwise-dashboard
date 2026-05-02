@@ -44,7 +44,7 @@ export const accountFormSchema = z
 
     recurrenceMonths: z.number().int().positive().nullable().optional(),
 
-    installments: z.number().int().min(2).nullable().optional(),
+    installments: z.number().int().min(2, "Mínimo de 2 parcelas").nullable().optional(),
 
     editScope: z.enum(["single", "future", "all"]),
   })
