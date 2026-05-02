@@ -61,7 +61,7 @@ export async function exportAccountsAction(
       row.month,
       row.year,
       row.due_date ? row.due_date.toISOString().substring(0, 10) : "",
-      row.paid_at ? row.paid_at.toISOString().substring(0, 10) : "",
+      row.status === "paid" && row.paid_at ? row.paid_at.toISOString().substring(0, 10) : "",
       row.consumption !== null && row.consumption !== undefined
         ? Number(row.consumption)
         : null,
