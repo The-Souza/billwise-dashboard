@@ -1,18 +1,10 @@
 "use client";
 
-import { Field, FieldError, FieldLabel } from "@/components/ui/field";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Field, FieldError } from "@/components/ui/field";
 import { Separator } from "@/components/ui/separator";
 import { Controller } from "react-hook-form";
 import { useAccountForm } from "./AccountFormContext";
-
-const RECURRENCE_MONTH_OPTIONS = [3, 6, 9, 12, 18, 24];
+import { RecurrenceDurationInput } from "./RecurrenceDurationInput";
 
 export function AccountFormRecurrence() {
   const { form } = useAccountForm();
@@ -32,32 +24,15 @@ export function AccountFormRecurrence() {
           control={form.control}
           render={({ field, fieldState }) => (
             <Field>
-              <FieldLabel htmlFor={field.name} className="text-md">
-                Gerar próximos meses
-              </FieldLabel>
-              <Select
-                value={field.value?.toString() ?? "none"}
-                onValueChange={(v) =>
-                  field.onChange(v === "none" ? null : Number(v))
-                }
-                name={field.name}
-              >
-                <SelectTrigger
-                  aria-invalid={fieldState.invalid}
-                  id={field.name}
-                >
-                  <SelectValue placeholder="Selecione" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">Sem limite definido</SelectItem>
-                  {RECURRENCE_MONTH_OPTIONS.map((months) => (
-                    <SelectItem key={months} value={months.toString()}>
-                      {months} meses
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+              <RecurrenceDurationInput
+                value={field.value ?? null}
+                onChange={field.onChange}
+                fieldName={field.name}
+                invalid={fieldState.invalid}
+              />
+              {fieldState.invalid && (
+                <FieldError errors={[fieldState.error]} />
+              )}
             </Field>
           )}
         />
