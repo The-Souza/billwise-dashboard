@@ -96,6 +96,17 @@ describe("accountFormSchema", () => {
     });
     expect(result.success).toBe(true);
   });
+
+  it("rejeita parcelado com 1 parcela (mínimo é 2)", () => {
+    const result = accountFormSchema.safeParse({
+      ...base,
+      scheduleType: "installments",
+      installments: 1,
+    });
+    expect(result.success).toBe(false);
+    const messages = result.error?.issues.map((i) => i.message);
+    expect(messages).toContain("Mínimo de 2 parcelas");
+  });
 });
 
 describe("deleteAccountsSchema", () => {

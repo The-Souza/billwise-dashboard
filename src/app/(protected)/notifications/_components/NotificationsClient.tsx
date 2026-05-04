@@ -6,6 +6,8 @@ import {
   AlertTriangleIcon,
   BellIcon,
   CheckCheckIcon,
+  RefreshCwIcon,
+  TrendingUpIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { useNotifications } from "./NotificationsContext";
@@ -31,6 +33,24 @@ const TYPE_CONFIG: Record<
       </div>
     ),
     accentClass: "border-l-amber-500/60",
+  },
+  budget_exceeded: {
+    label: "Orçamento",
+    icon: (
+      <div className="p-2 rounded-md bg-orange-500/10 shrink-0">
+        <TrendingUpIcon className="size-4 text-orange-500" />
+      </div>
+    ),
+    accentClass: "border-l-orange-500/60",
+  },
+  recurring_generated: {
+    label: "Recorrente",
+    icon: (
+      <div className="p-2 rounded-md bg-primary/10 shrink-0">
+        <RefreshCwIcon className="size-4 text-primary" />
+      </div>
+    ),
+    accentClass: "border-l-primary/60",
   },
 };
 

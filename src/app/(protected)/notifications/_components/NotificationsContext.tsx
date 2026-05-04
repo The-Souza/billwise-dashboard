@@ -4,7 +4,7 @@ import { NotificationItem } from "@/actions/notifications/get-notifications";
 import { markNotificationsReadAction } from "@/actions/notifications/mark-notifications-read";
 import { createContext, useContext, useState } from "react";
 
-type FilterType = "all" | "overdue" | "due_soon";
+type FilterType = "all" | "overdue" | "due_soon" | "budget_exceeded" | "recurring_generated";
 
 type NotificationsContextValue = {
   notifications: NotificationItem[];

@@ -1,11 +1,7 @@
 "use client";
 
 import { FieldError, FieldLabel } from "@/components/ui/field";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/ui/input-group";
+import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import { useState } from "react";
 import type {
   ControllerFieldState,
@@ -33,9 +29,6 @@ export function CurrencyInputField<T extends FieldValues, N extends Path<T>>({
         Valor (R$)
       </FieldLabel>
       <InputGroup>
-        <InputGroupAddon className="text-muted-foreground text-sm font-medium">
-          R$
-        </InputGroupAddon>
         <InputGroupInput
           id={field.name}
           type="text"

@@ -161,6 +161,7 @@ export function AccountsDataTable({
           categories={categories}
           onFiltersChange={handleFiltersChange}
           onDelete={handleDeleteSelected}
+          onImportSuccess={mutate}
         />
       </div>
 
