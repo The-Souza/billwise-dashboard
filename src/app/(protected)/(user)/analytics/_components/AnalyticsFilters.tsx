@@ -53,14 +53,14 @@ export function AnalyticsFilters({ filters }: AnalyticsFiltersProps) {
 
   return (
     <div className="flex flex-col sm:flex-row items-center gap-3">
-      <div className="flex items-center gap-2 flex-wrap">
-        <CalendarRangeIcon className="h-4 w-4 text-muted-foreground shrink-0" />
-        <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
+        <div className="flex items-center gap-1.5 w-full sm:w-auto">
+          <CalendarRangeIcon className="h-4 w-4 text-muted-foreground shrink-0" />
           <Select
             value={String(startMonth)}
             onValueChange={(v) => setStart(parseInt(v), startYear)}
           >
-            <SelectTrigger className="w-18 h-8 text-xs">
+            <SelectTrigger className="w-full sm:w-18 h-8 text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -75,7 +75,7 @@ export function AnalyticsFilters({ filters }: AnalyticsFiltersProps) {
             value={String(startYear)}
             onValueChange={(v) => setStart(startMonth, parseInt(v))}
           >
-            <SelectTrigger className="w-20 h-8 text-xs">
+            <SelectTrigger className="w-full sm:w-20 h-8 text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -88,14 +88,13 @@ export function AnalyticsFilters({ filters }: AnalyticsFiltersProps) {
           </Select>
         </div>
 
-        <span className="text-xs text-muted-foreground">até</span>
-
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 w-full sm:w-auto">
+          <span className="text-xs text-muted-foreground">até</span>
           <Select
             value={String(endMonth)}
             onValueChange={(v) => setEnd(parseInt(v), endYear)}
           >
-            <SelectTrigger className="w-18 h-8 text-xs">
+            <SelectTrigger className="w-full sm:w-18 h-8 text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent align="end">
@@ -110,7 +109,7 @@ export function AnalyticsFilters({ filters }: AnalyticsFiltersProps) {
             value={String(endYear)}
             onValueChange={(v) => setEnd(endMonth, parseInt(v))}
           >
-            <SelectTrigger className="w-20 h-8 text-xs">
+            <SelectTrigger className="w-full sm:w-20 h-8 text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent align="end">

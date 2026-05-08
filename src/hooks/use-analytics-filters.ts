@@ -22,7 +22,7 @@ export function useAnalyticsFilters(): AnalyticsFiltersState {
   const currentYear = now.getFullYear();
 
   const initStart = (() => {
-    let m = currentMonth - 3;
+    let m = currentMonth - 5;
     let y = currentYear;
     if (m <= 0) {
       m += 12;

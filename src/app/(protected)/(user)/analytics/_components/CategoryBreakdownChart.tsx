@@ -27,43 +27,14 @@ const COLORS = [
   "var(--chart-5)",
 ];
 
-interface TooltipPayloadItem {
-  name: string;
-  value: number;
-  payload: CategoryBreakdownItem;
-}
-
-function CustomTooltip({
-  active,
-  payload,
-}: {
-  active?: boolean;
-  payload?: TooltipPayloadItem[];
-}) {
-  if (!active || !payload?.length) return null;
-  const item = payload[0].payload;
-  return (
-    <div className="rounded-lg border border-border bg-background px-3 py-2 shadow-md text-xs">
-      <p className="font-medium mb-1">{capitalizeFirst(item.categoryName)}</p>
-      <p className="text-muted-foreground">
-        Total:{" "}
-        <span className="text-foreground font-medium">
-          {formatCurrency(item.total)}
-        </span>
-      </p>
-      <p className="text-muted-foreground">
-        Participação:{" "}
-        <span className="text-foreground font-medium">
-          {item.percentage.toFixed(1)}%
-        </span>
-      </p>
-      <p className="text-muted-foreground">
-        Transações:{" "}
-        <span className="text-foreground font-medium">{item.count}</span>
-      </p>
-    </div>
-  );
-}
+const TOOLTIP_ROWS: {
+  label: string;
+  format: (item: CategoryBreakdownItem) => string;
+}[] = [
+  { label: "Total", format: (item) => formatCurrency(item.total) },
+  { label: "Participação", format: (item) => `${item.percentage.toFixed(1)}%` },
+  { label: "Transações", format: (item) => String(item.count) },
+];
 
 export function CategoryBreakdownChart({
   data = [],
@@ -126,7 +97,44 @@ export function CategoryBreakdownChart({
                     />
                   ))}
                 </Pie>
-                <Tooltip content={<CustomTooltip />} />
+                <Tooltip
+                  content={({ active, payload }) => {
+                    if (!active || !payload?.length) return null;
+                    const item = payload[0].payload as CategoryBreakdownItem;
+                    const index = data.findIndex(
+                      (d) => d.categoryId === item.categoryId,
+                    );
+                    const fill = COLORS[Math.max(0, index) % COLORS.length];
+                    return (
+                      <div className="grid min-w-32 items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
+                        <div className="font-medium">
+                          {capitalizeFirst(item.categoryName)}
+                        </div>
+                        <div className="grid gap-1.5">
+                          {TOOLTIP_ROWS.map(({ label, format }) => (
+                            <div
+                              key={label}
+                              className="flex w-full items-center gap-2"
+                            >
+                              <div
+                                className="h-2 w-2 shrink-0 rounded-full"
+                                style={{ backgroundColor: fill }}
+                              />
+                              <div className="flex flex-1 justify-between items-center leading-none">
+                                <span className="text-muted-foreground">
+                                  {label}
+                                </span>
+                                <span className="font-medium tabular-nums text-foreground ml-2">
+                                  {format(item)}
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  }}
+                />
               </PieChart>
             </ResponsiveContainer>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import type { CategoryBreakdownItem } from "@/actions/(user)/analytics/get-category-breakdown";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -9,13 +10,23 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { formatCurrency } from "@/utils/format-currency";
 import { capitalizeFirst } from "@/utils/format-text";
-import { icons, RefreshCw } from "lucide-react";
+import { ChevronLeft, ChevronRight, icons, RefreshCw } from "lucide-react";
 import { useState } from "react";
 
 type SortKey = "categoryName" | "total" | "count" | "average" | "percentage";
 type SortDir = "asc" | "desc";
+
+const PAGE_SIZE = 10;
 
 interface CategoryTableProps {
   data?: CategoryBreakdownItem[];
@@ -24,12 +35,13 @@ interface CategoryTableProps {
 
 function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
   if (!active) return <span className="text-muted-foreground/40">↕</span>;
-  return <span className="text-foreground">{dir === "asc" ? "↑" : "↓"}</span>;
+  return <span>{dir === "asc" ? "↑" : "↓"}</span>;
 }
 
 export function CategoryTable({ data = [], isLoading }: CategoryTableProps) {
   const [sortKey, setSortKey] = useState<SortKey>("total");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
+  const [page, setPage] = useState(0);
 
   function handleSort(key: SortKey) {
     if (sortKey === key) {
@@ -38,6 +50,7 @@ export function CategoryTable({ data = [], isLoading }: CategoryTableProps) {
       setSortKey(key);
       setSortDir("desc");
     }
+    setPage(0);
   }
 
   const sorted = [...data].sort((a, b) => {
@@ -50,12 +63,15 @@ export function CategoryTable({ data = [], isLoading }: CategoryTableProps) {
     return sortDir === "asc" ? cmp : -cmp;
   });
 
-  const headers: { key: SortKey; label: string; align?: "right" }[] = [
+  const totalPages = Math.ceil(sorted.length / PAGE_SIZE);
+  const paged = sorted.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+
+  const headers: { key: SortKey; label: string; className?: string }[] = [
     { key: "categoryName", label: "Categoria" },
-    { key: "total", label: "Total", align: "right" },
-    { key: "count", label: "Transações", align: "right" },
-    { key: "average", label: "Média", align: "right" },
-    { key: "percentage", label: "% do total", align: "right" },
+    { key: "total", label: "Total", className: "text-right" },
+    { key: "count", label: "Transações", className: "text-right" },
+    { key: "average", label: "Média", className: "text-right" },
+    { key: "percentage", label: "% do total", className: "text-right" },
   ];
 
   return (
@@ -66,99 +82,126 @@ export function CategoryTable({ data = [], isLoading }: CategoryTableProps) {
         </CardTitle>
         <CardDescription>Clique nos cabeçalhos para ordenar</CardDescription>
       </CardHeader>
-      <CardContent className="p-0">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border">
-                {headers.map((h) => (
-                  <th
-                    key={h.key}
-                    onClick={() => handleSort(h.key)}
-                    className={`px-6 py-3 text-xs font-medium text-muted-foreground cursor-pointer select-none hover:text-foreground transition-colors ${
-                      h.align === "right" ? "text-right" : "text-left"
-                    }`}
-                  >
-                    {h.label}{" "}
-                    <SortIcon active={sortKey === h.key} dir={sortDir} />
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {isLoading ? (
-                Array.from({ length: 5 }).map((_, i) => (
-                  <tr key={i}>
-                    <td className="px-6 py-3">
-                      <div className="flex items-center gap-2">
-                        <Skeleton className="h-6 w-6 rounded-md shrink-0" />
-                        <Skeleton className="h-3.5 w-28" />
-                      </div>
-                    </td>
-                    {Array.from({ length: 4 }).map((_, j) => (
-                      <td key={j} className="px-6 py-3 text-right">
-                        <Skeleton className="h-3.5 w-16 ml-auto" />
-                      </td>
-                    ))}
-                  </tr>
-                ))
-              ) : sorted.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={5}
-                    className="px-6 py-12 text-center text-sm text-muted-foreground"
-                  >
-                    Nenhuma categoria no período selecionado.
-                  </td>
-                </tr>
-              ) : (
-                sorted.map((item) => {
-                  const IconComponent = item.categoryIcon
-                    ? (icons[
-                        item.categoryIcon as keyof typeof icons
-                      ] as React.ElementType)
-                    : null;
+      <CardContent className="pt-0">
+        <Table>
+          <TableHeader>
+            <TableRow className="*:border-border [&>:not(:last-child)]:border-r hover:bg-transparent">
+              {headers.map((h) => (
+                <TableHead
+                  key={h.key}
+                  onClick={() => handleSort(h.key)}
+                  className={`cursor-pointer select-none hover:text-foreground transition-colors whitespace-nowrap ${h.className ?? ""}`}
+                >
+                  {h.label}{" "}
+                  <SortIcon active={sortKey === h.key} dir={sortDir} />
+                </TableHead>
+              ))}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {isLoading ? (
+              Array.from({ length: PAGE_SIZE }).map((_, i) => (
+                <TableRow
+                  key={i}
+                  className="*:border-border [&>:not(:last-child)]:border-r odd:bg-muted/50 odd:hover:bg-muted/50 hover:bg-transparent"
+                >
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Skeleton className="h-6 w-6 rounded-md shrink-0" />
+                      <Skeleton className="h-3.5 w-28" />
+                    </div>
+                  </TableCell>
+                  {Array.from({ length: 4 }).map((_, j) => (
+                    <TableCell key={j} className="text-right">
+                      <Skeleton className="h-3.5 w-16 ml-auto" />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : sorted.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={5}
+                  className="py-12 text-center text-sm text-muted-foreground"
+                >
+                  Nenhuma categoria no período selecionado.
+                </TableCell>
+              </TableRow>
+            ) : (
+              paged.map((item) => {
+                const IconComponent = item.categoryIcon
+                  ? (icons[
+                      item.categoryIcon as keyof typeof icons
+                    ] as React.ElementType)
+                  : null;
 
-                  return (
-                    <tr
-                      key={item.categoryId}
-                      className="hover:bg-muted/30 transition-colors"
-                    >
-                      <td className="px-6 py-3">
-                        <div className="flex items-center gap-2">
-                          <div className="p-1.5 rounded-md bg-primary/10 shrink-0">
-                            {IconComponent ? (
-                              <IconComponent className="h-3.5 w-3.5 text-primary" />
-                            ) : (
-                              <RefreshCw className="h-3.5 w-3.5 text-primary" />
-                            )}
-                          </div>
-                          <span className="font-medium">
-                            {capitalizeFirst(item.categoryName)}
-                          </span>
+                return (
+                  <TableRow
+                    key={item.categoryId}
+                    className="*:border-border [&>:not(:last-child)]:border-r odd:bg-muted/50 odd:hover:bg-muted/50 hover:bg-transparent"
+                  >
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <div className="p-1.5 rounded-md bg-primary/10 shrink-0">
+                          {IconComponent ? (
+                            <IconComponent className="h-3.5 w-3.5 text-primary" />
+                          ) : (
+                            <RefreshCw className="h-3.5 w-3.5 text-primary" />
+                          )}
                         </div>
-                      </td>
-                      <td className="px-6 py-3 text-right tabular-nums font-medium">
-                        {formatCurrency(item.total)}
-                      </td>
-                      <td className="px-6 py-3 text-right tabular-nums text-muted-foreground">
-                        {item.count}
-                      </td>
-                      <td className="px-6 py-3 text-right tabular-nums text-muted-foreground">
-                        {formatCurrency(item.average)}
-                      </td>
-                      <td className="px-6 py-3 text-right tabular-nums">
-                        <span className="text-muted-foreground">
-                          {item.percentage.toFixed(1)}%
+                        <span className="font-medium">
+                          {capitalizeFirst(item.categoryName)}
                         </span>
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums font-medium">
+                      {formatCurrency(item.total)}
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums text-muted-foreground">
+                      {item.count}
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums text-muted-foreground">
+                      {formatCurrency(item.average)}
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums text-muted-foreground">
+                      {item.percentage.toFixed(1)}%
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+            )}
+          </TableBody>
+        </Table>
+
+        {!isLoading && totalPages > 1 && (
+          <div className="flex items-center justify-between pt-3 border-t border-border text-xs text-muted-foreground">
+            <span>
+              {page * PAGE_SIZE + 1}–
+              {Math.min((page + 1) * PAGE_SIZE, sorted.length)} de{" "}
+              {sorted.length}
+            </span>
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                disabled={page === 0}
+                onClick={() => setPage((p) => p - 1)}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                disabled={page >= totalPages - 1}
+                onClick={() => setPage((p) => p + 1)}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
