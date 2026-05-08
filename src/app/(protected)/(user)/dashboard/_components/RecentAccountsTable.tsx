@@ -69,7 +69,7 @@ export function RecentAccountTable({
       <CardContent className="flex-1">
         <Table>
           <TableHeader>
-            <TableRow className="*:border-border [&>:not(:last-child)]:border-r hover:bg-transparent">
+            <TableRow className="*:border-border [&>:not(:last-child)]:border-r hover:bg-transparent whitespace-nowrap">
               {tableHeaders.map((header) => (
                 <TableHead
                   key={header.label}
@@ -85,7 +85,7 @@ export function RecentAccountTable({
               Array.from({ length: 8 }).map((_, i) => (
                 <TableRow
                   key={i}
-                  className="*:border-border [&>:not(:last-child)]:border-r hover:bg-transparent"
+                  className="*:border-border [&>:not(:last-child)]:border-r odd:bg-muted/50 odd:hover:bg-muted/50 hover:bg-transparent"
                 >
                   {skeletonCells.map((cell, index) => (
                     <TableCell key={index} className={cell.cellClass}>
@@ -119,7 +119,7 @@ export function RecentAccountTable({
                 return (
                   <TableRow
                     key={account.id}
-                    className="*:border-border [&>:not(:last-child)]:border-r odd:bg-muted/50 odd:hover:bg-muted/50 hover:bg-transparent"
+                    className="*:border-border [&>:not(:last-child)]:border-r odd:bg-muted/50 odd:hover:bg-muted/50 hover:bg-transparent whitespace-nowrap"
                   >
                     <TableCell className="font-medium">
                       {capitalizeFirst(account.title)}
