@@ -2,54 +2,56 @@
 
 import { requireAuth } from "@/lib/auth/guards";
 import { createServerSupabase } from "@/lib/supabase/server";
+import { updateAccountSchema } from "@/schemas/profile/update-account";
 import { revalidatePath } from "next/cache";
-
-type UpdateAccountInput = {
-  name: string;
-  email: string;
-};
+import z from "zod";
 
 type UpdateAccountResponse =
   | { success: true }
   | { success: false; error: string };
 
 export async function updateAccountAction(
-  data: UpdateAccountInput,
+  data: z.infer<typeof updateAccountSchema>,
 ): Promise<UpdateAccountResponse> {
-  const user = await requireAuth();
-  const supabase = await createServerSupabase();
+  const parsed = updateAccountSchema.safeParse(data);
 
-  const { error: profileError } = await supabase
-    .from("profiles")
-    .update({ name: data.name })
-    .eq("id", user.id);
-
-  if (profileError) {
-    return {
-      success: false,
-      error: profileError.message,
-    };
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.issues[0].message };
   }
 
-  const { error: authError } = await supabase.auth.updateUser({
-    email: data.email,
-  });
+  try {
+    const user = await requireAuth();
+    const supabase = await createServerSupabase();
 
-  if (authError) {
-    if (authError.status === 429) {
-      return {
-        success: false,
-        error: "Muitas tentativas. Aguarde alguns minutos.",
-      };
+    const { error: profileError } = await supabase
+      .from("profiles")
+      .update({ name: parsed.data.name })
+      .eq("id", user.id);
+
+    if (profileError) {
+      return { success: false, error: "Erro ao atualizar nome." };
     }
 
-    return {
-      success: false,
-      error: authError.message,
-    };
+    const { error: authError } = await supabase.auth.updateUser({
+      email: parsed.data.email,
+    });
+
+    if (authError) {
+      if (authError.status === 429) {
+        return {
+          success: false,
+          error: "Muitas tentativas. Aguarde alguns minutos.",
+        };
+      }
+
+      return { success: false, error: "Erro ao atualizar email." };
+    }
+
+    revalidatePath("/profile");
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error in updateAccountAction:", error);
+    return { success: false, error: "Erro ao atualizar dados. Tente novamente." };
   }
-
-  revalidatePath("/profile");
-
-  return { success: true };
 }

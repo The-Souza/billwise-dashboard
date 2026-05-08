@@ -17,6 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { SWR_DEFAULT_OPTIONS } from "@/config/swr";
 import { DashboardMonth } from "@/hooks/use-dashboard-month";
 import { appToast } from "@/utils/app-toast";
 import {
@@ -86,6 +87,7 @@ export function AccountsDataTable({
     mutate,
   } = useSWR(["accounts", filters], () => getAccountsAction(filters), {
     keepPreviousData: true,
+    ...SWR_DEFAULT_OPTIONS,
   });
 
   const accounts = result?.success ? result.data : [];
@@ -159,6 +161,7 @@ export function AccountsDataTable({
           categories={categories}
           onFiltersChange={handleFiltersChange}
           onDelete={handleDeleteSelected}
+          onImportSuccess={mutate}
         />
       </div>
 
@@ -168,7 +171,7 @@ export function AccountsDataTable({
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow
                 key={headerGroup.id}
-                className="*:border-border [&>:not(:last-child)]:border-r hover:bg-transparent"
+                className="*:border-border [&>:not(:last-child)]:border-r hover:bg-transparent whitespace-nowrap"
               >
                 {headerGroup.headers.map((header) => (
                   <TableHead
@@ -191,7 +194,7 @@ export function AccountsDataTable({
               Array.from({ length: PAGE_SIZE }).map((_, i) => (
                 <TableRow
                   key={i}
-                  className="*:border-border [&>:not(:last-child)]:border-r hover:bg-transparent"
+                  className="*:border-border [&>:not(:last-child)]:border-r odd:bg-muted/50 odd:hover:bg-muted/50 hover:bg-transparent"
                 >
                   {skeletonWidths.map((width, index) => (
                     <TableCell key={index} className="h-11.25">
@@ -205,7 +208,7 @@ export function AccountsDataTable({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="*:border-border [&>:not(:last-child)]:border-r odd:bg-muted/50 odd:hover:bg-muted/50 hover:bg-transparent"
+                  className="*:border-border [&>:not(:last-child)]:border-r odd:bg-muted/50 odd:hover:bg-muted/50 hover:bg-transparent whitespace-nowrap"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell

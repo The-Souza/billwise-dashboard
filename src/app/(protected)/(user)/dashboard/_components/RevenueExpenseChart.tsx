@@ -55,7 +55,7 @@ export function RevenueExpenseChart({
           <CardTitle className="font-heading text-md">
             Receitas vs Despesas
           </CardTitle>
-          <CardDescription className="capitalize">
+          <CardDescription>
             Histórico dos últimos {chartPeriod} meses
           </CardDescription>
         </div>
@@ -63,7 +63,7 @@ export function RevenueExpenseChart({
           <SelectTrigger className="w-26 h-8 text-xs">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent align="end">
             <SelectItem value="3">3 meses</SelectItem>
             <SelectItem value="6">6 meses</SelectItem>
             <SelectItem value="12">12 meses</SelectItem>
@@ -72,14 +72,14 @@ export function RevenueExpenseChart({
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <Skeleton className="h-80 md:h-130 w-full rounded-lg" />
+          <Skeleton className="h-80 md:h-136 w-full rounded-lg" />
         ) : chartData.length === 0 ? (
-          <div className="h-130 w-full flex flex-col items-center justify-center gap-2 text-muted-foreground">
+          <div className="h-136 w-full flex flex-col items-center justify-center gap-2 text-muted-foreground">
             <TrendingUp className="h-8 w-8 opacity-30" />
             <p className="text-sm">Nenhuma movimentação neste período.</p>
           </div>
         ) : (
-          <ChartContainer config={chartConfig} className="h-80 md:h-130 w-full">
+          <ChartContainer config={chartConfig} className="h-80 md:h-136 w-full">
             <AreaChart data={chartData}>
               <defs>
                 <linearGradient id="incomeGrad" x1="0" y1="0" x2="0" y2="1">

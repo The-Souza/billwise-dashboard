@@ -3,6 +3,8 @@
 import { account_status, category_type } from "@/generated/prisma/enums";
 import { requireAuth } from "@/lib/auth/guards";
 import { prisma } from "@/lib/prisma/client";
+import { getAccountsFiltersSchema } from "@/schemas/accounts/get-accounts";
+import z from "zod";
 
 export type AccountRow = {
   id: string;
@@ -17,15 +19,7 @@ export type AccountRow = {
   installments: { current: number; total: number } | null;
 };
 
-export type AccountFilters = {
-  month?: number;
-  year?: number;
-  status?: account_status;
-  categoryId?: string;
-  title?: string;
-  page?: number;
-  pageSize?: number;
-};
+export type AccountFilters = z.input<typeof getAccountsFiltersSchema>;
 
 export type GetAccountsResult =
   | { success: true; data: AccountRow[]; total: number }
@@ -34,18 +28,15 @@ export type GetAccountsResult =
 export async function getAccountsAction(
   filters: AccountFilters = {},
 ): Promise<GetAccountsResult> {
+  const parsed = getAccountsFiltersSchema.safeParse(filters);
+  if (!parsed.success) {
+    return { success: false, error: "Filtros inválidos" };
+  }
+
   try {
     const user = await requireAuth();
 
-    const {
-      month,
-      year,
-      status,
-      categoryId,
-      title,
-      page = 1,
-      pageSize = 10,
-    } = filters;
+    const { month, year, status, categoryId, title, page, pageSize } = parsed.data;
 
     const where = {
       user_id: user.id,

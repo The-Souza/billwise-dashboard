@@ -24,35 +24,41 @@ export async function updatePasswordAction(
     };
   }
 
-  const supabase = await createServerSupabase();
+  try {
+    const supabase = await createServerSupabase();
 
-  const { error } = await supabase.auth.updateUser({
-    password: parsed.data.password,
-  });
+    const { error } = await supabase.auth.updateUser({
+      password: parsed.data.password,
+    });
 
-  if (error) {
-    if (error.status === 429) {
+    if (error) {
+      if (error.status === 429) {
+        return {
+          success: false,
+          error: "Muitas tentativas. Aguarde alguns minutos.",
+        };
+      }
+
+      if (error.status === 422) {
+        return {
+          success: false,
+          error: "A nova senha deve ser diferente da senha atual.",
+          field: "password",
+        };
+      }
+
       return {
         success: false,
-        error: "Muitas tentativas. Aguarde alguns minutos.",
+        error: "Erro ao atualizar senha. Tente novamente.",
       };
     }
 
-    if (error.status === 422) {
-      return {
-        success: false,
-        error: "A nova senha deve ser diferente da senha atual.",
-        field: "password",
-      };
-    }
-    return {
-      success: false,
-      error: "Erro ao atualizar senha. Tente novamente.",
-    };
+    await supabase.auth.signOut();
+    cookieStore.delete("recovery_session");
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error in updatePasswordAction:", error);
+    return { success: false, error: "Erro ao conectar ao servidor. Tente novamente." };
   }
-
-  await supabase.auth.signOut();
-  cookieStore.delete("recovery_session");
-
-  return { success: true };
 }

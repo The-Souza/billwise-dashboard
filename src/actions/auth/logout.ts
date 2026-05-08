@@ -3,11 +3,24 @@
 import { createServerSupabase } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
 
-export async function logoutAction() {
-  const supabase = await createServerSupabase();
-  const cookieStore = await cookies();
+type LogoutResult = { success: true } | { success: false; error: string };
 
-  await supabase.auth.signOut();
+export async function logoutAction(): Promise<LogoutResult> {
+  try {
+    const supabase = await createServerSupabase();
+    const cookieStore = await cookies();
 
-  cookieStore.delete("recovery_session");
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      return { success: false, error: "Erro ao encerrar sessão" };
+    }
+
+    cookieStore.delete("recovery_session");
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error in logoutAction:", error);
+    return { success: false, error: "Erro ao encerrar sessão" };
+  }
 }

@@ -1,7 +1,7 @@
 import { createServerSupabase } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { AuthUser, getUserWithRole, UserRole } from "./getUserWithRole";
+import { AuthUser, getUserWithRole, UserRole } from "./get-user-with-role";
 
 export async function requireRole(
   allowedRoles: UserRole | UserRole[],

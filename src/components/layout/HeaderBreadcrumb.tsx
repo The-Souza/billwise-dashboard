@@ -8,7 +8,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { UserRole } from "@/lib/auth/getUserWithRole";
+import { UserRole } from "@/lib/auth/get-user-with-role";
 import { isUuid } from "@/utils/is-uuid";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -25,6 +25,7 @@ const routeLabels: Record<string, string> = {
   notifications: "Notificações",
   "change-password": "Alterar Senha",
   "add-account": "Nova Conta",
+  analytics: "Análises",
 };
 
 const uuidContextLabels: Record<string, string> = {

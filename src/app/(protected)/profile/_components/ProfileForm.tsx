@@ -27,7 +27,8 @@ import {
 } from "@/components/ui/field";
 import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import { Spinner } from "@/components/ui/spinner";
-import { AuthUser } from "@/lib/auth/getUserWithRole";
+import { AuthUser } from "@/lib/auth/get-user-with-role";
+import { updateAccountSchema } from "@/schemas/profile/update-account";
 import { appToast } from "@/utils/app-toast";
 import { getInitials } from "@/utils/get-initials";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -36,15 +37,6 @@ import Link from "next/link";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
-
-const formSchema = z.object({
-  name: z.string().nonempty("Nome é obrigatório"),
-  email: z
-    .string()
-    .nonempty("Email é obrigatório")
-    .email("Email inválido")
-    .toLowerCase(),
-});
 
 type User = {
   user: AuthUser;
@@ -55,8 +47,8 @@ export function ProfileForm({ user }: User) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof updateAccountSchema>>({
+    resolver: zodResolver(updateAccountSchema),
     mode: "onChange",
     defaultValues: {
       name: user.name ?? "",
@@ -93,7 +85,7 @@ export function ProfileForm({ user }: User) {
     }
   }
 
-  async function handleSubmit(data: z.infer<typeof formSchema>) {
+  async function handleSubmit(data: z.infer<typeof updateAccountSchema>) {
     if (isSubmitting) return;
 
     setIsSubmitting(true);
@@ -166,7 +158,7 @@ export function ProfileForm({ user }: User) {
                   const response = await removeAvatarAction();
 
                   if (!response.success) {
-                    appToast.error(response.message);
+                    appToast.error(response.error);
                     return;
                   }
 
@@ -187,7 +179,7 @@ export function ProfileForm({ user }: User) {
       </div>
 
       <div className="flex flex-col gap-4 w-full">
-        <Card className="border-none bg-transparent">
+        <Card className="border-none bg-transparent shadow-none">
           <CardHeader className="flex flex-col sm:flex-row gap-2 items-start sm:items-center justify-between">
             <div>
               <CardTitle className="text-md">Dados Pessoais</CardTitle>
@@ -285,7 +277,7 @@ export function ProfileForm({ user }: User) {
           </CardContent>
         </Card>
 
-        <Card className="border-none bg-transparent">
+        <Card className="border-none bg-transparent shadow-none">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-md">
               <Lock className="h-4 w-4" /> Segurança

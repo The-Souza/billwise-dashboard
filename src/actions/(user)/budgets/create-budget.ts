@@ -43,7 +43,8 @@ export async function createBudgetAction(
     });
 
     return { success: true };
-  } catch {
+  } catch (error) {
+    console.error("Error in createBudgetAction:", error);
     return { success: false, error: "Erro ao criar orçamento" };
   }
 }

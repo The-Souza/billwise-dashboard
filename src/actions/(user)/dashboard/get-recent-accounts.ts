@@ -3,6 +3,7 @@
 import { account_status, category_type } from "@/generated/prisma/enums";
 import { requireAuth } from "@/lib/auth/guards";
 import { prisma } from "@/lib/prisma/client";
+import { monthYearSchema } from "@/schemas/shared/params";
 
 export type RecentAccount = {
   id: string;
@@ -19,19 +20,28 @@ type GetRecentAccountsResult =
   | { success: true; data: RecentAccount[] }
   | { success: false; error: string };
 
+const MAX_LIMIT = 50;
+
 export async function getRecentAccountsAction(
   month: number,
   year: number,
   limit = 8,
 ): Promise<GetRecentAccountsResult> {
+  const parsed = monthYearSchema.safeParse({ month, year });
+  if (!parsed.success) {
+    return { success: false, error: "Parâmetros de data inválidos" };
+  }
+
+  const safeLimit = Math.min(Math.max(1, limit), MAX_LIMIT);
+
   try {
     const user = await requireAuth();
 
     const rows = await prisma.accounts.findMany({
       where: {
         user_id: user.id,
-        month,
-        year,
+        month: parsed.data.month,
+        year: parsed.data.year,
       },
       include: {
         categories: {
@@ -43,7 +53,7 @@ export async function getRecentAccountsAction(
         },
       },
       orderBy: { created_at: "desc" },
-      take: limit,
+      take: safeLimit,
     });
 
     const data: RecentAccount[] = rows.map((row) => ({
@@ -58,7 +68,8 @@ export async function getRecentAccountsAction(
     }));
 
     return { success: true, data };
-  } catch {
+  } catch (error) {
+    console.error("Error in getRecentAccountsAction:", error);
     return { success: false, error: "Erro ao buscar contas recentes" };
   }
 }

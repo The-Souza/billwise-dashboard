@@ -3,6 +3,7 @@
 import { category_type } from "@/generated/prisma/enums";
 import { requireAuth } from "@/lib/auth/guards";
 import { prisma } from "@/lib/prisma/client";
+import { monthYearSchema } from "@/schemas/shared/params";
 
 export type BudgetRow = {
   id: string;
@@ -26,6 +27,11 @@ export async function getBudgetsAction(
   month: number,
   year: number,
 ): Promise<GetBudgetsResult> {
+  const parsed = monthYearSchema.safeParse({ month, year });
+  if (!parsed.success) {
+    return { success: false, error: "Parâmetros de data inválidos" };
+  }
+
   try {
     const user = await requireAuth();
 
@@ -64,8 +70,8 @@ export async function getBudgetsAction(
         AND b.user_id = bva.user_id
       JOIN public.categories c ON c.id = bva.category_id
       WHERE bva.user_id = ${user.id}::uuid
-        AND bva.month = ${month}
-        AND bva.year = ${year}
+        AND bva.month = ${parsed.data.month}
+        AND bva.year = ${parsed.data.year}
       ORDER BY c.type ASC, bva.used_percentage DESC
     `;
 
@@ -85,7 +91,8 @@ export async function getBudgetsAction(
         month: row.month,
       })),
     };
-  } catch {
+  } catch (error) {
+    console.error("Error in getBudgetsAction:", error);
     return { success: false, error: "Erro ao buscar orçamentos" };
   }
 }

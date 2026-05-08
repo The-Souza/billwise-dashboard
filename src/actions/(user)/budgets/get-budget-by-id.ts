@@ -2,6 +2,7 @@
 
 import { requireAuth } from "@/lib/auth/guards";
 import { prisma } from "@/lib/prisma/client";
+import { uuidSchema } from "@/schemas/shared/params";
 
 export type BudgetDetail = {
   id: string;
@@ -19,12 +20,22 @@ type GetBudgetByIdResult =
 export async function getBudgetByIdAction(
   id: string,
 ): Promise<GetBudgetByIdResult> {
+  const parsed = uuidSchema.safeParse(id);
+  if (!parsed.success) {
+    return { success: false, error: "ID inválido" };
+  }
+
   try {
     const user = await requireAuth();
 
     const row = await prisma.budgets.findFirst({
       where: { id, user_id: user.id },
-      include: {
+      select: {
+        id: true,
+        category_id: true,
+        limit_amount: true,
+        month: true,
+        year: true,
         categories: { select: { name: true } },
       },
     });
@@ -44,7 +55,8 @@ export async function getBudgetByIdAction(
         year: row.year,
       },
     };
-  } catch {
+  } catch (error) {
+    console.error("Error in getBudgetByIdAction:", error);
     return { success: false, error: "Erro ao buscar orçamento" };
   }
 }

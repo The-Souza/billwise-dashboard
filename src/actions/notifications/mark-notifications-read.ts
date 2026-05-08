@@ -2,6 +2,7 @@
 
 import { requireAuth } from "@/lib/auth/guards";
 import { prisma } from "@/lib/prisma/client";
+import { markReadIdsSchema } from "@/schemas/notifications/mark-read";
 
 export type MarkNotificationsReadResult =
   | { success: true }
@@ -10,6 +11,13 @@ export type MarkNotificationsReadResult =
 export async function markNotificationsReadAction(
   ids?: string[],
 ): Promise<MarkNotificationsReadResult> {
+  if (ids !== undefined) {
+    const parsed = markReadIdsSchema.safeParse(ids);
+    if (!parsed.success) {
+      return { success: false, error: "IDs inválidos" };
+    }
+  }
+
   try {
     const user = await requireAuth();
 
@@ -23,7 +31,7 @@ export async function markNotificationsReadAction(
 
     return { success: true };
   } catch (error) {
-    console.error("Error marking notifications as read:", error);
+    console.error("Error in markNotificationsReadAction:", error);
     return { success: false, error: "Erro ao marcar notificações" };
   }
 }

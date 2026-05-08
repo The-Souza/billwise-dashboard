@@ -1,6 +1,6 @@
 import { NotificationItem } from "@/actions/notifications/get-notifications";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircleIcon, AlertTriangleIcon, BellIcon } from "lucide-react";
+import { AlertCircleIcon, AlertTriangleIcon, BellIcon, RefreshCwIcon, TrendingUpIcon } from "lucide-react";
 
 const TYPE_ICON: Record<string, React.ReactNode> = {
   overdue: (
@@ -11,6 +11,16 @@ const TYPE_ICON: Record<string, React.ReactNode> = {
   due_soon: (
     <div className="p-1.5 rounded-md bg-amber-600/10 shrink-0">
       <AlertCircleIcon className="size-3.5 text-amber-500" />
+    </div>
+  ),
+  budget_exceeded: (
+    <div className="p-1.5 rounded-md bg-orange-500/10 shrink-0">
+      <TrendingUpIcon className="size-3.5 text-orange-500" />
+    </div>
+  ),
+  recurring_generated: (
+    <div className="p-1.5 rounded-md bg-primary/10 shrink-0">
+      <RefreshCwIcon className="size-3.5 text-primary" />
     </div>
   ),
 };
@@ -46,7 +56,9 @@ export function NotificationsList({
           <BellIcon className="h-4 w-4 text-muted-foreground opacity-50" />
         </div>
         <p className="text-xs font-medium text-foreground">Sem notificações</p>
-        <p className="text-xs text-muted-foreground">Você está em dia com tudo.</p>
+        <p className="text-xs text-muted-foreground">
+          Você está em dia com tudo.
+        </p>
       </div>
     );
   }
@@ -66,15 +78,13 @@ export function NotificationsList({
             </div>
           )}
           <div className="flex flex-col gap-0.5 min-w-0">
-            <span className="font-medium capitalize leading-tight">
-              {n.title}
-            </span>
+            <span className="font-medium leading-tight">{n.title}</span>
             {n.body && (
               <span className="text-muted-foreground text-xs line-clamp-2">
                 {n.body}
               </span>
             )}
-            <span className="text-xs text-muted-foreground mt-0.5 capitalize">
+            <span className="text-xs text-muted-foreground mt-0.5">
               {new Date(n.createdAt).toLocaleDateString("pt-BR", {
                 day: "2-digit",
                 month: "short",

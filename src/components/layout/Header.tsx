@@ -3,7 +3,7 @@
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { ToggleTheme } from "@/components/ui/toggle-theme";
-import { UserRole } from "@/lib/auth/getUserWithRole";
+import { UserRole } from "@/lib/auth/get-user-with-role";
 import { HeaderBreadcrumb } from "./HeaderBreadcrumb";
 import { NotificationBell } from "./notification/NotificationBell";
 

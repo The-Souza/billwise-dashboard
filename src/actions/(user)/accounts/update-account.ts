@@ -1,6 +1,7 @@
 "use server";
 
 import { account_status } from "@/generated/prisma/enums";
+import { calcRecurringEndDate } from "@/helper/calc-recurring-end-date";
 import { parseDateParts } from "@/helper/parse-date";
 import { requireAuth } from "@/lib/auth/guards";
 import { prisma } from "@/lib/prisma/client";
@@ -10,12 +11,6 @@ import { z } from "zod";
 type UpdateAccountResult =
   | { success: true }
   | { success: false; error: string };
-
-function calcRecurringEndDate(startDate: Date, months: number): Date {
-  const end = new Date(startDate);
-  end.setMonth(end.getMonth() + months);
-  return end;
-}
 
 export async function updateAccountAction(
   id: string,
@@ -45,9 +40,15 @@ export async function updateAccountAction(
 
     const account = await prisma.accounts.findFirst({
       where: { id, user_id: user.id },
-      include: {
+      select: {
+        recurring_rule_id: true,
+        installment_group_id: true,
+        paid_at: true,
         account_installments: {
-          select: { installment_number: true, total_installments: true },
+          select: {
+            installment_number: true,
+            total_installments: true,
+          },
         },
       },
     });
@@ -104,6 +105,7 @@ export async function updateAccountAction(
               user_id: user.id,
             },
             orderBy: { account_date: "asc" },
+            select: { id: true },
           });
 
           const installmentAmount = Number(amount);

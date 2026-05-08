@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getUserWithRole } from "@/lib/auth/getUserWithRole";
+import { getUserWithRole } from "@/lib/auth/get-user-with-role";
 
 export default async function HomePage() {
   const user = await getUserWithRole();

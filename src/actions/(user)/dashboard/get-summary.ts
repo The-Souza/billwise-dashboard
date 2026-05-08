@@ -2,6 +2,7 @@
 
 import { requireAuth } from "@/lib/auth/guards";
 import { prisma } from "@/lib/prisma/client";
+import { monthYearSchema } from "@/schemas/shared/params";
 
 export type MonthlySummary = {
   balance: number;
@@ -25,11 +26,16 @@ export async function getSummaryAction(
   month: number,
   year: number,
 ): Promise<GetSummaryResult> {
+  const parsed = monthYearSchema.safeParse({ month, year });
+  if (!parsed.success) {
+    return { success: false, error: "Parâmetros de data inválidos" };
+  }
+
   try {
     const user = await requireAuth();
 
-    const prevMonth = month === 1 ? 12 : month - 1;
-    const prevYear = month === 1 ? year - 1 : year;
+    const prevMonth = parsed.data.month === 1 ? 12 : parsed.data.month - 1;
+    const prevYear = parsed.data.month === 1 ? parsed.data.year - 1 : parsed.data.year;
 
     const [current, previous] = await Promise.all([
       prisma.$queryRaw<
@@ -41,8 +47,8 @@ export async function getSummaryAction(
           COALESCE(balance, 0)::float       AS balance
         FROM public.income_vs_expense
         WHERE user_id = ${user.id}::uuid
-          AND month = ${month}
-          AND year  = ${year}
+          AND month = ${parsed.data.month}
+          AND year  = ${parsed.data.year}
         LIMIT 1
       `,
       prisma.$queryRaw<
@@ -61,11 +67,7 @@ export async function getSummaryAction(
     ]);
 
     const cur = current[0] ?? { total_income: 0, total_expense: 0, balance: 0 };
-    const prev = previous[0] ?? {
-      total_income: 0,
-      total_expense: 0,
-      balance: 0,
-    };
+    const prev = previous[0] ?? { total_income: 0, total_expense: 0, balance: 0 };
 
     return {
       success: true,
@@ -78,7 +80,8 @@ export async function getSummaryAction(
         expenseTrend: calcTrend(cur.total_expense, prev.total_expense),
       },
     };
-  } catch {
+  } catch (error) {
+    console.error("Error in getSummaryAction:", error);
     return { success: false, error: "Erro ao buscar resumo do mês" };
   }
 }

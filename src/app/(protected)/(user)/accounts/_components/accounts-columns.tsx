@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { formatCurrency } from "@/utils/format-currency";
 import { formatDate } from "@/utils/format-date";
+import { capitalizeFirst } from "@/utils/format-text";
 import { ColumnDef } from "@tanstack/react-table";
 import { icons, PencilIcon, RefreshCw, Trash2Icon } from "lucide-react";
 import Link from "next/link";
@@ -50,7 +51,7 @@ export function accountColumns(
       accessorKey: "title",
       header: "Título",
       cell: ({ row }) => (
-        <span className="font-medium capitalize">{row.getValue("title")}</span>
+        <span className="font-medium">{capitalizeFirst(row.getValue("title"))}</span>
       ),
     },
 
@@ -64,7 +65,7 @@ export function accountColumns(
           : null;
 
         return (
-          <span className="flex items-center gap-1.5 text-sm text-muted-foreground capitalize">
+          <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
             {IconComponent && <IconComponent className="h-3.5 w-3.5" />}
             {row.getValue("category")}
           </span>
@@ -78,7 +79,7 @@ export function accountColumns(
       cell: ({ row }) => {
         const date = row.getValue("dueDate") as string | null;
         return (
-          <span className="text-sm text-muted-foreground capitalize">
+          <span className="text-sm text-muted-foreground">
             {date ? formatDate(date) : "—"}
           </span>
         );

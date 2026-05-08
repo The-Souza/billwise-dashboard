@@ -23,29 +23,34 @@ export async function signUpAction(
     };
   }
 
-  const supabase = await createServerSupabase();
+  try {
+    const supabase = await createServerSupabase();
 
-  const { error } = await supabase.auth.signUp({
-    email: parsed.data.email,
-    password: parsed.data.password,
-    options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/sign-up/callback`,
-      data: {
-        name: parsed.data.name,
+    const { error } = await supabase.auth.signUp({
+      email: parsed.data.email,
+      password: parsed.data.password,
+      options: {
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/sign-up/callback`,
+        data: {
+          name: parsed.data.name,
+        },
       },
-    },
-  });
+    });
 
-  if (error) {
-    if (error.status === 429) {
-      return {
-        success: false,
-        error: "Muitas tentativas. Aguarde alguns minutos.",
-      };
+    if (error) {
+      if (error.status === 429) {
+        return {
+          success: false,
+          error: "Muitas tentativas. Aguarde alguns minutos.",
+        };
+      }
+
+      return { success: false, error: "Erro ao criar conta. Tente novamente." };
     }
 
-    return { success: false, error: error.message };
+    return { success: true };
+  } catch (error) {
+    console.error("Error in signUpAction:", error);
+    return { success: false, error: "Erro ao conectar ao servidor. Tente novamente." };
   }
-
-  return { success: true };
 }
