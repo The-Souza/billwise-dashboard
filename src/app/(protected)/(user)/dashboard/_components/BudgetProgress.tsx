@@ -141,10 +141,14 @@ export function BudgetProgress({
       </CardHeader>
 
       <CardContent>
-        <Tabs defaultValue="expense">
-          <TabsList className="w-auto">
-            <TabsTrigger value="expense">Despesas</TabsTrigger>
-            <TabsTrigger value="income">Metas</TabsTrigger>
+        <Tabs defaultValue="expense" className="w-full">
+          <TabsList className="w-full">
+            <TabsTrigger value="expense" className="flex-1">
+              Despesas
+            </TabsTrigger>
+            <TabsTrigger value="income" className="flex-1">
+              Metas
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="expense" className="flex flex-col gap-4 mt-4">

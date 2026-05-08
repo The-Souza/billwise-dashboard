@@ -63,7 +63,7 @@ export function RevenueExpenseChart({
           <SelectTrigger className="w-26 h-8 text-xs">
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent align="end">
             <SelectItem value="3">3 meses</SelectItem>
             <SelectItem value="6">6 meses</SelectItem>
             <SelectItem value="12">12 meses</SelectItem>
