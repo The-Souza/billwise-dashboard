@@ -6,10 +6,10 @@ import {
   getBudgetsAction,
 } from "@/actions/(user)/budgets/get-budgets";
 import { MonthPicker } from "@/components/ui/month-picker";
+import { SWR_DEFAULT_OPTIONS } from "@/config/swr";
 import { useDashboardMonth } from "@/hooks/use-dashboard-month";
 import { appToast } from "@/utils/app-toast";
 import { useState } from "react";
-import { SWR_DEFAULT_OPTIONS } from "@/config/swr";
 import useSWR from "swr";
 import { AddBudgetCard } from "./_components/AddBudgetCard";
 import { BudgetCard } from "./_components/BudgetCard";
@@ -87,14 +87,14 @@ export default function BudgetsPage() {
         <MonthPicker {...dashboardMonth} onSelect={handleMonthSelect} />
       </div>
 
-      {isLoading ? (
-        <BudgetsSkeleton />
-      ) : (
-        <div className="flex flex-col gap-6">
-          <section className="flex flex-col gap-3">
-            <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
-              Despesas
-            </h2>
+      <div className="flex flex-col gap-6">
+        <section className="flex flex-col gap-3">
+          <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+            Despesas
+          </h2>
+          {isLoading ? (
+            <BudgetsSkeleton />
+          ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
               {expense.map((b) => (
                 <BudgetCard
@@ -110,12 +110,16 @@ export default function BudgetsPage() {
                 onClick={openCreate}
               />
             </div>
-          </section>
+          )}
+        </section>
 
-          <section className="flex flex-col gap-3">
-            <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
-              Receitas
-            </h2>
+        <section className="flex flex-col gap-3">
+          <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+            Receitas
+          </h2>
+          {isLoading ? (
+            <BudgetsSkeleton />
+          ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
               {income.map((b) => (
                 <BudgetCard
@@ -131,9 +135,9 @@ export default function BudgetsPage() {
                 onClick={openCreate}
               />
             </div>
-          </section>
-        </div>
-      )}
+          )}
+        </section>
+      </div>
 
       <BudgetFormDialog
         open={formDialog.open}
