@@ -1,8 +1,8 @@
+import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/providers/ThemeProvider";
+import type { Metadata, Viewport } from "next";
 import { inter, poppins } from "./fonts";
 import "./globals.css";
-import { Toaster } from "@/components/ui/sonner";
-import type { Metadata, Viewport } from "next";
 
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ??
@@ -82,9 +82,17 @@ export const metadata: Metadata = {
 
   icons: {
     icon: [
-      { media: '(prefers-color-scheme: light)', url: '/icon-light-theme.png', href: '/icon-light-theme.png'},
-      { media: '(prefers-color-scheme: dark)', url: '/icon-dark-theme.png', href: '/icon-dark-theme.png'}
-    ]
+      {
+        media: "(prefers-color-scheme: light)",
+        url: "/icon-light-theme.png",
+        href: "/icon-light-theme.png",
+      },
+      {
+        media: "(prefers-color-scheme: dark)",
+        url: "/icon-dark-theme.png",
+        href: "/icon-dark-theme.png",
+      },
+    ],
   },
 
   manifest: "/manifest.webmanifest",
