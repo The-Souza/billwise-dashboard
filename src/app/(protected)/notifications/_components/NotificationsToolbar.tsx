@@ -24,8 +24,8 @@ export function NotificationsToolbar() {
     useNotifications();
 
   return (
-    <div className="flex items-center justify-between gap-2">
-      <div className="grid grid-cols-3 sm:grid-cols-5 items-center gap-1">
+    <div className="flex flex-col lg:flex-row items-center justify-between gap-2">
+      <div className="grid grid-cols-3 sm:grid-cols-5 items-center gap-1 w-full lg:w-auto">
         {FILTER_OPTIONS.map((opt) => (
           <Button
             key={opt.value}
