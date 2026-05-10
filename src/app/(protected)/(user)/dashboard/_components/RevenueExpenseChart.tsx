@@ -60,7 +60,7 @@ export function RevenueExpenseChart({
           </CardDescription>
         </div>
         <Select value={chartPeriod} onValueChange={setChartPeriod}>
-          <SelectTrigger className="w-26 h-8 text-xs">
+          <SelectTrigger className="w-26 sm:w-32 h-8 text-xs">
             <SelectValue />
           </SelectTrigger>
           <SelectContent align="end">
