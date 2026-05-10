@@ -92,7 +92,7 @@ export function NotificationPrefsSection() {
           <div className="flex flex-col">
             <div>
               <div className="flex items-center gap-4 py-4">
-                <div className="p-2 rounded-lg bg-amber-500/10 shrink-0">
+                <div className="p-2 rounded-lg bg-amber-500/10 shrink-0 self-start sm:self-center">
                   <ClockIcon className="h-4 w-4 text-amber-500" />
                 </div>
                 <div className="flex flex-col sm:flex-row justify-between gap-2 w-full">
