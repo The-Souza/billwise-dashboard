@@ -26,13 +26,13 @@ export async function getSummaryAction(
   month: number,
   year: number,
 ): Promise<GetSummaryResult> {
-  const parsed = monthYearSchema.safeParse({ month, year });
-  if (!parsed.success) {
-    return { success: false, error: "Parâmetros de data inválidos" };
-  }
-
   try {
     const user = await requireAuth();
+
+    const parsed = monthYearSchema.safeParse({ month, year });
+    if (!parsed.success) {
+      return { success: false, error: "Parâmetros de data inválidos" };
+    }
 
     const prevMonth = parsed.data.month === 1 ? 12 : parsed.data.month - 1;
     const prevYear = parsed.data.month === 1 ? parsed.data.year - 1 : parsed.data.year;

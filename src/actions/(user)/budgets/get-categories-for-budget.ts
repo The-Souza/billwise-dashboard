@@ -25,13 +25,13 @@ export async function getCategoriesForBudgetAction(
   year: number,
   excludeBudgetId?: string,
 ): Promise<GetCategoriesForBudgetResult> {
-  const parsed = paramsSchema.safeParse({ month, year, excludeBudgetId });
-  if (!parsed.success) {
-    return { success: false, error: "Parâmetros inválidos" };
-  }
-
   try {
     const user = await requireAuth();
+
+    const parsed = paramsSchema.safeParse({ month, year, excludeBudgetId });
+    if (!parsed.success) {
+      return { success: false, error: "Parâmetros inválidos" };
+    }
 
     const existingBudgets = await prisma.budgets.findMany({
       where: {

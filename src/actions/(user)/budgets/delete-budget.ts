@@ -9,13 +9,13 @@ type DeleteBudgetResult = { success: true } | { success: false; error: string };
 export async function deleteBudgetAction(
   id: string,
 ): Promise<DeleteBudgetResult> {
-  const parsed = uuidSchema.safeParse(id);
-  if (!parsed.success) {
-    return { success: false, error: "ID inválido" };
-  }
-
   try {
     const user = await requireAuth();
+
+    const parsed = uuidSchema.safeParse(id);
+    if (!parsed.success) {
+      return { success: false, error: "ID inválido" };
+    }
 
     const budget = await prisma.budgets.findFirst({
       where: { id: parsed.data, user_id: user.id },

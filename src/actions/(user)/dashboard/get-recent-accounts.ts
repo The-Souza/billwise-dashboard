@@ -27,15 +27,15 @@ export async function getRecentAccountsAction(
   year: number,
   limit = 8,
 ): Promise<GetRecentAccountsResult> {
-  const parsed = monthYearSchema.safeParse({ month, year });
-  if (!parsed.success) {
-    return { success: false, error: "Parâmetros de data inválidos" };
-  }
-
-  const safeLimit = Math.min(Math.max(1, limit), MAX_LIMIT);
-
   try {
     const user = await requireAuth();
+
+    const parsed = monthYearSchema.safeParse({ month, year });
+    if (!parsed.success) {
+      return { success: false, error: "Parâmetros de data inválidos" };
+    }
+
+    const safeLimit = Math.min(Math.max(1, limit), MAX_LIMIT);
 
     const rows = await prisma.accounts.findMany({
       where: {
