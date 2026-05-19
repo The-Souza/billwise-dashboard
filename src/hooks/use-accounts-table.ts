@@ -8,6 +8,7 @@ import {
 } from "@/actions/(user)/accounts/get-accounts";
 import { SWR_DEFAULT_OPTIONS } from "@/config/swr";
 import { DashboardMonth } from "@/hooks/use-dashboard-month";
+import { AccountSortKey } from "@/schemas/accounts/get-accounts";
 import { appToast } from "@/utils/app-toast";
 import { RowSelectionState } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
@@ -67,6 +68,21 @@ export function useAccountsTable({ dashboardMonth }: UseAccountsTableProps) {
     setRowSelection({});
   }
 
+  function handleSort(key: AccountSortKey) {
+    setFilters((prev) => ({
+      ...prev,
+      sortKey: key,
+      sortDir:
+        prev.sortKey === key
+          ? prev.sortDir === "asc"
+            ? "desc"
+            : "asc"
+          : "desc",
+      page: 1,
+    }));
+    setRowSelection({});
+  }
+
   function handleDeleteSelected() {
     const selected = accounts.filter((_, i) => rowSelection[i] !== undefined);
     setDeleteDialog({ open: true, accounts: selected });
@@ -105,6 +121,8 @@ export function useAccountsTable({ dashboardMonth }: UseAccountsTableProps) {
     total,
     page,
     totalPages,
+    sortKey: filters.sortKey,
+    sortDir: filters.sortDir ?? ("desc" as const),
     selectedCount,
     rowSelection,
     setRowSelection,
@@ -112,6 +130,7 @@ export function useAccountsTable({ dashboardMonth }: UseAccountsTableProps) {
     setDeleteDialog,
     isDeleting,
     handleFiltersChange,
+    handleSort,
     handleDeleteSelected,
     handleDeleteSingle,
     handleConfirmDelete,

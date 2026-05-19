@@ -4,6 +4,7 @@ import { AccountRow } from "@/actions/(user)/accounts/get-accounts";
 import { AppBadge, AppBadgeVariant } from "@/components/ui/app-badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { AccountSortKey } from "@/schemas/accounts/get-accounts";
 import { formatCurrency } from "@/utils/format-currency";
 import { formatDate } from "@/utils/format-date";
 import { capitalizeFirst } from "@/utils/format-text";
@@ -11,8 +12,41 @@ import { ColumnDef } from "@tanstack/react-table";
 import { icons, PencilIcon, RefreshCw, Trash2Icon } from "lucide-react";
 import Link from "next/link";
 
+interface SortState {
+  key: AccountSortKey | undefined;
+  dir: "asc" | "desc";
+  onSort: (key: AccountSortKey) => void;
+}
+
+function SortIcon({ active, dir }: { active: boolean; dir: "asc" | "desc" }) {
+  if (!active) return <span className="text-muted-foreground/40">↕</span>;
+  return <span>{dir === "asc" ? "↑" : "↓"}</span>;
+}
+
+function SortHeader({
+  label,
+  sortKey,
+  sort,
+  className,
+}: {
+  label: string;
+  sortKey: AccountSortKey;
+  sort: SortState;
+  className?: string;
+}) {
+  return (
+    <button
+      onClick={() => sort.onSort(sortKey)}
+      className={`flex items-center gap-1 cursor-pointer select-none hover:text-foreground transition-colors ${className ?? ""}`}
+    >
+      {label} <SortIcon active={sort.key === sortKey} dir={sort.dir} />
+    </button>
+  );
+}
+
 export function accountColumns(
   onDelete: (account: AccountRow) => void,
+  sort?: SortState,
 ): ColumnDef<AccountRow>[] {
   return [
     {
@@ -49,15 +83,27 @@ export function accountColumns(
 
     {
       accessorKey: "title",
-      header: "Título",
+      header: () =>
+        sort ? (
+          <SortHeader label="Título" sortKey="title" sort={sort} />
+        ) : (
+          "Título"
+        ),
       cell: ({ row }) => (
-        <span className="font-medium">{capitalizeFirst(row.getValue("title"))}</span>
+        <span className="font-medium">
+          {capitalizeFirst(row.getValue("title"))}
+        </span>
       ),
     },
 
     {
       accessorKey: "category",
-      header: "Categoria",
+      header: () =>
+        sort ? (
+          <SortHeader label="Categoria" sortKey="category" sort={sort} />
+        ) : (
+          "Categoria"
+        ),
       cell: ({ row }) => {
         const icon = row.original.categoryIcon;
         const IconComponent = icon
@@ -75,7 +121,12 @@ export function accountColumns(
 
     {
       accessorKey: "dueDate",
-      header: "Vencimento",
+      header: () =>
+        sort ? (
+          <SortHeader label="Vencimento" sortKey="dueDate" sort={sort} />
+        ) : (
+          "Vencimento"
+        ),
       cell: ({ row }) => {
         const date = row.getValue("dueDate") as string | null;
         return (
@@ -88,7 +139,12 @@ export function accountColumns(
 
     {
       accessorKey: "status",
-      header: "Status",
+      header: () =>
+        sort ? (
+          <SortHeader label="Status" sortKey="status" sort={sort} />
+        ) : (
+          "Status"
+        ),
       cell: ({ row }) => (
         <AppBadge variant={row.getValue("status") as AppBadgeVariant} />
       ),
@@ -125,7 +181,17 @@ export function accountColumns(
 
     {
       accessorKey: "amount",
-      header: () => <span className="block text-right">Valor</span>,
+      header: () =>
+        sort ? (
+          <SortHeader
+            label="Valor"
+            sortKey="amount"
+            sort={sort}
+            className="justify-end w-full"
+          />
+        ) : (
+          <span className="block text-right">Valor</span>
+        ),
       cell: ({ row }) => {
         const isIncome = row.original.categoryType === "income";
         return (

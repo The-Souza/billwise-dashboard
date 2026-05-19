@@ -36,7 +36,35 @@ export async function getAccountsAction(
       return { success: false, error: "Filtros inválidos" };
     }
 
-    const { month, year, status, categoryId, title, page, pageSize } = parsed.data;
+    const {
+      month,
+      year,
+      status,
+      categoryId,
+      title,
+      page,
+      pageSize,
+      sortKey,
+      sortDir,
+    } = parsed.data;
+
+    const dir = sortDir ?? "desc";
+    const orderBy = (() => {
+      switch (sortKey) {
+        case "title":
+          return { title: dir };
+        case "category":
+          return { categories: { name: dir } };
+        case "dueDate":
+          return { due_date: dir };
+        case "status":
+          return { status: dir };
+        case "amount":
+          return { amount: dir };
+        default:
+          return { created_at: "desc" as const };
+      }
+    })();
 
     const where = {
       user_id: user.id,
@@ -72,7 +100,7 @@ export async function getAccountsAction(
             orderBy: { installment_number: "asc" },
           },
         },
-        orderBy: { created_at: "desc" },
+        orderBy,
         skip: (page - 1) * pageSize,
         take: pageSize,
       }),
