@@ -13,7 +13,7 @@ export function AccountFormScope() {
     <>
       <Separator />
       <div className="flex flex-col gap-1">
-        <h3 className="text-md font-heading capitalize">Escopo da alteração</h3>
+        <h3 className="text-md font-heading">Escopo da alteração</h3>
         <p className="text-sm text-muted-foreground">
           Escolha como deseja aplicar as alterações
         </p>

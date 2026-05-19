@@ -5,6 +5,7 @@ import {
   Shield,
   Users,
   BarChart3,
+  LineChart,
 } from "lucide-react";
 
 export const navigation = {
@@ -23,6 +24,11 @@ export const navigation = {
       title: "Orçamentos",
       url: "/budgets",
       icon: Receipt,
+    },
+    {
+      title: "Análises",
+      url: "/analytics",
+      icon: LineChart,
     },
   ],
 

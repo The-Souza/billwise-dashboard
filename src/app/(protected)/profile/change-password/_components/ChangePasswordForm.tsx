@@ -169,7 +169,7 @@ export default function ChangePasswordForm() {
                         type={
                           visibleField === "newPassword" ? "text" : "password"
                         }
-                        placeholder="Confirme sua senha"
+                        placeholder="Digite sua nova senha"
                         aria-invalid={fieldState.invalid}
                       />
                       <InputGroupAddon align="inline-end">

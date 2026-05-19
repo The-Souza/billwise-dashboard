@@ -88,7 +88,7 @@ export function AuthLayoutWrapper({ children }: { children: React.ReactNode }) {
         <div className="flex justify-end p-5">
           <ToggleTheme />
         </div>
-        <main className="flex-1 flex items-center justify-center px-6 pb-10">
+        <main className="flex-1 flex items-center justify-center">
           {children}
         </main>
       </div>

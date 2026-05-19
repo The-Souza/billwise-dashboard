@@ -109,7 +109,7 @@ export function SignUpForm() {
                       id={field.name}
                       type="text"
                       aria-invalid={fieldState.invalid}
-                      placeholder="Digite seu nome completo"
+                      placeholder="Digite seu nome e sobrenome"
                     />
                   </InputGroup>
                   {fieldState.invalid && (

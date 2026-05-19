@@ -25,6 +25,7 @@ const routeLabels: Record<string, string> = {
   notifications: "Notificações",
   "change-password": "Alterar Senha",
   "add-account": "Nova Conta",
+  analytics: "Análises",
 };
 
 const uuidContextLabels: Record<string, string> = {

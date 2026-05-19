@@ -1,9 +1,12 @@
 import { isValidSecret } from "@/lib/auth/is-valid-secret";
 import { prisma } from "@/lib/prisma/client";
+import { notificationPrefsSchema } from "@/schemas/settings/notification-prefs";
+import { capitalizeFirst } from "@/utils/format-text";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
-  const secret = req.headers.get("authorization")?.replace("Bearer ", "") ?? null;
+  const secret =
+    req.headers.get("authorization")?.replace("Bearer ", "") ?? null;
 
   if (!isValidSecret(secret, process.env.CRON_SECRET)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -28,6 +31,11 @@ export async function GET(req: NextRequest) {
     });
 
     let generated = 0;
+    const generatedAccounts: Array<{
+      accountId: string;
+      userId: string;
+      title: string;
+    }> = [];
 
     for (const rule of rules) {
       const alreadyExists = await prisma.accounts.findFirst({
@@ -41,7 +49,7 @@ export async function GET(req: NextRequest) {
 
       if (alreadyExists) continue;
 
-      await prisma.accounts.create({
+      const account = await prisma.accounts.create({
         data: {
           user_id: rule.user_id,
           title: rule.title,
@@ -56,6 +64,50 @@ export async function GET(req: NextRequest) {
       });
 
       generated++;
+      generatedAccounts.push({
+        accountId: account.id,
+        userId: rule.user_id,
+        title: rule.title,
+      });
+    }
+
+    // Notificações em bloco separado — falha aqui não impede a geração
+    if (generatedAccounts.length > 0) {
+      try {
+        const profileRows = await prisma.$queryRaw<
+          Array<{ id: string; notification_prefs: unknown }>
+        >`SELECT id, notification_prefs FROM public.profiles`;
+
+        const userNotifyMap = new Map<string, boolean>();
+        for (const profile of profileRows) {
+          const parsed = notificationPrefsSchema.safeParse(
+            profile.notification_prefs,
+          );
+          userNotifyMap.set(
+            profile.id,
+            parsed.success ? parsed.data.onRecurringGenerated : true,
+          );
+        }
+
+        const notifications = generatedAccounts
+          .filter((a) => userNotifyMap.get(a.userId) ?? true)
+          .map((a) => ({
+            user_id: a.userId,
+            title: "Conta recorrente gerada",
+            body: `A conta recorrente "${capitalizeFirst(a.title)}" foi gerada para ${String(currentMonth).padStart(2, "0")}/${currentYear}.`,
+            type: "recurring_generated",
+            account_id: a.accountId,
+          }));
+
+        if (notifications.length > 0) {
+          await prisma.notifications.createMany({
+            data: notifications,
+            skipDuplicates: true,
+          });
+        }
+      } catch (notifError) {
+        console.error("Error creating recurring notifications:", notifError);
+      }
     }
 
     return NextResponse.json({ success: true, generated });

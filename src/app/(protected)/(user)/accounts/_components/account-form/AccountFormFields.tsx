@@ -39,7 +39,7 @@ export function AccountFormFields() {
         control={form.control}
         render={({ field, fieldState }) => (
           <Field>
-            <FieldLabel htmlFor={field.name} className="text-md capitalize">
+            <FieldLabel htmlFor={field.name} className="text-md">
               Título
             </FieldLabel>
             <InputGroup>
@@ -70,7 +70,7 @@ export function AccountFormFields() {
         control={form.control}
         render={({ field, fieldState }) => (
           <Field>
-            <FieldLabel htmlFor={field.name} className="text-md capitalize">
+            <FieldLabel htmlFor={field.name} className="text-md">
               Categoria
             </FieldLabel>
             <Select
@@ -126,7 +126,7 @@ export function AccountFormFields() {
         control={form.control}
         render={({ field, fieldState }) => (
           <Field>
-            <FieldLabel htmlFor={field.name} className="text-md capitalize">
+            <FieldLabel htmlFor={field.name} className="text-md">
               Status
             </FieldLabel>
             <Select
@@ -183,7 +183,7 @@ export function AccountFormFields() {
         control={form.control}
         render={({ field, fieldState }) => (
           <Field className="sm:col-span-2 lg:col-span-3 xl:col-span-4">
-            <FieldLabel htmlFor={field.name} className="text-md capitalize">
+            <FieldLabel htmlFor={field.name} className="text-md">
               Descrição
             </FieldLabel>
             <InputGroup>
