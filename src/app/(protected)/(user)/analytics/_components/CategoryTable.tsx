@@ -18,15 +18,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  CATEGORY_PAGE_SIZE,
+  type SortDir,
+  type SortKey,
+  useCategoryTable,
+} from "@/hooks/use-category-table";
 import { formatCurrency } from "@/utils/format-currency";
 import { capitalizeFirst, formatPercentage } from "@/utils/format-text";
 import { ChevronLeft, ChevronRight, icons, RefreshCw } from "lucide-react";
-import { useState } from "react";
-
-type SortKey = "categoryName" | "total" | "count" | "average" | "percentage";
-type SortDir = "asc" | "desc";
-
-const PAGE_SIZE = 10;
 
 interface CategoryTableProps {
   data?: CategoryBreakdownItem[];
@@ -39,32 +39,16 @@ function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
 }
 
 export function CategoryTable({ data = [], isLoading }: CategoryTableProps) {
-  const [sortKey, setSortKey] = useState<SortKey>("total");
-  const [sortDir, setSortDir] = useState<SortDir>("desc");
-  const [page, setPage] = useState(0);
-
-  function handleSort(key: SortKey) {
-    if (sortKey === key) {
-      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
-    } else {
-      setSortKey(key);
-      setSortDir("desc");
-    }
-    setPage(0);
-  }
-
-  const sorted = [...data].sort((a, b) => {
-    const av = a[sortKey];
-    const bv = b[sortKey];
-    const cmp =
-      typeof av === "string"
-        ? av.localeCompare(bv as string)
-        : (av as number) - (bv as number);
-    return sortDir === "asc" ? cmp : -cmp;
-  });
-
-  const totalPages = Math.ceil(sorted.length / PAGE_SIZE);
-  const paged = sorted.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  const {
+    sortKey,
+    sortDir,
+    page,
+    setPage,
+    handleSort,
+    sorted,
+    totalPages,
+    paged,
+  } = useCategoryTable(data);
 
   const headers: { key: SortKey; label: string; className?: string }[] = [
     { key: "categoryName", label: "Categoria" },
@@ -100,7 +84,7 @@ export function CategoryTable({ data = [], isLoading }: CategoryTableProps) {
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              Array.from({ length: PAGE_SIZE }).map((_, i) => (
+              Array.from({ length: CATEGORY_PAGE_SIZE }).map((_, i) => (
                 <TableRow
                   key={i}
                   className="*:border-border [&>:not(:last-child)]:border-r odd:bg-muted/50 odd:hover:bg-muted/50 hover:bg-transparent"
@@ -176,8 +160,8 @@ export function CategoryTable({ data = [], isLoading }: CategoryTableProps) {
         {!isLoading && totalPages > 1 && (
           <div className="flex items-center justify-between pt-3 border-t border-border text-xs text-muted-foreground">
             <span>
-              {page * PAGE_SIZE + 1}–
-              {Math.min((page + 1) * PAGE_SIZE, sorted.length)} de{" "}
+              {page * CATEGORY_PAGE_SIZE + 1}–
+              {Math.min((page + 1) * CATEGORY_PAGE_SIZE, sorted.length)} de{" "}
               {sorted.length}
             </span>
             <div className="flex items-center gap-1">
