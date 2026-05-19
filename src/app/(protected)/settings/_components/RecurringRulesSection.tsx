@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/card";
 import { SWR_DEFAULT_OPTIONS } from "@/config/swr";
 import { formatCurrency } from "@/utils/format-currency";
+import { formatRuleEndDate } from "@/utils/format-date";
 import { capitalizeFirst, formatRecurrenceDuration } from "@/utils/format-text";
 import { icons, PencilIcon, RefreshCw, Trash2Icon } from "lucide-react";
 import Link from "next/link";
@@ -115,7 +116,7 @@ export function RecurringRulesSection() {
                       </span>
                       <span className="hidden sm:block text-xs text-muted-foreground">
                         {rule.endDate
-                          ? `Até ${new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short", year: "numeric", timeZone: "UTC" }).format(new Date(rule.endDate))}`
+                          ? `Até ${formatRuleEndDate(rule.endDate)}`
                           : "Sem prazo"}
                       </span>
                     </div>

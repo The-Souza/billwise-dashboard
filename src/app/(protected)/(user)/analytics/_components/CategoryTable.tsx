@@ -19,7 +19,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatCurrency } from "@/utils/format-currency";
-import { capitalizeFirst } from "@/utils/format-text";
+import { capitalizeFirst, formatPercentage } from "@/utils/format-text";
 import { ChevronLeft, ChevronRight, icons, RefreshCw } from "lucide-react";
 import { useState } from "react";
 
@@ -164,7 +164,7 @@ export function CategoryTable({ data = [], isLoading }: CategoryTableProps) {
                       {formatCurrency(item.average)}
                     </TableCell>
                     <TableCell className="text-right tabular-nums text-muted-foreground">
-                      {item.percentage.toFixed(1)}%
+                      {formatPercentage(item.percentage, 1)}
                     </TableCell>
                   </TableRow>
                 );

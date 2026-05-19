@@ -1,6 +1,7 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
+import { formatNotificationDateTime } from "@/utils/format-date";
 import {
   AlertCircleIcon,
   AlertTriangleIcon,
@@ -131,13 +132,7 @@ export function NotificationsClient() {
 
                 <div className="flex items-center justify-between gap-2 mt-1">
                   <span className="text-xs text-muted-foreground tabular-nums">
-                    {new Date(n.createdAt).toLocaleDateString("pt-BR", {
-                      day: "2-digit",
-                      month: "long",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                    {formatNotificationDateTime(n.createdAt)}
                   </span>
 
                   {isUnread && !n.accountId && (

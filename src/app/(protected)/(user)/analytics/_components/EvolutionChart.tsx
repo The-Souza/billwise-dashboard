@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/chart";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency } from "@/utils/format-currency";
+import { formatCurrencyCompact } from "@/utils/format-text";
 import { TrendingUp } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
@@ -60,7 +61,7 @@ export function EvolutionChart({ data = [], isLoading }: EvolutionChartProps) {
                 tickLine={false}
                 axisLine={false}
                 tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
-                tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`}
+                tickFormatter={formatCurrencyCompact}
                 width={48}
               />
               <ChartTooltip

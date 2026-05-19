@@ -1,6 +1,13 @@
 import { NotificationItem } from "@/actions/notifications/get-notifications";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircleIcon, AlertTriangleIcon, BellIcon, RefreshCwIcon, TrendingUpIcon } from "lucide-react";
+import { formatNotificationDate } from "@/utils/format-date";
+import {
+  AlertCircleIcon,
+  AlertTriangleIcon,
+  BellIcon,
+  RefreshCwIcon,
+  TrendingUpIcon,
+} from "lucide-react";
 
 const TYPE_ICON: Record<string, React.ReactNode> = {
   overdue: (
@@ -85,11 +92,7 @@ export function NotificationsList({
               </span>
             )}
             <span className="text-xs text-muted-foreground mt-0.5">
-              {new Date(n.createdAt).toLocaleDateString("pt-BR", {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-              })}
+              {formatNotificationDate(n.createdAt)}
             </span>
           </div>
         </div>
