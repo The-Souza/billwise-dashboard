@@ -1,11 +1,5 @@
 "use client";
 
-import { deleteAccountsAction } from "@/actions/(user)/accounts/delete-accounts";
-import {
-  AccountFilters,
-  AccountRow,
-  getAccountsAction,
-} from "@/actions/(user)/accounts/get-accounts";
 import { CategoryOption } from "@/actions/(user)/accounts/get-categories";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -17,18 +11,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { SWR_DEFAULT_OPTIONS } from "@/config/swr";
+import { useAccountsTable } from "@/hooks/use-accounts-table";
 import { DashboardMonth } from "@/hooks/use-dashboard-month";
-import { appToast } from "@/utils/app-toast";
 import {
-  RowSelectionState,
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useEffect, useState } from "react";
-import useSWR from "swr";
 import { AccountsFilters } from "./AccountsFilters";
 import { DeleteAccountDialog } from "./DeleteAccountDialog";
 import { accountColumns } from "./accounts-columns";
@@ -40,8 +30,6 @@ interface AccountsDataTableProps {
   };
   categories: CategoryOption[];
 }
-
-const PAGE_SIZE = 10;
 
 const skeletonWidths = [
   "w-5",
@@ -59,79 +47,26 @@ export function AccountsDataTable({
   dashboardMonth,
   categories,
 }: AccountsDataTableProps) {
-  const { month, year } = dashboardMonth;
-
-  const [filters, setFilters] = useState<AccountFilters>({
-    month,
-    year,
-    page: 1,
-    pageSize: PAGE_SIZE,
-  });
-
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-
-  const [deleteDialog, setDeleteDialog] = useState<{
-    open: boolean;
-    accounts: AccountRow[];
-  }>({ open: false, accounts: [] });
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  useEffect(() => {
-    setFilters((prev) => ({ ...prev, month, year, page: 1 }));
-    setRowSelection({});
-  }, [month, year]);
-
   const {
-    data: result,
+    filters,
     isLoading,
     mutate,
-  } = useSWR(["accounts", filters], () => getAccountsAction(filters), {
-    keepPreviousData: true,
-    ...SWR_DEFAULT_OPTIONS,
-  });
-
-  const accounts = result?.success ? result.data : [];
-  const total = result?.success ? result.total : 0;
-  const page = filters.page ?? 1;
-  const totalPages = Math.ceil(total / PAGE_SIZE);
-  const selectedCount = Object.keys(rowSelection).length;
-
-  function handleFiltersChange(partial: Partial<AccountFilters>) {
-    setFilters((prev) => ({ ...prev, ...partial }));
-    setRowSelection({});
-  }
-
-  function handleDeleteSelected() {
-    const selectedAccounts = accounts.filter(
-      (_, i) => rowSelection[i] !== undefined,
-    );
-    setDeleteDialog({ open: true, accounts: selectedAccounts });
-  }
-
-  function handleDeleteSingle(account: AccountRow) {
-    setDeleteDialog({ open: true, accounts: [account] });
-  }
-
-  async function handleConfirmDelete() {
-    setIsDeleting(true);
-    const ids = deleteDialog.accounts.map((a) => a.id);
-    const result = await deleteAccountsAction(ids);
-
-    if (result.success) {
-      appToast.success(
-        result.deleted === 1
-          ? "Conta excluída com sucesso."
-          : `${result.deleted} contas excluídas com sucesso.`,
-      );
-      setRowSelection({});
-      mutate();
-    } else {
-      appToast.error(result.error);
-    }
-
-    setIsDeleting(false);
-    setDeleteDialog({ open: false, accounts: [] });
-  }
+    accounts,
+    total,
+    page,
+    totalPages,
+    selectedCount,
+    rowSelection,
+    setRowSelection,
+    deleteDialog,
+    setDeleteDialog,
+    isDeleting,
+    handleFiltersChange,
+    handleDeleteSelected,
+    handleDeleteSingle,
+    handleConfirmDelete,
+    PAGE_SIZE,
+  } = useAccountsTable({ dashboardMonth });
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
@@ -196,10 +131,10 @@ export function AccountsDataTable({
               Array.from({ length: PAGE_SIZE }).map((_, i) => (
                 <TableRow
                   key={i}
-                  className="*:border-border [&>:not(:last-child)]:border-r odd:bg-muted/50 odd:hover:bg-muted/50 hover:bg-transparent"
+                  className="*:border-border [&>:not(:last-child)]:border-r odd:bg-muted/50 odd:hover:bg-muted/50 hover:bg-transparent h-11.25"
                 >
                   {skeletonWidths.map((width, index) => (
-                    <TableCell key={index} className="h-11.25">
+                    <TableCell key={index}>
                       <Skeleton className={`h-5 ${width}`} />
                     </TableCell>
                   ))}
@@ -210,7 +145,7 @@ export function AccountsDataTable({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="*:border-border [&>:not(:last-child)]:border-r odd:bg-muted/50 odd:hover:bg-muted/50 hover:bg-transparent whitespace-nowrap"
+                  className="*:border-border [&>:not(:last-child)]:border-r odd:bg-muted/50 odd:hover:bg-muted/50 hover:bg-transparent whitespace-nowrap h-11.25"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
@@ -227,7 +162,7 @@ export function AccountsDataTable({
               ))
             ) : (
               <TableRow className="hover:bg-transparent">
-                <TableCell colSpan={accountColumns(handleDeleteSingle).length}>
+                <TableCell colSpan={table.getAllColumns().length}>
                   <div className="flex flex-col items-center justify-center gap-2 py-10 text-center">
                     <div className="p-3 rounded-full bg-muted">
                       <ChevronRight className="h-5 w-5 text-muted-foreground opacity-50" />
