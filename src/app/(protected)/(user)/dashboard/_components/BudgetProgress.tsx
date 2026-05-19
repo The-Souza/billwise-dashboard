@@ -11,6 +11,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/utils/format-currency";
+import {
+  formatPercentage,
+  formatPercentageOverflow,
+} from "@/utils/format-text";
 import { getStatusClasses } from "@/utils/get-status-classes";
 import { ArrowRight, icons } from "lucide-react";
 import Link from "next/link";
@@ -35,11 +39,11 @@ function BudgetItem({ budget }: { budget: BudgetProgressItem }) {
     if (isIncome) {
       return budget.usedPercentage >= 100
         ? "Meta atingida!"
-        : `${budget.usedPercentage.toFixed(0)}% alcançado`;
+        : `${formatPercentage(budget.usedPercentage)} alcançado`;
     }
     return isOver
-      ? `+${(budget.usedPercentage - 100).toFixed(0)}% acima`
-      : `${budget.usedPercentage.toFixed(0)}% utilizado`;
+      ? `${formatPercentageOverflow(budget.usedPercentage)} acima`
+      : `${formatPercentage(budget.usedPercentage)} utilizado`;
   }
 
   return (

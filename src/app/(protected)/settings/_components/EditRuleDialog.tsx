@@ -1,7 +1,7 @@
 "use client";
 
-import { updateRecurringRuleAction } from "@/actions/(user)/settings/update-recurring-rule";
 import type { RecurringRuleRow } from "@/actions/(user)/settings/get-recurring-rules";
+import { updateRecurringRuleAction } from "@/actions/(user)/settings/update-recurring-rule";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -15,7 +15,10 @@ import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
 import { appToast } from "@/utils/app-toast";
-import { computeRecurrenceEndDate } from "@/utils/format-date";
+import {
+  computeRecurrenceEndDate,
+  formatRuleEndDate,
+} from "@/utils/format-date";
 import { capitalizeFirst } from "@/utils/format-text";
 import { PencilIcon } from "lucide-react";
 import { useState } from "react";
@@ -26,7 +29,11 @@ interface EditRuleDialogProps {
   onSaved: () => void;
 }
 
-export function EditRuleDialog({ rule, onClose, onSaved }: EditRuleDialogProps) {
+export function EditRuleDialog({
+  rule,
+  onClose,
+  onSaved,
+}: EditRuleDialogProps) {
   const [editUnit, setEditUnit] = useState<"meses" | "anos">(() => {
     const m = rule?.recurrenceMonths;
     return m && m % 12 === 0 && m >= 12 ? "anos" : "meses";
@@ -50,9 +57,15 @@ export function EditRuleDialog({ rule, onClose, onSaved }: EditRuleDialogProps) 
     setIsSaving(true);
 
     const months = totalMonths();
-    const endDate = months ? computeRecurrenceEndDate(rule.startDate, months) : null;
+    const endDate = months
+      ? computeRecurrenceEndDate(rule.startDate, months)
+      : null;
 
-    const res = await updateRecurringRuleAction({ id: rule.id, endDate, recurrenceMonths: months });
+    const res = await updateRecurringRuleAction({
+      id: rule.id,
+      endDate,
+      recurrenceMonths: months,
+    });
 
     if (res.success) {
       appToast.success("Regra atualizada com sucesso.");
@@ -126,13 +139,10 @@ export function EditRuleDialog({ rule, onClose, onSaved }: EditRuleDialogProps) 
                 const months = totalMonths();
                 if (!months) return <span>—</span>;
                 const end = computeRecurrenceEndDate(rule.startDate, months);
-                const label = new Intl.DateTimeFormat("pt-BR", {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-                  timeZone: "UTC",
-                }).format(new Date(end));
-                return <span className="text-foreground font-medium">{label}</span>;
+                const label = formatRuleEndDate(end);
+                return (
+                  <span className="text-foreground font-medium">{label}</span>
+                );
               })()}
             </p>
             {editDuration && (

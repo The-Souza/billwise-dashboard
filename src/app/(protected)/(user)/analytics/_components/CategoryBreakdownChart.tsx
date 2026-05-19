@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency } from "@/utils/format-currency";
-import { capitalizeFirst } from "@/utils/format-text";
+import { capitalizeFirst, formatPercentage } from "@/utils/format-text";
 import { PieChart as PieChartIcon } from "lucide-react";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
@@ -32,7 +32,10 @@ const TOOLTIP_ROWS: {
   format: (item: CategoryBreakdownItem) => string;
 }[] = [
   { label: "Total", format: (item) => formatCurrency(item.total) },
-  { label: "Participação", format: (item) => `${item.percentage.toFixed(1)}%` },
+  {
+    label: "Participação",
+    format: (item) => `${formatPercentage(item.percentage, 1)}`,
+  },
   { label: "Transações", format: (item) => String(item.count) },
 ];
 
@@ -154,7 +157,7 @@ export function CategoryBreakdownChart({
                     </span>
                   </div>
                   <span className="font-medium tabular-nums shrink-0">
-                    {item.percentage.toFixed(1)}%
+                    {formatPercentage(item.percentage, 1)}
                   </span>
                 </div>
               ))}

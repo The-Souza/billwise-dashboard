@@ -1,10 +1,7 @@
 "use client";
 
-import { exportAccountsAction } from "@/actions/(user)/accounts/export-accounts";
 import { AccountFilters } from "@/actions/(user)/accounts/get-accounts";
 import { CategoryOption } from "@/actions/(user)/accounts/get-categories";
-import { getImportTemplateAction } from "@/actions/(user)/accounts/get-import-template";
-import { importAccountsAction } from "@/actions/(user)/accounts/import-accounts";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -25,10 +22,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { account_status } from "@/generated/prisma/enums";
+import { useAccountsFileActions } from "@/hooks/use-accounts-file-actions";
 import { useMobile } from "@/hooks/use-mobile";
-import { parseCsvFile, parseXlsxFile } from "@/utils/account-import";
-import { appToast } from "@/utils/app-toast";
-import { downloadXlsx } from "@/utils/file-download";
 import { STATUS_OPTIONS } from "@/utils/status-options";
 import {
   ChevronDownIcon,
@@ -39,7 +34,7 @@ import {
   UploadIcon,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
 interface AccountsFiltersProps {
@@ -60,9 +55,15 @@ export function AccountsFilters({
   onImportSuccess,
 }: AccountsFiltersProps) {
   const [titleInput, setTitleInput] = useState(filters.title ?? "");
-  const [isBusy, setIsBusy] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const isMobile = useMobile();
+
+  const {
+    isBusy,
+    fileInputRef,
+    handleExport,
+    handleDownloadTemplate,
+    handleImportFile,
+  } = useAccountsFileActions({ filters, onImportSuccess });
 
   const debouncedTitleChange = useDebouncedCallback((value: string) => {
     onFiltersChange({ title: value || undefined, page: 1 });
@@ -71,65 +72,6 @@ export function AccountsFilters({
   useEffect(() => {
     debouncedTitleChange(titleInput);
   }, [titleInput, debouncedTitleChange]);
-
-  async function handleExport() {
-    setIsBusy(true);
-    const res = await exportAccountsAction({
-      month: filters.month,
-      year: filters.year,
-    });
-    if (res.success) {
-      downloadXlsx(res.data, res.filename);
-    } else {
-      appToast.error(res.error);
-    }
-    setIsBusy(false);
-  }
-
-  async function handleDownloadTemplate() {
-    setIsBusy(true);
-    const res = await getImportTemplateAction();
-    if (res.success) {
-      downloadXlsx(res.data, res.filename);
-    } else {
-      appToast.error(res.error);
-    }
-    setIsBusy(false);
-  }
-
-  async function handleImportFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!fileInputRef.current) return;
-    fileInputRef.current.value = "";
-    if (!file) return;
-
-    setIsBusy(true);
-    try {
-      const isXlsx = file.name.toLowerCase().endsWith(".xlsx");
-      const rows = isXlsx
-        ? await parseXlsxFile(file)
-        : parseCsvFile(await file.text());
-
-      if (rows.length === 0) {
-        appToast.error("Arquivo vazio ou sem dados válidos.");
-        setIsBusy(false);
-        return;
-      }
-
-      const res = await importAccountsAction(rows);
-      if (res.success) {
-        appToast.success(
-          `${res.created} conta${res.created !== 1 ? "s" : ""} importada${res.created !== 1 ? "s" : ""} com sucesso.`,
-        );
-        onImportSuccess?.();
-      } else {
-        appToast.error(res.error);
-      }
-    } catch {
-      appToast.error("Erro ao ler o arquivo.");
-    }
-    setIsBusy(false);
-  }
 
   return (
     <div className="flex flex-col lg:flex-row items-center justify-between gap-2 w-full lg:w-auto">

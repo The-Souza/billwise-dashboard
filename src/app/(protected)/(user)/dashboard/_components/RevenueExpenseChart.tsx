@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency } from "@/utils/format-currency";
+import { formatCurrencyCompact } from "@/utils/format-text";
 import { TrendingUp } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
@@ -118,7 +119,7 @@ export function RevenueExpenseChart({
                 tickLine={false}
                 axisLine={false}
                 tick={{ fontSize: 12, fill: "var(--muted-foreground)" }}
-                tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`}
+                tickFormatter={formatCurrencyCompact}
               />
               <ChartTooltip
                 content={
