@@ -55,6 +55,8 @@ export function AccountsDataTable({
     total,
     page,
     totalPages,
+    sortKey,
+    sortDir,
     selectedCount,
     rowSelection,
     setRowSelection,
@@ -62,6 +64,7 @@ export function AccountsDataTable({
     setDeleteDialog,
     isDeleting,
     handleFiltersChange,
+    handleSort,
     handleDeleteSelected,
     handleDeleteSingle,
     handleConfirmDelete,
@@ -71,7 +74,11 @@ export function AccountsDataTable({
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: accounts,
-    columns: accountColumns(handleDeleteSingle),
+    columns: accountColumns(handleDeleteSingle, {
+      key: sortKey,
+      dir: sortDir,
+      onSort: handleSort,
+    }),
     manualPagination: true,
     pageCount: totalPages,
     getCoreRowModel: getCoreRowModel(),
