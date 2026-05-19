@@ -123,7 +123,7 @@ export async function updateAccountAction(
               : null;
 
             await tx.accounts.update({
-              where: { id: sibling.id },
+              where: { id: sibling.id, user_id: user.id },
               data: {
                 title,
                 amount: installmentAmount,
@@ -152,7 +152,7 @@ export async function updateAccountAction(
         // -----------------------------
 
         await tx.accounts.update({
-          where: { id },
+          where: { id, user_id: user.id },
           data: {
             title,
             amount,

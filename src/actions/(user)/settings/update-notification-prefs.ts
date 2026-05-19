@@ -15,13 +15,13 @@ type UpdateNotificationPrefsResult =
 export async function updateNotificationPrefsAction(
   data: NotificationPrefs,
 ): Promise<UpdateNotificationPrefsResult> {
-  const parsed = notificationPrefsSchema.safeParse(data);
-  if (!parsed.success) {
-    return { success: false, error: parsed.error.issues[0].message };
-  }
-
   try {
     const user = await requireAuth();
+
+    const parsed = notificationPrefsSchema.safeParse(data);
+    if (!parsed.success) {
+      return { success: false, error: parsed.error.issues[0].message };
+    }
     const supabase = await createServerSupabase();
 
     const { error } = await supabase

@@ -28,13 +28,13 @@ export type GetAccountsResult =
 export async function getAccountsAction(
   filters: AccountFilters = {},
 ): Promise<GetAccountsResult> {
-  const parsed = getAccountsFiltersSchema.safeParse(filters);
-  if (!parsed.success) {
-    return { success: false, error: "Filtros inválidos" };
-  }
-
   try {
     const user = await requireAuth();
+
+    const parsed = getAccountsFiltersSchema.safeParse(filters);
+    if (!parsed.success) {
+      return { success: false, error: "Filtros inválidos" };
+    }
 
     const { month, year, status, categoryId, title, page, pageSize } = parsed.data;
 

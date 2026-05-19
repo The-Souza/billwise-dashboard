@@ -25,13 +25,13 @@ export async function getChartDataAction(
   currentYear: number,
   periods: number,
 ): Promise<GetChartDataResult> {
-  const parsed = chartParamsSchema.safeParse({ month: currentMonth, year: currentYear, periods });
-  if (!parsed.success) {
-    return { success: false, error: "Parâmetros inválidos" };
-  }
-
   try {
     const user = await requireAuth();
+
+    const parsed = chartParamsSchema.safeParse({ month: currentMonth, year: currentYear, periods });
+    if (!parsed.success) {
+      return { success: false, error: "Parâmetros inválidos" };
+    }
 
     const monthsToFetch: { month: number; year: number }[] = [];
 

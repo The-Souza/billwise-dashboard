@@ -11,13 +11,13 @@ export type DeleteAccountsResult =
 export async function deleteAccountsAction(
   ids: string[],
 ): Promise<DeleteAccountsResult> {
-  const parsed = deleteAccountsSchema.safeParse(ids);
-  if (!parsed.success) {
-    return { success: false, error: parsed.error.issues[0].message };
-  }
-
   try {
     const user = await requireAuth();
+
+    const parsed = deleteAccountsSchema.safeParse(ids);
+    if (!parsed.success) {
+      return { success: false, error: parsed.error.issues[0].message };
+    }
 
     const accounts = await prisma.accounts.findMany({
       where: { id: { in: parsed.data }, user_id: user.id },

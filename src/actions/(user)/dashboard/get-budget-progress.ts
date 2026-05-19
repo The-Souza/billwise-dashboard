@@ -23,13 +23,13 @@ export async function getBudgetProgressAction(
   month: number,
   year: number,
 ): Promise<GetBudgetProgressResult> {
-  const parsed = monthYearSchema.safeParse({ month, year });
-  if (!parsed.success) {
-    return { success: false, error: "Parâmetros de data inválidos" };
-  }
-
   try {
     const user = await requireAuth();
+
+    const parsed = monthYearSchema.safeParse({ month, year });
+    if (!parsed.success) {
+      return { success: false, error: "Parâmetros de data inválidos" };
+    }
 
     const rows = await prisma.$queryRaw<
       {
