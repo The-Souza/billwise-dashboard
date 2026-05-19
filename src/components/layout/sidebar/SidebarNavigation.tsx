@@ -30,6 +30,7 @@ export function SidebarNavigation({ user }: User) {
               <SidebarMenuButton
                 asChild
                 isActive={pathname === item.url}
+                tooltip={item.title}
                 onClick={() => {
                   if (isMobile) {
                     setOpenMobile(false);
