@@ -32,7 +32,7 @@ export async function updateRecurringRuleAction(
     }
 
     await prisma.recurring_rules.update({
-      where: { id },
+      where: { id, user_id: user.id },
       data: {
         end_date: endDate ? new Date(endDate) : null,
         recurrence_months: recurrenceMonths ?? null,

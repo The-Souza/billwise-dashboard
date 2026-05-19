@@ -2,6 +2,7 @@
 
 import { requireAuth } from "@/lib/auth/guards";
 import { prisma } from "@/lib/prisma/client";
+import { uuidSchema } from "@/schemas/shared/params";
 import { revalidatePath } from "next/cache";
 
 type DeleteRecurringRuleResult =
@@ -11,13 +12,14 @@ type DeleteRecurringRuleResult =
 export async function deleteRecurringRuleAction(
   id: string,
 ): Promise<DeleteRecurringRuleResult> {
-  if (!id) return { success: false, error: "ID inválido" };
+  const parsed = uuidSchema.safeParse(id);
+  if (!parsed.success) return { success: false, error: "ID inválido" };
 
   try {
     const user = await requireAuth();
 
     const rule = await prisma.recurring_rules.findFirst({
-      where: { id, user_id: user.id },
+      where: { id: parsed.data, user_id: user.id },
       select: { id: true },
     });
 
@@ -28,13 +30,13 @@ export async function deleteRecurringRuleAction(
     await prisma.$transaction(async (tx) => {
       await tx.accounts.deleteMany({
         where: {
-          recurring_rule_id: id,
+          recurring_rule_id: parsed.data,
           user_id: user.id,
           status: "pending",
         },
       });
 
-      await tx.recurring_rules.delete({ where: { id } });
+      await tx.recurring_rules.delete({ where: { id: parsed.data, user_id: user.id } });
     });
 
     revalidatePath("/settings");

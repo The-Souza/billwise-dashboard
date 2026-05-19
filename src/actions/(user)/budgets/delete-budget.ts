@@ -26,7 +26,7 @@ export async function deleteBudgetAction(
       return { success: false, error: "Orçamento não encontrado" };
     }
 
-    await prisma.budgets.delete({ where: { id: parsed.data } });
+    await prisma.budgets.delete({ where: { id: parsed.data, user_id: user.id } });
 
     return { success: true };
   } catch (error) {
