@@ -5,6 +5,7 @@ import { getChartDataAction } from "@/actions/(user)/dashboard/get-chart-data";
 import { getRecentAccountsAction } from "@/actions/(user)/dashboard/get-recent-accounts";
 import { getSummaryAction } from "@/actions/(user)/dashboard/get-summary";
 import { MonthPicker } from "@/components/ui/month-picker";
+import { SWR_DEFAULT_OPTIONS } from "@/config/swr";
 import { useDashboardMonth } from "@/hooks/use-dashboard-month";
 import useSWR from "swr";
 import { BudgetProgress } from "./_components/BudgetProgress";
@@ -16,10 +17,13 @@ export default function DashboardPage() {
   const dashboardMonth = useDashboardMonth();
   const { month, year, label } = dashboardMonth;
 
+  const swrOptions = SWR_DEFAULT_OPTIONS;
+
   const { data: summary, isLoading: loadingSummary } = useSWR(
     ["dashboard-summary", month, year],
     () =>
       getSummaryAction(month, year).then((r) => (r.success ? r.data : null)),
+    swrOptions,
   );
 
   const { data: chartData, isLoading: loadingChart } = useSWR(
@@ -28,6 +32,7 @@ export default function DashboardPage() {
       getChartDataAction(month, year, 12).then((r) =>
         r.success ? r.data : [],
       ),
+    swrOptions,
   );
 
   const { data: budgets, isLoading: loadingBudgets } = useSWR(
@@ -36,6 +41,7 @@ export default function DashboardPage() {
       getBudgetProgressAction(month, year).then((r) =>
         r.success ? r.data : [],
       ),
+    swrOptions,
   );
 
   const { data: accounts, isLoading: loadingAccounts } = useSWR(
@@ -44,6 +50,7 @@ export default function DashboardPage() {
       getRecentAccountsAction(month, year).then((r) =>
         r.success ? r.data : [],
       ),
+    swrOptions,
   );
 
   function handleMonthSelect(m: number, y: number) {
@@ -54,7 +61,7 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col gap-4 min-h-full">
       <div className="flex flex-col sm:flex-row items-center justify-between">
-        <h1 className="text-lg font-bold font-heading tracking-tight capitalize">
+        <h1 className="text-lg font-bold font-heading tracking-tight">
           Visão geral das suas finanças
         </h1>
         <MonthPicker {...dashboardMonth} onSelect={handleMonthSelect} />

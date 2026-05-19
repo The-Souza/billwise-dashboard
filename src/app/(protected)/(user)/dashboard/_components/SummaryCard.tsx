@@ -43,7 +43,7 @@ export function SummaryCard({ data, isLoading }: SummaryCardProps) {
       {CARD_CONFIG.map((item) => (
         <Card key={item.id}>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-md font-heading text-muted-foreground capitalize">
+            <CardTitle className="text-md font-heading text-muted-foreground">
               {item.title}
             </CardTitle>
             <div className="p-2 rounded-md bg-primary/10">

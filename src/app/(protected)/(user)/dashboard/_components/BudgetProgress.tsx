@@ -11,6 +11,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/utils/format-currency";
+import {
+  formatPercentage,
+  formatPercentageOverflow,
+} from "@/utils/format-text";
 import { getStatusClasses } from "@/utils/get-status-classes";
 import { ArrowRight, icons } from "lucide-react";
 import Link from "next/link";
@@ -35,11 +39,11 @@ function BudgetItem({ budget }: { budget: BudgetProgressItem }) {
     if (isIncome) {
       return budget.usedPercentage >= 100
         ? "Meta atingida!"
-        : `${budget.usedPercentage.toFixed(0)}% alcançado`;
+        : `${formatPercentage(budget.usedPercentage)} alcançado`;
     }
     return isOver
-      ? `+${(budget.usedPercentage - 100).toFixed(0)}% acima`
-      : `${budget.usedPercentage.toFixed(0)}% utilizado`;
+      ? `${formatPercentageOverflow(budget.usedPercentage)} acima`
+      : `${formatPercentage(budget.usedPercentage)} utilizado`;
   }
 
   return (
@@ -88,7 +92,7 @@ function BudgetSkeleton() {
   return (
     <>
       {Array.from({ length: 6 }).map((_, i) => (
-        <div key={i} className="flex flex-col gap-2">
+        <div key={i} className="flex flex-col gap-2 h-17">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               <Skeleton className="h-5 w-5 rounded" />
@@ -96,7 +100,7 @@ function BudgetSkeleton() {
             </div>
             <Skeleton className="h-4 w-28" />
           </div>
-          <Skeleton className="h-2 w-full rounded-full" />
+          <Skeleton className="h-2.5 w-full rounded-full" />
           <div className="flex justify-end">
             <Skeleton className="h-5 w-20 rounded-full" />
           </div>
@@ -130,9 +134,7 @@ export function BudgetProgress({
       <CardHeader className="flex flex-row items-start justify-between">
         <div className="flex flex-col gap-1">
           <CardTitle className="font-heading text-base">Orçamentos</CardTitle>
-          <CardDescription className="capitalize">
-            Uso em {label}
-          </CardDescription>
+          <CardDescription>Uso em {label}</CardDescription>
         </div>
         <Button variant="ghost" size="sm" className="text-xs" asChild>
           <Link href="/budgets">
@@ -143,10 +145,14 @@ export function BudgetProgress({
       </CardHeader>
 
       <CardContent>
-        <Tabs defaultValue="expense">
-          <TabsList className="w-auto">
-            <TabsTrigger value="expense">Despesas</TabsTrigger>
-            <TabsTrigger value="income">Metas</TabsTrigger>
+        <Tabs defaultValue="expense" className="w-full">
+          <TabsList className="w-full">
+            <TabsTrigger value="expense" className="flex-1">
+              Despesas
+            </TabsTrigger>
+            <TabsTrigger value="income" className="flex-1">
+              Metas
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="expense" className="flex flex-col gap-4 mt-4">

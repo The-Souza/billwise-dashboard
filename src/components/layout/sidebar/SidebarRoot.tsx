@@ -6,7 +6,7 @@ import {
   SidebarFooter,
   SidebarHeader,
 } from "@/components/ui/sidebar";
-import { AuthUser } from "@/lib/auth/getUserWithRole";
+import { AuthUser } from "@/lib/auth/get-user-with-role";
 import { BillwiseLogo, SidebarNavigation, SidebarUser } from "./index";
 
 export type User = {

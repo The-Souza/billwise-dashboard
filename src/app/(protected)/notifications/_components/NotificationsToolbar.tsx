@@ -4,12 +4,19 @@ import { Button } from "@/components/ui/button";
 import { CheckCheckIcon } from "lucide-react";
 import { useNotifications } from "./NotificationsContext";
 
-type FilterType = "all" | "overdue" | "due_soon";
+type FilterType =
+  | "all"
+  | "overdue"
+  | "due_soon"
+  | "budget_exceeded"
+  | "recurring_generated";
 
 const FILTER_OPTIONS: { value: FilterType; label: string }[] = [
   { value: "all", label: "Todas" },
   { value: "overdue", label: "Vencidas" },
   { value: "due_soon", label: "Prestes a vencer" },
+  { value: "budget_exceeded", label: "Orçamento" },
+  { value: "recurring_generated", label: "Recorrentes" },
 ];
 
 export function NotificationsToolbar() {
@@ -17,8 +24,8 @@ export function NotificationsToolbar() {
     useNotifications();
 
   return (
-    <div className="flex items-center justify-between gap-2 flex-wrap">
-      <div className="flex items-center gap-1">
+    <div className="flex flex-col lg:flex-row items-center justify-between gap-2">
+      <div className="grid grid-cols-3 sm:grid-cols-5 items-center gap-1 w-full lg:w-auto">
         {FILTER_OPTIONS.map((opt) => (
           <Button
             key={opt.value}

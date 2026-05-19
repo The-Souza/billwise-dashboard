@@ -1,11 +1,14 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
+import { formatNotificationDateTime } from "@/utils/format-date";
 import {
   AlertCircleIcon,
   AlertTriangleIcon,
   BellIcon,
   CheckCheckIcon,
+  RefreshCwIcon,
+  TrendingUpIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { useNotifications } from "./NotificationsContext";
@@ -31,6 +34,24 @@ const TYPE_CONFIG: Record<
       </div>
     ),
     accentClass: "border-l-amber-500/60",
+  },
+  budget_exceeded: {
+    label: "Orçamento",
+    icon: (
+      <div className="p-2 rounded-md bg-orange-500/10 shrink-0">
+        <TrendingUpIcon className="size-4 text-orange-500" />
+      </div>
+    ),
+    accentClass: "border-l-orange-500/60",
+  },
+  recurring_generated: {
+    label: "Recorrente",
+    icon: (
+      <div className="p-2 rounded-md bg-primary/10 shrink-0">
+        <RefreshCwIcon className="size-4 text-primary" />
+      </div>
+    ),
+    accentClass: "border-l-primary/60",
   },
 };
 
@@ -99,7 +120,7 @@ export function NotificationsClient() {
               )}
 
               <div className="flex flex-col gap-1 flex-1 min-w-0 pr-4">
-                <span className="font-heading font-semibold capitalize text-sm">
+                <span className="font-heading font-semibold text-sm">
                   {n.title}
                 </span>
 
@@ -111,13 +132,7 @@ export function NotificationsClient() {
 
                 <div className="flex items-center justify-between gap-2 mt-1">
                   <span className="text-xs text-muted-foreground tabular-nums">
-                    {new Date(n.createdAt).toLocaleDateString("pt-BR", {
-                      day: "2-digit",
-                      month: "long",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                    {formatNotificationDateTime(n.createdAt)}
                   </span>
 
                   {isUnread && !n.accountId && (

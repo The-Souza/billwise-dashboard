@@ -27,7 +27,8 @@ import {
 } from "@/components/ui/field";
 import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import { Spinner } from "@/components/ui/spinner";
-import { AuthUser } from "@/lib/auth/getUserWithRole";
+import { AuthUser } from "@/lib/auth/get-user-with-role";
+import { updateAccountSchema } from "@/schemas/profile/update-account";
 import { appToast } from "@/utils/app-toast";
 import { getInitials } from "@/utils/get-initials";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -36,15 +37,6 @@ import Link from "next/link";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
-
-const formSchema = z.object({
-  name: z.string().nonempty("Nome é obrigatório"),
-  email: z
-    .string()
-    .nonempty("Email é obrigatório")
-    .email("Email inválido")
-    .toLowerCase(),
-});
 
 type User = {
   user: AuthUser;
@@ -55,8 +47,8 @@ export function ProfileForm({ user }: User) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof updateAccountSchema>>({
+    resolver: zodResolver(updateAccountSchema),
     mode: "onChange",
     defaultValues: {
       name: user.name ?? "",
@@ -93,7 +85,7 @@ export function ProfileForm({ user }: User) {
     }
   }
 
-  async function handleSubmit(data: z.infer<typeof formSchema>) {
+  async function handleSubmit(data: z.infer<typeof updateAccountSchema>) {
     if (isSubmitting) return;
 
     setIsSubmitting(true);
@@ -199,17 +191,17 @@ export function ProfileForm({ user }: User) {
               <Button
                 type="button"
                 variant="outline"
-                className="transition-transform ease-in hover:scale-103 active:scale-97 shrink-0"
+                className="transition-transform ease-in hover:scale-103 active:scale-97 shrink-0 w-1/2 sm:w-auto"
                 onClick={() => setIsEditing(true)}
               >
                 Editar <Pencil />
               </Button>
             ) : (
-              <div className="flex gap-2 shrink-0">
+              <div className="flex gap-2 shrink-0 w-full sm:w-auto">
                 <Button
                   type="button"
                   variant="outline"
-                  className="transition-transform ease-in hover:scale-103 active:scale-97"
+                  className="transition-transform ease-in hover:scale-103 active:scale-97 w-full sm:w-auto"
                   onClick={() => setIsEditing(false)}
                 >
                   Cancelar
@@ -218,7 +210,7 @@ export function ProfileForm({ user }: User) {
                   type="submit"
                   size={isSubmitting ? "icon" : "default"}
                   form="form-profile"
-                  className="transition-transform ease-in hover:scale-103 active:scale-97"
+                  className="transition-transform ease-in hover:scale-103 active:scale-97 w-full sm:w-auto"
                 >
                   {isSubmitting ? (
                     <Spinner data-icon="inline-start" />
@@ -298,7 +290,7 @@ export function ProfileForm({ user }: User) {
             <Button variant="outline" asChild>
               <Link
                 href="/profile/change-password"
-                className="transition-transform ease-in hover:scale-103 active:scale-97"
+                className="transition-transform ease-in hover:scale-103 active:scale-97 w-1/2 sm:w-auto"
               >
                 Alterar Senha
               </Link>

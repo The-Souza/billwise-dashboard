@@ -1,18 +1,13 @@
 "use client";
 
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Controller, useWatch } from "react-hook-form";
 import { useAccountForm } from "./AccountFormContext";
+import { RecurrenceDurationInput } from "./RecurrenceDurationInput";
 
 export function AccountFormSchedule() {
   const { form } = useAccountForm();
@@ -26,9 +21,7 @@ export function AccountFormSchedule() {
     <>
       <Separator />
       <div className="flex flex-col gap-1">
-        <h3 className="text-md font-heading capitalize">
-          Configurações da Conta
-        </h3>
+        <h3 className="text-md font-heading">Configurações da conta</h3>
         <p className="text-sm text-muted-foreground">
           Configure recorrência ou parcelamento
         </p>
@@ -39,7 +32,7 @@ export function AccountFormSchedule() {
         control={form.control}
         render={({ field }) => (
           <Field>
-            <FieldLabel htmlFor={field.name} className="text-md capitalize">
+            <FieldLabel htmlFor={field.name} className="text-md">
               Tipo de configuração
             </FieldLabel>
             <RadioGroup
@@ -70,31 +63,13 @@ export function AccountFormSchedule() {
           control={form.control}
           render={({ field, fieldState }) => (
             <Field>
-              <FieldLabel htmlFor={field.name} className="text-md capitalize">
-                Gerar próximos meses
-              </FieldLabel>
-              <Select
-                value={field.value?.toString() ?? "none"}
-                onValueChange={(v) =>
-                  field.onChange(v === "none" ? null : Number(v))
-                }
+              <RecurrenceDurationInput
+                value={field.value ?? null}
+                onChange={field.onChange}
+                fieldName={field.name}
+                invalid={fieldState.invalid}
                 disabled={!isRecurringForm}
-                name={field.name}
-              >
-                <SelectTrigger aria-invalid={fieldState.invalid}>
-                  <SelectValue placeholder="Selecione" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">
-                    Não gerar automaticamente
-                  </SelectItem>
-                  {[3, 6, 9, 12, 18, 24].map((months) => (
-                    <SelectItem key={months} value={months.toString()}>
-                      {months} meses
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
@@ -105,29 +80,29 @@ export function AccountFormSchedule() {
           control={form.control}
           render={({ field, fieldState }) => (
             <Field>
-              <FieldLabel htmlFor={field.name} className="text-md capitalize">
+              <FieldLabel htmlFor={field.name} className="text-md">
                 Quantidade de parcelas
               </FieldLabel>
-              <Select
-                value={field.value?.toString() ?? "none"}
-                onValueChange={(v) =>
-                  field.onChange(v === "none" ? null : Number(v))
-                }
-                disabled={!hasInstallmentsForm}
-                name={field.name}
-              >
-                <SelectTrigger aria-invalid={fieldState.invalid}>
-                  <SelectValue placeholder="Selecione" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">Sem parcelamento</SelectItem>
-                  {[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((count) => (
-                    <SelectItem key={count} value={count.toString()}>
-                      {count} parcelas
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <InputGroup>
+                <InputGroupInput
+                  id={field.name}
+                  type="number"
+                  min={2}
+                  value={field.value ?? ""}
+                  onChange={(e) => {
+                    const raw = e.target.value;
+                    if (raw === "") {
+                      field.onChange(null);
+                    } else {
+                      const n = parseInt(raw, 10);
+                      if (!isNaN(n)) field.onChange(n);
+                    }
+                  }}
+                  placeholder={hasInstallmentsForm ? "Ex: 12" : "—"}
+                  disabled={!hasInstallmentsForm}
+                  aria-invalid={fieldState.invalid}
+                />
+              </InputGroup>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}

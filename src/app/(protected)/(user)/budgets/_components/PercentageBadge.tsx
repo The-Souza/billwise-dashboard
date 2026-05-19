@@ -1,5 +1,9 @@
 import { BudgetRow } from "@/actions/(user)/budgets/get-budgets";
 import { cn } from "@/lib/utils";
+import {
+  formatPercentage,
+  formatPercentageOverflow,
+} from "@/utils/format-text";
 import { getStatusClasses } from "@/utils/get-status-classes";
 
 export function PercentageBadge({
@@ -19,7 +23,7 @@ export function PercentageBadge({
           classes.badge,
         )}
       >
-        {budget.usedPercentage.toFixed(0)}%
+        {formatPercentage(budget.usedPercentage)}
       </span>
     );
   }
@@ -31,8 +35,8 @@ export function PercentageBadge({
       )}
     >
       {budget.usedPercentage > 100
-        ? `+${(budget.usedPercentage - 100).toFixed(0)}%`
-        : `${budget.usedPercentage.toFixed(0)}%`}
+        ? formatPercentageOverflow(budget.usedPercentage)
+        : formatPercentage(budget.usedPercentage)}
     </span>
   );
 }
