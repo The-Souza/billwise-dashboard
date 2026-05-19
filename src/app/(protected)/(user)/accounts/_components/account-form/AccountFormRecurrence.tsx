@@ -30,9 +30,7 @@ export function AccountFormRecurrence() {
                 fieldName={field.name}
                 invalid={fieldState.invalid}
               />
-              {fieldState.invalid && (
-                <FieldError errors={[fieldState.error]} />
-              )}
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />

@@ -151,9 +151,11 @@ export function AccountsDataTable({
     <div className="flex flex-col gap-3 flex-1">
       <div className="flex flex-col-reverse lg:flex-row justify-between items-start lg:items-end gap-2">
         <p className="text-xs text-muted-foreground">
-          {selectedCount > 0
-            ? `${selectedCount} de ${total} selecionadas`
-            : `${total} conta${total !== 1 ? "s" : ""} encontrada${total !== 1 ? "s" : ""}`}
+          {isLoading
+            ? "0 contas encontradas"
+            : selectedCount > 0
+              ? `${selectedCount} de ${total} selecionadas`
+              : `${total} conta${total !== 1 ? "s" : ""} encontrada${total !== 1 ? "s" : ""}`}
         </p>
         <AccountsFilters
           filters={filters}
@@ -244,9 +246,11 @@ export function AccountsDataTable({
 
       <div className="flex items-center justify-between">
         <p className="text-xs text-muted-foreground">
-          {total > 0
-            ? `Mostrando ${Math.min((page - 1) * PAGE_SIZE + 1, total)}–${Math.min(page * PAGE_SIZE, total)} de ${total} contas`
-            : "Nenhuma conta encontrada"}
+          {isLoading
+            ? "Mostrando 0 contas"
+            : total > 0
+              ? `Mostrando ${Math.min((page - 1) * PAGE_SIZE + 1, total)}–${Math.min(page * PAGE_SIZE, total)} de ${total} contas`
+              : "Nenhuma conta encontrada"}
         </p>
         <div className="flex items-center gap-1">
           <Button

@@ -97,7 +97,7 @@ export function RecurringRulesSection() {
                       <span className="text-sm font-medium leading-tight truncate">
                         {capitalizeFirst(rule.title)}
                       </span>
-                      <span className="text-xs text-muted-foreground truncate">
+                      <span className="text-xs text-muted-foreground">
                         {rule.categoryName ?? "Sem categoria"}
                         {formatRecurrenceDuration(rule.recurrenceMonths)}
                       </span>
@@ -113,7 +113,7 @@ export function RecurringRulesSection() {
                       >
                         {formatCurrency(rule.amount)}
                       </span>
-                      <span className="text-xs text-muted-foreground">
+                      <span className="hidden sm:block text-xs text-muted-foreground">
                         {rule.endDate
                           ? `Até ${new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short", year: "numeric", timeZone: "UTC" }).format(new Date(rule.endDate))}`
                           : "Sem prazo"}

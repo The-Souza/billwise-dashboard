@@ -57,7 +57,7 @@ export function VerifyEmail({ email }: VerifyEmailProps) {
   return (
     <div className="w-full">
       <CardHeader>
-        <CardTitle className="text-4xl font-semibold font-heading text-center">
+        <CardTitle className="text-3xl font-semibold font-heading text-center">
           Verifique seu email
         </CardTitle>
       </CardHeader>

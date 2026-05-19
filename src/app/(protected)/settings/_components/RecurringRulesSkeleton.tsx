@@ -7,12 +7,12 @@ export function RecurringRulesSkeleton() {
         <div key={i} className="flex items-center gap-3 px-6 py-3.5">
           <Skeleton className="h-8 w-8 rounded-lg shrink-0" />
           <div className="flex flex-col gap-1.5 flex-1">
+            <Skeleton className="h-4 w-24" />
             <Skeleton className="h-4 w-32" />
-            <Skeleton className="h-4 w-38" />
           </div>
           <div className="flex flex-col items-end gap-1.5 shrink-0">
-            <Skeleton className="h-4 w-20" />
-            <Skeleton className="h-4 w-34.5" />
+            <Skeleton className="h-4 w-18" />
+            <Skeleton className="h-4 w-34.5 hidden sm:block" />
           </div>
           <div className="flex items-center gap-1">
             <Skeleton className="h-7 w-7 rounded-md" />

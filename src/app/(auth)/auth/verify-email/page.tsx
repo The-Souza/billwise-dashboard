@@ -26,7 +26,7 @@ export default async function VerifyEmailPage({
   }
 
   return (
-    <Card className="w-full max-w-lg border-none bg-transparent shadow-none">
+    <Card className="w-full max-w-2xl border-none bg-transparent shadow-none">
       <VerifyEmail email={email} />
     </Card>
   );

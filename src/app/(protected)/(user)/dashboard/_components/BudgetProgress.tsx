@@ -96,7 +96,7 @@ function BudgetSkeleton() {
             </div>
             <Skeleton className="h-4 w-28" />
           </div>
-          <Skeleton className="h-2 w-full rounded-full" />
+          <Skeleton className="h-2.5 w-full rounded-full" />
           <div className="flex justify-end">
             <Skeleton className="h-5 w-20 rounded-full" />
           </div>
