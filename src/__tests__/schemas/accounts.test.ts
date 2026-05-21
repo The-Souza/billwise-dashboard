@@ -105,6 +105,35 @@ describe("accountFormSchema", () => {
     const messages = result.error?.issues.map((i) => i.message);
     expect(messages).toContain("Mínimo de 2 parcelas");
   });
+
+  it("rejeita recurrenceMonths zero", () => {
+    const result = accountFormSchema.safeParse({
+      ...base,
+      scheduleType: "recurring",
+      recurrenceMonths: 0,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejeita recurrenceMonths negativo", () => {
+    const result = accountFormSchema.safeParse({
+      ...base,
+      scheduleType: "recurring",
+      recurrenceMonths: -5,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejeita installments acima de 120 (máximo de 120 parcelas)", () => {
+    const result = accountFormSchema.safeParse({
+      ...base,
+      scheduleType: "installments",
+      installments: 121,
+    });
+    expect(result.success).toBe(false);
+    const messages = result.error?.issues.map((i) => i.message);
+    expect(messages).toContain("Máximo de 120 parcelas");
+  });
 });
 
 describe("deleteAccountsSchema", () => {

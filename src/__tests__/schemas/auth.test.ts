@@ -108,4 +108,15 @@ describe("signUpSchema", () => {
     expect(result.success).toBe(false);
     expect(result.error?.issues[0].message).toBe("Nome é obrigatório");
   });
+
+  it("rejeita email com espaço interno", () => {
+    const result = signUpSchema.safeParse({ ...valid, email: "user @example.com" });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejeita nome com mais de 100 caracteres", () => {
+    const result = signUpSchema.safeParse({ ...valid, name: "A".repeat(101) });
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0].message).toBe("Nome muito longo");
+  });
 });
