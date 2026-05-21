@@ -7,7 +7,7 @@ export function NotificationsSkeleton() {
       <div className="flex items-center">
         <div className="grid grid-cols-3 sm:grid-cols-5 items-center gap-1 w-full lg:w-auto">
           {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-8 lg:w-30 rounded-md" />
+            <Skeleton key={i} className="h-8 lg:w-32 rounded-md" />
           ))}
         </div>
       </div>

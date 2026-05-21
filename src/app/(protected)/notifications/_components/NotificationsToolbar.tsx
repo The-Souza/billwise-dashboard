@@ -32,6 +32,7 @@ export function NotificationsToolbar() {
             variant={filter === opt.value ? "default" : "outline"}
             size="sm"
             onClick={() => setFilter(opt.value)}
+            className="lg:w-32"
           >
             {opt.label}
           </Button>

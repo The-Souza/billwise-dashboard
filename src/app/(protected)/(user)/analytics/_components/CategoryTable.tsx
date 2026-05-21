@@ -87,17 +87,17 @@ export function CategoryTable({ data = [], isLoading }: CategoryTableProps) {
               Array.from({ length: CATEGORY_PAGE_SIZE }).map((_, i) => (
                 <TableRow
                   key={i}
-                  className="*:border-border [&>:not(:last-child)]:border-r odd:bg-muted/50 odd:hover:bg-muted/50 hover:bg-transparent"
+                  className="*:border-border [&>:not(:last-child)]:border-r odd:bg-muted/50 odd:hover:bg-muted/50 hover:bg-transparent h-12"
                 >
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Skeleton className="h-6 w-6 rounded-md shrink-0" />
-                      <Skeleton className="h-3.5 w-28" />
+                      <Skeleton className="h-5 w-28" />
                     </div>
                   </TableCell>
                   {Array.from({ length: 4 }).map((_, j) => (
                     <TableCell key={j} className="text-right">
-                      <Skeleton className="h-3.5 w-16 ml-auto" />
+                      <Skeleton className="h-5 w-16 ml-auto" />
                     </TableCell>
                   ))}
                 </TableRow>
@@ -122,7 +122,7 @@ export function CategoryTable({ data = [], isLoading }: CategoryTableProps) {
                 return (
                   <TableRow
                     key={item.categoryId}
-                    className="*:border-border [&>:not(:last-child)]:border-r odd:bg-muted/50 odd:hover:bg-muted/50 hover:bg-transparent"
+                    className="*:border-border [&>:not(:last-child)]:border-r odd:bg-muted/50 odd:hover:bg-muted/50 hover:bg-transparent h-12"
                   >
                     <TableCell>
                       <div className="flex items-center gap-2">
