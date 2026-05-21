@@ -57,7 +57,7 @@ describe("updateRecurringRuleAction", () => {
       recurrenceMonths: null,
     });
     expect(result).toEqual({ success: false, error: "ID inválido" });
-    expect(mockAuth).not.toHaveBeenCalled();
+    expect(mockAuth).toHaveBeenCalled();
   });
 
   it("retorna erro quando regra não pertence ao usuário", async () => {
@@ -76,7 +76,7 @@ describe("updateRecurringRuleAction", () => {
     expect(result).toEqual({ success: true });
     expect(mockUpdate).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { id: VALID_UUID },
+        where: { id: VALID_UUID, user_id: MOCK_USER.id },
         data: expect.objectContaining({
           recurrence_months: VALID_DATA.recurrenceMonths,
         }),

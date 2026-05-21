@@ -82,7 +82,7 @@ describe("deleteRecurringRuleAction", () => {
       }),
     );
     expect(mockRuleDelete).toHaveBeenCalledWith(
-      expect.objectContaining({ where: { id: VALID_UUID } }),
+      expect.objectContaining({ where: { id: VALID_UUID, user_id: MOCK_USER.id } }),
     );
   });
 

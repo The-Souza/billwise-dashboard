@@ -43,7 +43,7 @@ describe("deleteBudgetAction", () => {
   it("retorna erro para ID inválido (não UUID)", async () => {
     const result = await deleteBudgetAction("nao-é-uuid");
     expect(result).toEqual({ success: false, error: "ID inválido" });
-    expect(mockAuth).not.toHaveBeenCalled();
+    expect(mockAuth).toHaveBeenCalled();
   });
 
   it("retorna erro quando orçamento não é encontrado", async () => {
@@ -62,7 +62,7 @@ describe("deleteBudgetAction", () => {
 
     const result = await deleteBudgetAction(VALID_ID);
     expect(result).toEqual({ success: true });
-    expect(mockDelete).toHaveBeenCalledWith({ where: { id: VALID_ID } });
+    expect(mockDelete).toHaveBeenCalledWith({ where: { id: VALID_ID, user_id: MOCK_USER.id } });
   });
 
   it("garante que apenas orçamentos do próprio usuário são deletados", async () => {
