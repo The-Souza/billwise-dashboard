@@ -99,7 +99,7 @@ export function ForgotPasswordForm() {
                       type="email"
                       aria-invalid={fieldState.invalid}
                       placeholder="seu@email.com"
-                      autoComplete="on"
+                      autoComplete="email"
                     />
                   </InputGroup>
                   {fieldState.invalid && (

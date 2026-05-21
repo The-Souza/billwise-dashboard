@@ -95,14 +95,14 @@ export default function ChangePasswordForm() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-full">
-      <div className="w-full max-w-md">
-        <CardHeader className="text-center">
+      <div className="w-full max-w-sm">
+        <CardHeader className="text-center px-0">
           <CardTitle className="text-2xl">Alterar Senha</CardTitle>
           <CardDescription className="text-md text-muted-foreground">
             Insira sua senha atual e digite sua nova senha.
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col gap-6">
+        <CardContent className="flex flex-col gap-6 px-0">
           <form
             id="form-change-password"
             onSubmit={form.handleSubmit(handleSubmit)}
@@ -125,6 +125,7 @@ export default function ChangePasswordForm() {
                             ? "text"
                             : "password"
                         }
+                        autoComplete="current-password"
                         placeholder="Digite sua senha"
                         aria-invalid={fieldState.invalid}
                       />
@@ -169,6 +170,7 @@ export default function ChangePasswordForm() {
                         type={
                           visibleField === "newPassword" ? "text" : "password"
                         }
+                        autoComplete="new-password"
                         placeholder="Digite sua nova senha"
                         aria-invalid={fieldState.invalid}
                       />
@@ -215,6 +217,7 @@ export default function ChangePasswordForm() {
                             ? "text"
                             : "password"
                         }
+                        autoComplete="new-password"
                         placeholder="Confirme sua nova senha"
                         aria-invalid={fieldState.invalid}
                       />
@@ -268,7 +271,7 @@ export default function ChangePasswordForm() {
             </ul>
           </div>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="px-0">
           <Field>
             <Button
               type="submit"

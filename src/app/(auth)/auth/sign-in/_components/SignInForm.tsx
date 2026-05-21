@@ -105,7 +105,7 @@ export function SignInForm() {
                       type="email"
                       aria-invalid={fieldState.invalid}
                       placeholder="seu@email.com"
-                      autoComplete="on"
+                      autoComplete="email"
                     />
                   </InputGroup>
                   {fieldState.invalid && (
@@ -135,6 +135,7 @@ export function SignInForm() {
                       {...field}
                       id={field.name}
                       type={isVisible ? "text" : "password"}
+                      autoComplete="current-password"
                       placeholder="Digite sua senha"
                       aria-invalid={fieldState.invalid}
                     />
