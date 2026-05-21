@@ -108,6 +108,7 @@ export function SignUpForm() {
                       {...field}
                       id={field.name}
                       type="text"
+                      autoComplete="name"
                       aria-invalid={fieldState.invalid}
                       placeholder="Digite seu nome e sobrenome"
                     />
@@ -133,7 +134,7 @@ export function SignUpForm() {
                       type="email"
                       aria-invalid={fieldState.invalid}
                       placeholder="seu@email.com"
-                      autoComplete="on"
+                      autoComplete="email"
                     />
                   </InputGroup>
                   {fieldState.invalid && (
@@ -155,6 +156,7 @@ export function SignUpForm() {
                       {...field}
                       id={field.name}
                       type={visibleField === "password" ? "text" : "password"}
+                      autoComplete="new-password"
                       placeholder="Digite sua senha"
                       aria-invalid={fieldState.invalid}
                     />
@@ -197,6 +199,7 @@ export function SignUpForm() {
                       type={
                         visibleField === "confirmPassword" ? "text" : "password"
                       }
+                      autoComplete="new-password"
                       placeholder="Confirme sua senha"
                       aria-invalid={fieldState.invalid}
                     />

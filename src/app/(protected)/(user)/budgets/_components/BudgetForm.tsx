@@ -3,23 +3,23 @@
 import { BudgetDetail } from "@/actions/(user)/budgets/get-budget-by-id";
 import { CategoryForBudget } from "@/actions/(user)/budgets/get-categories-for-budget";
 import { Button } from "@/components/ui/button";
+import {
+  Combobox,
+  ComboboxCollection,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxGroup,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxLabel,
+  ComboboxList,
+  ComboboxSeparator,
+} from "@/components/ui/combobox";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/ui/input-group";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectSeparator,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
+import { buildCategoryGroups, findCategoryItem } from "@/utils/category-combobox";
 import { budgetFormSchema } from "@/schemas/budgets/budget-form";
 import { appToast } from "@/utils/app-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -33,6 +33,7 @@ interface BudgetFormProps {
   year: number;
   budget?: BudgetDetail;
   categoryType?: "expense" | "income";
+  isLoadingCategories?: boolean;
   expenseCategories: CategoryForBudget[];
   incomeCategories: CategoryForBudget[];
   onSuccess: () => void;
@@ -47,6 +48,7 @@ export function BudgetForm({
   year,
   budget,
   categoryType,
+  isLoadingCategories = false,
   expenseCategories,
   incomeCategories,
   onSuccess,
@@ -55,6 +57,7 @@ export function BudgetForm({
 }: BudgetFormProps) {
   const isEditing = !!budget;
   const [raw, setRaw] = useState(budget?.limitAmount?.toString() ?? "");
+  const [formEl, setFormEl] = useState<HTMLFormElement | null>(null);
 
   const form = useForm<z.infer<typeof budgetFormSchema>>({
     resolver: zodResolver(budgetFormSchema),
@@ -82,85 +85,102 @@ export function BudgetForm({
 
   const visibleExpense = categoryType === "income" ? [] : expenseCategories;
   const visibleIncome = categoryType === "expense" ? [] : incomeCategories;
-
-  const hasExpense = visibleExpense.length > 0;
-  const hasIncome = visibleIncome.length > 0;
-  const noCategories = !hasExpense && !hasIncome;
+  const noCategories = visibleExpense.length === 0 && visibleIncome.length === 0;
 
   return (
     <form
+      ref={setFormEl}
       onSubmit={form.handleSubmit(handleSubmit)}
       className="flex flex-col gap-5"
     >
-      {isEditing ? (
-        <Field>
-          <FieldLabel className="text-sm font-medium">Categoria</FieldLabel>
-          <div className="flex h-9 items-center rounded-md border bg-muted/50 px-3 text-sm text-muted-foreground select-none">
-            {budget.categoryName}
-          </div>
-          <p className="text-xs text-muted-foreground">
-            A categoria não pode ser alterada.
-          </p>
-        </Field>
-      ) : (
-        <Controller
-          name="categoryId"
-          control={form.control}
-          render={({ field, fieldState }) => (
+      <Controller
+        name="categoryId"
+        control={form.control}
+        render={({ field, fieldState }) => {
+          if (isEditing) {
+            const editingItem = {
+              id: budget!.categoryId,
+              name: budget!.categoryName,
+            };
+            return (
+              <Field>
+                <FieldLabel
+                  htmlFor={field.name}
+                  className="text-sm font-medium"
+                >
+                  Categoria
+                </FieldLabel>
+                {isLoadingCategories ? (
+                  <Skeleton className="h-9 w-full" />
+                ) : (
+                  <Combobox
+                    items={[editingItem]}
+                    value={editingItem}
+                    itemToStringLabel={(item) => item.name}
+                  >
+                    <ComboboxInput id={field.name} disabled showTrigger />
+                  </Combobox>
+                )}
+                <span className="text-xs text-muted-foreground">
+                  A categoria não pode ser alterada.
+                </span>
+              </Field>
+            );
+          }
+
+          const categoryGroups = buildCategoryGroups(visibleExpense, visibleIncome);
+          const selectedItem = findCategoryItem(categoryGroups, field.value);
+
+          return (
             <Field>
               <FieldLabel htmlFor={field.name} className="text-sm font-medium">
                 Categoria
               </FieldLabel>
-              {noCategories ? (
+              {!isLoadingCategories && noCategories ? (
                 <p className="text-sm text-muted-foreground rounded-md border border-dashed px-3 py-2">
                   Todas as categorias já possuem orçamento neste mês.
                 </p>
               ) : (
-                <Select
-                  value={field.value}
-                  onValueChange={field.onChange}
-                  name={field.name}
+                <Combobox
+                  items={categoryGroups}
+                  value={selectedItem}
+                  onValueChange={(item) => field.onChange(item?.id ?? "")}
+                  itemToStringLabel={(item) => item.name}
                 >
-                  <SelectTrigger
-                    aria-invalid={fieldState.invalid}
+                  <ComboboxInput
                     id={field.name}
-                  >
-                    <SelectValue placeholder="Selecione uma categoria" />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-80">
-                    {hasExpense && (
-                      <SelectGroup>
-                        <SelectLabel className="text-muted-foreground text-xs">
-                          Despesas
-                        </SelectLabel>
-                        {visibleExpense.map((cat) => (
-                          <SelectItem key={cat.id} value={cat.id}>
-                            {cat.name}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    )}
-                    {hasExpense && hasIncome && <SelectSeparator />}
-                    {hasIncome && (
-                      <SelectGroup>
-                        <SelectLabel className="text-muted-foreground text-xs">
-                          Receitas
-                        </SelectLabel>
-                        {visibleIncome.map((cat) => (
-                          <SelectItem key={cat.id} value={cat.id}>
-                            {cat.name}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    )}
-                  </SelectContent>
-                </Select>
+                    placeholder="Selecione uma categoria"
+                    aria-invalid={fieldState.invalid}
+                    disabled={isLoadingCategories}
+                    showTrigger
+                  />
+                  <ComboboxContent container={formEl}>
+                    <ComboboxEmpty>Nenhuma categoria encontrada.</ComboboxEmpty>
+                    <ComboboxList>
+                      {(group, index) => (
+                        <ComboboxGroup key={group.label} items={group.items}>
+                          <ComboboxLabel>{group.label}</ComboboxLabel>
+                          <ComboboxCollection>
+                            {(item) => (
+                              <ComboboxItem key={item.id} value={item}>
+                                {item.name}
+                              </ComboboxItem>
+                            )}
+                          </ComboboxCollection>
+                          {index < categoryGroups.length - 1 && (
+                            <ComboboxSeparator />
+                          )}
+                        </ComboboxGroup>
+                      )}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
               )}
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
-          )}
-        />
-      )}
+          );
+        }}
+      />
 
       <Controller
         name="limitAmount"
@@ -168,27 +188,28 @@ export function BudgetForm({
         render={({ field, fieldState }) => (
           <Field>
             <FieldLabel htmlFor={field.name} className="text-sm font-medium">
-              Valor limite
+              Valor limite (R$)
             </FieldLabel>
-            <InputGroup>
-              <InputGroupAddon className="text-muted-foreground text-sm font-medium">
-                R$
-              </InputGroupAddon>
-              <InputGroupInput
-                id={field.name}
-                type="text"
-                inputMode="decimal"
-                placeholder="0,00"
-                value={raw}
-                aria-invalid={fieldState.invalid}
-                onChange={(e) => {
-                  const text = e.target.value;
-                  setRaw(text);
-                  const val = parseFloat(text.replace(",", "."));
-                  field.onChange(isNaN(val) ? undefined : val);
-                }}
-              />
-            </InputGroup>
+            {isEditing && isLoadingCategories ? (
+              <Skeleton className="h-9 w-full" />
+            ) : (
+              <InputGroup>
+                <InputGroupInput
+                  id={field.name}
+                  type="text"
+                  inputMode="decimal"
+                  placeholder="0,00"
+                  value={raw}
+                  aria-invalid={fieldState.invalid}
+                  onChange={(e) => {
+                    const text = e.target.value;
+                    setRaw(text);
+                    const val = parseFloat(text.replace(",", "."));
+                    field.onChange(isNaN(val) ? undefined : val);
+                  }}
+                />
+              </InputGroup>
+            )}
             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
         )}

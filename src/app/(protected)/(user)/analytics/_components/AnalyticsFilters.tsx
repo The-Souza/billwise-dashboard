@@ -60,7 +60,7 @@ export function AnalyticsFilters({ filters }: AnalyticsFiltersProps) {
             value={String(startMonth)}
             onValueChange={(v) => setStart(parseInt(v), startYear)}
           >
-            <SelectTrigger className="w-full sm:w-18 h-8 text-xs">
+            <SelectTrigger className="w-full sm:w-20 lg:w-32 h-8 text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -75,7 +75,7 @@ export function AnalyticsFilters({ filters }: AnalyticsFiltersProps) {
             value={String(startYear)}
             onValueChange={(v) => setStart(startMonth, parseInt(v))}
           >
-            <SelectTrigger className="w-full sm:w-20 h-8 text-xs">
+            <SelectTrigger className="w-full sm:w-20 lg:w-32 h-8 text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -94,7 +94,7 @@ export function AnalyticsFilters({ filters }: AnalyticsFiltersProps) {
             value={String(endMonth)}
             onValueChange={(v) => setEnd(parseInt(v), endYear)}
           >
-            <SelectTrigger className="w-full sm:w-18 h-8 text-xs">
+            <SelectTrigger className="w-full sm:w-20 lg:w-32 h-8 text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent align="end">
@@ -109,7 +109,7 @@ export function AnalyticsFilters({ filters }: AnalyticsFiltersProps) {
             value={String(endYear)}
             onValueChange={(v) => setEnd(endMonth, parseInt(v))}
           >
-            <SelectTrigger className="w-full sm:w-20 h-8 text-xs">
+            <SelectTrigger className="w-full sm:w-20 lg:w-32 h-8 text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent align="end">

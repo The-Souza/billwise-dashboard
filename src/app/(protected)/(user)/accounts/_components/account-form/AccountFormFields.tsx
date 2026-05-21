@@ -1,6 +1,18 @@
 "use client";
 
 import {
+  Combobox,
+  ComboboxCollection,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxGroup,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxLabel,
+  ComboboxList,
+  ComboboxSeparator,
+} from "@/components/ui/combobox";
+import {
   Field,
   FieldError,
   FieldGroup,
@@ -16,13 +28,11 @@ import {
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
-  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { buildCategoryGroups, findCategoryItem } from "@/utils/category-combobox";
 import { STATUS_OPTIONS } from "@/utils/status-options";
 import { Controller } from "react-hook-form";
 import { useAccountForm } from "./AccountFormContext";
@@ -46,6 +56,7 @@ export function AccountFormFields() {
               <InputGroupInput
                 {...field}
                 id={field.name}
+                autoComplete="off"
                 placeholder="Ex: Aluguel, Salário..."
                 aria-invalid={fieldState.invalid}
               />
@@ -68,57 +79,56 @@ export function AccountFormFields() {
       <Controller
         name="categoryId"
         control={form.control}
-        render={({ field, fieldState }) => (
-          <Field>
-            <FieldLabel htmlFor={field.name} className="text-md">
-              Categoria
-            </FieldLabel>
-            <Select
-              value={field.value ?? "none"}
-              onValueChange={(v) => field.onChange(v === "none" ? null : v)}
-              name={field.name}
-            >
-              <SelectTrigger aria-invalid={fieldState.invalid} id={field.name}>
-                <SelectValue placeholder="Selecione uma categoria" />
-              </SelectTrigger>
-              <SelectContent className="max-h-80">
-                <SelectGroup>
-                  <SelectLabel className="text-muted-foreground text-xs">
-                    Sem categoria
-                  </SelectLabel>
-                  <SelectItem value="none">Sem categoria</SelectItem>
-                </SelectGroup>
-                <SelectSeparator />
-                <SelectGroup>
-                  <SelectLabel className="text-muted-foreground text-xs">
-                    Despesas
-                  </SelectLabel>
-                  {categories
-                    .filter((cat) => cat.type === "expense")
-                    .map((cat) => (
-                      <SelectItem key={cat.id} value={cat.id}>
-                        {cat.name}
-                      </SelectItem>
-                    ))}
-                </SelectGroup>
-                <SelectSeparator />
-                <SelectGroup>
-                  <SelectLabel className="text-muted-foreground text-xs">
-                    Receitas
-                  </SelectLabel>
-                  {categories
-                    .filter((cat) => cat.type === "income")
-                    .map((cat) => (
-                      <SelectItem key={cat.id} value={cat.id}>
-                        {cat.name}
-                      </SelectItem>
-                    ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-          </Field>
-        )}
+        render={({ field, fieldState }) => {
+          const categoryGroups = buildCategoryGroups(
+            categories.filter((cat) => cat.type === "expense"),
+            categories.filter((cat) => cat.type === "income"),
+          );
+          const selectedItem = findCategoryItem(categoryGroups, field.value);
+
+          return (
+            <Field>
+              <FieldLabel htmlFor={field.name} className="text-md">
+                Categoria
+              </FieldLabel>
+              <Combobox
+                items={categoryGroups}
+                value={selectedItem}
+                onValueChange={(item) => field.onChange(item?.id ?? null)}
+                itemToStringLabel={(item) => item.name}
+              >
+                <ComboboxInput
+                  id={field.name}
+                  placeholder="Sem categoria"
+                  aria-invalid={fieldState.invalid}
+                  showTrigger
+                  showClear={!!field.value}
+                />
+                <ComboboxContent>
+                  <ComboboxEmpty>Nenhuma categoria encontrada.</ComboboxEmpty>
+                  <ComboboxList>
+                    {(group, index) => (
+                      <ComboboxGroup key={group.label} items={group.items}>
+                        <ComboboxLabel>{group.label}</ComboboxLabel>
+                        <ComboboxCollection>
+                          {(item) => (
+                            <ComboboxItem key={item.id} value={item}>
+                              {item.name}
+                            </ComboboxItem>
+                          )}
+                        </ComboboxCollection>
+                        {index < categoryGroups.length - 1 && (
+                          <ComboboxSeparator />
+                        )}
+                      </ComboboxGroup>
+                    )}
+                  </ComboboxList>
+                </ComboboxContent>
+              </Combobox>
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          );
+        }}
       />
 
       <Controller
@@ -190,6 +200,7 @@ export function AccountFormFields() {
               <InputGroupTextarea
                 {...field}
                 id={field.name}
+                autoComplete="off"
                 value={field.value ?? ""}
                 onChange={(e) => field.onChange(e.target.value || null)}
                 placeholder="Observações sobre esta conta..."

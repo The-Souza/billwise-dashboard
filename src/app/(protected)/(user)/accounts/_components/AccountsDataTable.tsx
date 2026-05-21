@@ -138,7 +138,7 @@ export function AccountsDataTable({
               Array.from({ length: PAGE_SIZE }).map((_, i) => (
                 <TableRow
                   key={i}
-                  className="*:border-border [&>:not(:last-child)]:border-r odd:bg-muted/50 odd:hover:bg-muted/50 hover:bg-transparent h-11.25"
+                  className="*:border-border [&>:not(:last-child)]:border-r odd:bg-muted/50 odd:hover:bg-muted/50 hover:bg-transparent h-12"
                 >
                   {skeletonWidths.map((width, index) => (
                     <TableCell key={index}>
@@ -152,7 +152,7 @@ export function AccountsDataTable({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="*:border-border [&>:not(:last-child)]:border-r odd:bg-muted/50 odd:hover:bg-muted/50 hover:bg-transparent whitespace-nowrap h-11.25"
+                  className="*:border-border [&>:not(:last-child)]:border-r odd:bg-muted/50 odd:hover:bg-muted/50 hover:bg-transparent whitespace-nowrap h-12"
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell

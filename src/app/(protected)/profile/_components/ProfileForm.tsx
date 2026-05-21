@@ -108,195 +108,204 @@ export function ProfileForm({ user }: User) {
   }
 
   return (
-    <div className="flex flex-col gap-6 items-center w-full max-w-4xl mx-auto pb-8">
-      <div className="flex flex-col items-center gap-4">
-        <div className="relative group">
-          <Avatar className="h-30 w-30 border-4 border-border">
-            {isUploadingAvatar && (
-              <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40">
-                <Spinner className="text-primary size-6" />
-              </div>
-            )}
-            <AvatarImage
-              src={user.avatarUrl ?? undefined}
-              alt={user.email}
-              className="object-cover"
+    <div className="flex items-center justify-center w-full min-h-full">
+      <div className="flex flex-col gap-6 items-center w-full max-w-4xl">
+        <div className="flex flex-col items-center gap-4">
+          <div className="relative group">
+            <Avatar className="h-30 w-30 border-4 border-border">
+              {isUploadingAvatar && (
+                <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40">
+                  <Spinner className="text-primary size-6" />
+                </div>
+              )}
+              <AvatarImage
+                src={user.avatarUrl ?? undefined}
+                alt={user.email}
+                className="object-cover"
+              />
+              <AvatarFallback className="bg-primary text-4xl text-primary-foreground">
+                {getInitials(user.name)}
+              </AvatarFallback>
+            </Avatar>
+            <input
+              type="file"
+              name="avatar"
+              accept="image/png, image/jpeg, image/jpg"
+              className="hidden"
+              id="avatar-upload"
+              onChange={handleAvatarUpload}
+              disabled={isUploadingAvatar}
             />
-            <AvatarFallback className="bg-primary text-4xl text-primary-foreground">
-              {getInitials(user.name)}
-            </AvatarFallback>
-          </Avatar>
-          <input
-            type="file"
-            name="avatar"
-            accept="image/png, image/jpeg, image/jpg"
-            className="hidden"
-            id="avatar-upload"
-            onChange={handleAvatarUpload}
-            disabled={isUploadingAvatar}
-          />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                size="icon"
-                variant="secondary"
-                className="absolute bottom-0 right-0 z-20 rounded-full shadow-md transition-transform ease-in hover:scale-103 active:scale-97"
-              >
-                <Pencil />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem asChild>
-                <label htmlFor="avatar-upload" className="cursor-pointer">
-                  Editar Foto
-                </label>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                className="text-destructive hover:bg-destructive/10 focus:bg-destructive/10 focus:text-destructive"
-                onClick={async () => {
-                  const response = await removeAvatarAction();
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  size="icon"
+                  variant="secondary"
+                  className="absolute bottom-0 right-0 z-20 rounded-full shadow-md transition-transform ease-in hover:scale-103 active:scale-97"
+                >
+                  <Pencil />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem asChild>
+                  <label htmlFor="avatar-upload" className="cursor-pointer">
+                    Editar Foto
+                  </label>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="text-destructive hover:bg-destructive/10 focus:bg-destructive/10 focus:text-destructive"
+                  onClick={async () => {
+                    const response = await removeAvatarAction();
 
-                  if (!response.success) {
-                    appToast.error(response.error);
-                    return;
-                  }
+                    if (!response.success) {
+                      appToast.error(response.error);
+                      return;
+                    }
 
-                  appToast.success("Foto removida com sucesso");
-                }}
-              >
-                Remover Foto
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                    appToast.success("Foto removida com sucesso");
+                  }}
+                >
+                  Remover Foto
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          <div className="text-center">
+            <h2 className="text-2xl font-heading">Seu Perfil</h2>
+            <p className="text-muted-foreground text-md">
+              Gerencie suas informações e segurança.
+            </p>
+          </div>
         </div>
-        <div className="text-center">
-          <h2 className="text-2xl font-heading">Seu Perfil</h2>
-          <p className="text-muted-foreground text-md">
-            Gerencie suas informações e segurança.
-          </p>
-        </div>
-      </div>
 
-      <div className="flex flex-col gap-4 w-full">
-        <Card className="border-none bg-transparent shadow-none">
-          <CardHeader className="flex flex-col sm:flex-row gap-2 items-start sm:items-center justify-between">
-            <div>
-              <CardTitle className="text-md">Dados Pessoais</CardTitle>
-              <CardDescription className="text-sm">
-                Informações básicas da sua conta.
-              </CardDescription>
-            </div>
-            {!isEditing ? (
-              <Button
-                type="button"
-                variant="outline"
-                className="transition-transform ease-in hover:scale-103 active:scale-97 shrink-0 w-1/2 sm:w-auto"
-                onClick={() => setIsEditing(true)}
-              >
-                Editar <Pencil />
-              </Button>
-            ) : (
-              <div className="flex gap-2 shrink-0 w-full sm:w-auto">
+        <div className="flex flex-col gap-4 w-full">
+          <Card className="border-none bg-transparent shadow-none">
+            <CardHeader className="flex flex-col sm:flex-row gap-2 items-start sm:items-center justify-between px-0">
+              <div>
+                <CardTitle className="text-md">Dados Pessoais</CardTitle>
+                <CardDescription className="text-sm">
+                  Informações básicas da sua conta.
+                </CardDescription>
+              </div>
+              {!isEditing ? (
                 <Button
                   type="button"
                   variant="outline"
-                  className="transition-transform ease-in hover:scale-103 active:scale-97 w-full sm:w-auto"
-                  onClick={() => setIsEditing(false)}
+                  className="transition-transform ease-in hover:scale-103 active:scale-97 shrink-0 w-1/2 sm:w-auto"
+                  onClick={() => setIsEditing(true)}
                 >
-                  Cancelar
+                  <Pencil /> Editar
                 </Button>
-                <Button
-                  type="submit"
-                  size={isSubmitting ? "icon" : "default"}
-                  form="form-profile"
-                  className="transition-transform ease-in hover:scale-103 active:scale-97 w-full sm:w-auto"
-                >
-                  {isSubmitting ? (
-                    <Spinner data-icon="inline-start" />
-                  ) : (
-                    <>
-                      Salvar <Save />
-                    </>
-                  )}
-                </Button>
-              </div>
-            )}
-          </CardHeader>
-          <CardContent>
-            <form id="form-profile" onSubmit={form.handleSubmit(handleSubmit)}>
-              <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Controller
-                  name="name"
-                  control={form.control}
-                  render={({ field, fieldState }) => (
-                    <Field>
-                      <FieldLabel htmlFor={field.name} className="text-md">
-                        Nome Completo
-                      </FieldLabel>
-                      <InputGroup>
-                        <InputGroupInput
-                          {...field}
-                          id={field.name}
-                          type="text"
-                          aria-invalid={fieldState.invalid}
-                          disabled={!isEditing}
-                        />
-                      </InputGroup>
-                      {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
-                      )}
-                    </Field>
-                  )}
-                />
-                <Controller
-                  name="email"
-                  control={form.control}
-                  render={({ field, fieldState }) => (
-                    <Field data-invalid={fieldState.invalid}>
-                      <FieldLabel htmlFor={field.name} className="text-md">
-                        Email
-                      </FieldLabel>
-                      <InputGroup>
-                        <InputGroupInput
-                          {...field}
-                          id={field.name}
-                          type="email"
-                          aria-invalid={fieldState.invalid}
-                          disabled={!isEditing}
-                        />
-                      </InputGroup>
-                      {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
-                      )}
-                    </Field>
-                  )}
-                />
-              </FieldGroup>
-            </form>
-          </CardContent>
-        </Card>
-
-        <Card className="border-none bg-transparent shadow-none">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-md">
-              <Lock className="h-4 w-4" /> Segurança
-            </CardTitle>
-            <CardDescription className="text-sm">
-              Atualize sua senha para manter a conta segura.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button variant="outline" asChild>
-              <Link
-                href="/profile/change-password"
-                className="transition-transform ease-in hover:scale-103 active:scale-97 w-1/2 sm:w-auto"
+              ) : (
+                <div className="flex gap-2 shrink-0 w-full sm:w-auto">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="transition-transform ease-in hover:scale-103 active:scale-97 w-full sm:w-auto"
+                    onClick={() => setIsEditing(false)}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    type="submit"
+                    form="form-profile"
+                    className="transition-transform ease-in hover:scale-103 active:scale-97 w-full sm:w-auto"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Spinner data-icon="inline-start" />
+                        Salvando...
+                      </>
+                    ) : (
+                      <>
+                        <Save /> Salvar
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
+            </CardHeader>
+            <CardContent className="px-0">
+              <form
+                id="form-profile"
+                onSubmit={form.handleSubmit(handleSubmit)}
               >
-                Alterar Senha
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
+                <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Controller
+                    name="name"
+                    control={form.control}
+                    render={({ field, fieldState }) => (
+                      <Field>
+                        <FieldLabel htmlFor={field.name} className="text-md">
+                          Nome Completo
+                        </FieldLabel>
+                        <InputGroup>
+                          <InputGroupInput
+                            {...field}
+                            id={field.name}
+                            type="text"
+                            autoComplete="name"
+                            aria-invalid={fieldState.invalid}
+                            disabled={!isEditing}
+                          />
+                        </InputGroup>
+                        {fieldState.invalid && (
+                          <FieldError errors={[fieldState.error]} />
+                        )}
+                      </Field>
+                    )}
+                  />
+                  <Controller
+                    name="email"
+                    control={form.control}
+                    render={({ field, fieldState }) => (
+                      <Field data-invalid={fieldState.invalid}>
+                        <FieldLabel htmlFor={field.name} className="text-md">
+                          Email
+                        </FieldLabel>
+                        <InputGroup>
+                          <InputGroupInput
+                            {...field}
+                            id={field.name}
+                            type="email"
+                            autoComplete="email"
+                            aria-invalid={fieldState.invalid}
+                            disabled={!isEditing}
+                          />
+                        </InputGroup>
+                        {fieldState.invalid && (
+                          <FieldError errors={[fieldState.error]} />
+                        )}
+                      </Field>
+                    )}
+                  />
+                </FieldGroup>
+              </form>
+            </CardContent>
+          </Card>
+
+          <Card className="border-none bg-transparent shadow-none">
+            <CardHeader className="px-0">
+              <CardTitle className="flex items-center gap-2 text-md">
+                <Lock className="h-4 w-4" /> Segurança
+              </CardTitle>
+              <CardDescription className="text-sm">
+                Atualize sua senha para manter a conta segura.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="px-0">
+              <Button variant="outline" asChild>
+                <Link
+                  href="/profile/change-password"
+                  className="transition-transform ease-in hover:scale-103 active:scale-97 w-1/2 sm:w-auto"
+                >
+                  Alterar Senha
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

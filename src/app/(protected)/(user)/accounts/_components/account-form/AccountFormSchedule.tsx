@@ -32,10 +32,12 @@ export function AccountFormSchedule() {
         control={form.control}
         render={({ field }) => (
           <Field>
-            <FieldLabel htmlFor={field.name} className="text-md">
+            <p id="scheduleType-label" className="text-md font-medium leading-none">
               Tipo de configuração
-            </FieldLabel>
+            </p>
             <RadioGroup
+              aria-labelledby="scheduleType-label"
+              name={field.name}
               value={field.value}
               onValueChange={field.onChange}
               className="flex gap-6"
@@ -88,6 +90,7 @@ export function AccountFormSchedule() {
                   id={field.name}
                   type="number"
                   min={2}
+                  autoComplete="off"
                   value={field.value ?? ""}
                   onChange={(e) => {
                     const raw = e.target.value;

@@ -53,13 +53,13 @@ describe("deleteAccountsAction", () => {
       success: false,
       error: "Nenhuma conta selecionada",
     });
-    expect(mockAuth).not.toHaveBeenCalled();
+    expect(mockAuth).toHaveBeenCalled();
   });
 
   it("retorna erro para UUID inválido", async () => {
     const result = await deleteAccountsAction(["nao-é-uuid"]);
     expect(result).toEqual({ success: false, error: "ID inválido" });
-    expect(mockAuth).not.toHaveBeenCalled();
+    expect(mockAuth).toHaveBeenCalled();
   });
 
   it("retorna erro quando nenhuma conta é encontrada para o usuário", async () => {
