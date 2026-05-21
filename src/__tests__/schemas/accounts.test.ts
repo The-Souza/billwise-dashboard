@@ -8,6 +8,7 @@ describe("accountFormSchema", () => {
   const base = {
     title: "Conta de luz",
     amount: 150.5,
+    categoryId: VALID_UUID,
     accountDate: "2026-04-01",
     status: "pending" as const,
     scheduleType: "none" as const,
@@ -54,17 +55,14 @@ describe("accountFormSchema", () => {
     expect(result.success).toBe(false);
   });
 
-  it("rejeita recorrente sem categoria", () => {
+  it("rejeita conta sem categoria", () => {
     const result = accountFormSchema.safeParse({
       ...base,
-      scheduleType: "recurring",
-      categoryId: null,
+      categoryId: undefined,
     });
     expect(result.success).toBe(false);
     const messages = result.error?.issues.map((i) => i.message);
-    expect(messages).toContain(
-      "Categoria é obrigatória para contas recorrentes",
-    );
+    expect(messages).toContain("Categoria é obrigatória");
   });
 
   it("aceita recorrente com categoria válida", () => {

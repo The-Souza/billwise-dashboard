@@ -11,7 +11,9 @@ export const accountFormSchema = z
       .number({ message: "Valor é obrigatório" })
       .positive("Valor deve ser maior que zero"),
 
-    categoryId: z.string().uuid("Categoria inválida").nullable().optional(),
+    categoryId: z
+      .string({ error: "Categoria é obrigatória" })
+      .uuid("Categoria inválida"),
 
     accountDate: z.string("Data da conta é obrigatória"),
 
@@ -49,14 +51,6 @@ export const accountFormSchema = z
     editScope: z.enum(["single", "future", "all"]),
   })
   .superRefine((data, ctx) => {
-    if (data.scheduleType === "recurring" && !data.categoryId) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Categoria é obrigatória para contas recorrentes",
-        path: ["categoryId"],
-      });
-    }
-
     if (data.scheduleType === "installments" && !data.installments) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
