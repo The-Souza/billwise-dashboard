@@ -23,8 +23,8 @@ export function AccountFormScope() {
         control={form.control}
         render={({ field }) => (
           <RadioGroup
+            name={field.name}
             value={field.value}
-            id={field.name}
             onValueChange={field.onChange}
             className="flex gap-6"
           >

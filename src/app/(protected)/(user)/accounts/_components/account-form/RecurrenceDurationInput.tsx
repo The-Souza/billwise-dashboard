@@ -74,6 +74,7 @@ export function RecurrenceDurationInput({
           id={fieldName}
           type="number"
           min={1}
+          autoComplete="off"
           value={disabled ? "" : duration}
           onChange={(e) => handleDurationChange(e.target.value)}
           placeholder={disabled ? "—" : `Ex: ${unit === "anos" ? "2" : "24"}`}
