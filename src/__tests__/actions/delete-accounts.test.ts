@@ -132,4 +132,11 @@ describe("deleteAccountsAction", () => {
     const result = await deleteAccountsAction([VALID_ID]);
     expect(result).toEqual({ success: false, error: "Erro ao excluir contas" });
   });
+
+  it("retorna erro quando usuário não está autenticado", async () => {
+    mockAuth.mockRejectedValue(new Error("Não autenticado"));
+
+    const result = await deleteAccountsAction([VALID_ID]);
+    expect(result).toEqual({ success: false, error: "Erro ao excluir contas" });
+  });
 });

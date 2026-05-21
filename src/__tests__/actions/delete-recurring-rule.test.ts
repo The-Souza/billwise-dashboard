@@ -63,11 +63,11 @@ describe("deleteRecurringRuleAction", () => {
 
     const mockDeleteMany = vi.fn().mockResolvedValue({});
     const mockRuleDelete = vi.fn().mockResolvedValue({});
-    mockTransaction.mockImplementation(async (fn: (tx: unknown) => Promise<void>) => {
+    mockTransaction.mockImplementation(async (fn) => {
       await fn({
         accounts: { deleteMany: mockDeleteMany },
         recurring_rules: { delete: mockRuleDelete },
-      });
+      } as never);
     });
 
     const result = await deleteRecurringRuleAction(VALID_UUID);
@@ -82,7 +82,9 @@ describe("deleteRecurringRuleAction", () => {
       }),
     );
     expect(mockRuleDelete).toHaveBeenCalledWith(
-      expect.objectContaining({ where: { id: VALID_UUID, user_id: MOCK_USER.id } }),
+      expect.objectContaining({
+        where: { id: VALID_UUID, user_id: MOCK_USER.id },
+      }),
     );
   });
 
@@ -100,6 +102,16 @@ describe("deleteRecurringRuleAction", () => {
 
   it("retorna erro genérico quando Prisma lança exceção", async () => {
     mockFindFirst.mockRejectedValue(new Error("DB error"));
+
+    const result = await deleteRecurringRuleAction(VALID_UUID);
+    expect(result).toEqual({
+      success: false,
+      error: "Erro ao excluir regra recorrente",
+    });
+  });
+
+  it("retorna erro quando usuário não está autenticado", async () => {
+    mockAuth.mockRejectedValue(new Error("Não autenticado"));
 
     const result = await deleteRecurringRuleAction(VALID_UUID);
     expect(result).toEqual({
