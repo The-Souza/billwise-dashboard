@@ -104,4 +104,11 @@ describe("updateBudgetAction", () => {
       error: "Erro ao atualizar orçamento",
     });
   });
+
+  it("retorna erro quando usuário não está autenticado", async () => {
+    mockAuth.mockRejectedValue(new Error("Não autenticado"));
+
+    const result = await updateBudgetAction(VALID_ID, VALID_DATA);
+    expect(result).toEqual({ success: false, error: "Erro ao atualizar orçamento" });
+  });
 });

@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const formSchema = z
   .object({
-    name: z.string().nonempty("Nome é obrigatório"),
+    name: z.string().nonempty("Nome é obrigatório").max(100, "Nome muito longo"),
     email: z.string().nonempty("Email é obrigatório").email("Email inválido").toLowerCase(),
     password: z
       .string()

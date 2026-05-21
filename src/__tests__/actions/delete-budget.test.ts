@@ -86,4 +86,11 @@ describe("deleteBudgetAction", () => {
       error: "Erro ao excluir orçamento",
     });
   });
+
+  it("retorna erro quando usuário não está autenticado", async () => {
+    mockAuth.mockRejectedValue(new Error("Não autenticado"));
+
+    const result = await deleteBudgetAction(VALID_ID);
+    expect(result).toEqual({ success: false, error: "Erro ao excluir orçamento" });
+  });
 });

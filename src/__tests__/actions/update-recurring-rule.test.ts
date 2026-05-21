@@ -122,4 +122,11 @@ describe("updateRecurringRuleAction", () => {
       error: "Erro ao atualizar regra recorrente",
     });
   });
+
+  it("retorna erro quando usuário não está autenticado", async () => {
+    mockAuth.mockRejectedValue(new Error("Não autenticado"));
+
+    const result = await updateRecurringRuleAction(VALID_DATA);
+    expect(result).toEqual({ success: false, error: "Erro ao atualizar regra recorrente" });
+  });
 });
