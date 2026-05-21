@@ -11,7 +11,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Skeleton } from "@/components/ui/skeleton";
 import { WalletIcon } from "lucide-react";
 import { SWR_DEFAULT_OPTIONS } from "@/config/swr";
 import useSWR from "swr";
@@ -106,37 +105,21 @@ export function BudgetFormDialog({
           </DialogDescription>
         </DialogHeader>
 
-        {isLoading || !categories ? (
-          <div className="flex flex-col gap-5">
-            <div className="flex flex-col gap-3">
-              <Skeleton className="h-5 w-20" />
-              <Skeleton className="h-9 w-full" />
-            </div>
-            <div className="flex flex-col gap-3">
-              <Skeleton className="h-5 w-28" />
-              <Skeleton className="h-9 w-full" />
-            </div>
-            <div className="flex justify-end gap-2 pt-1">
-              <Skeleton className="h-9 w-24" />
-              <Skeleton className="h-9 w-42" />
-            </div>
-          </div>
-        ) : (
-          <BudgetForm
-            month={month}
-            year={year}
-            budget={budgetDetail}
-            categoryType={categoryType}
-            expenseCategories={categories.success ? categories.expense : []}
-            incomeCategories={categories.success ? categories.income : []}
-            onSuccess={() => {
-              onSuccess();
-              onClose();
-            }}
-            onCancel={onClose}
-            onSubmit={handleSubmit}
-          />
-        )}
+        <BudgetForm
+          month={month}
+          year={year}
+          budget={budgetDetail}
+          categoryType={categoryType}
+          isLoadingCategories={isLoading || !categories}
+          expenseCategories={categories?.success ? categories.expense : []}
+          incomeCategories={categories?.success ? categories.income : []}
+          onSuccess={() => {
+            onSuccess();
+            onClose();
+          }}
+          onCancel={onClose}
+          onSubmit={handleSubmit}
+        />
       </DialogContent>
     </Dialog>
   );
