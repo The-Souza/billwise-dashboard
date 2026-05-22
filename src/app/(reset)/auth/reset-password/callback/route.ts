@@ -13,6 +13,7 @@ export async function GET(request: Request) {
 
     cookieStore.set("recovery_session", "true", {
       httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
       path: "/",
     });
   }

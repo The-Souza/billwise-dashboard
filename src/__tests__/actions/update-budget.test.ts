@@ -76,7 +76,7 @@ describe("updateBudgetAction", () => {
     expect(result).toEqual({ success: true });
     expect(mockUpdate).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { id: VALID_ID },
+        where: { id: VALID_ID, user_id: MOCK_USER.id },
         data: { limit_amount: VALID_DATA.limitAmount },
       }),
     );
