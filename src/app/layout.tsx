@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   },
 
   description:
-    "Gerencie suas contas e orçamentos de forma eficiente com o Billwise.",
+    "Gerencie suas contas, orçamentos, parcelas e recorrências com analytics detalhados. Controle financeiro completo com o Billwise.",
 
   category: "finance",
 
@@ -37,6 +37,11 @@ export const metadata: Metadata = {
     "gerenciamento financeiro",
     "dashboard financeiro",
     "controle de gastos",
+    "contas a pagar",
+    "parcelas",
+    "recorrências",
+    "orçamento mensal",
+    "analytics financeiro",
     "Billwise",
   ],
 
@@ -49,14 +54,14 @@ export const metadata: Metadata = {
     url: siteUrl,
     title: "Billwise - Gerenciamento de Contas",
     description:
-      "Gerencie suas contas e orçamentos de forma eficiente com o Billwise.",
+      "Gerencie suas contas, orçamentos, parcelas e recorrências com analytics detalhados. Controle financeiro completo com o Billwise.",
     siteName: "Billwise",
     images: [
       {
-        url: "/icon-light-theme.png",
-        width: 1200,
-        height: 630,
-        alt: "Billwise",
+        url: "/og-image.png",
+        width: 1920,
+        height: 1080,
+        alt: "Billwise - Dashboard de controle financeiro",
       },
     ],
   },
@@ -64,8 +69,9 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Billwise",
-    description: "Gerencie suas contas e orçamentos",
-    images: ["/icon-light-theme.png"],
+    description:
+      "Gerencie suas contas, orçamentos, parcelas e recorrências com analytics detalhados.",
+    images: ["/og-image.png"],
   },
 
   robots: {
