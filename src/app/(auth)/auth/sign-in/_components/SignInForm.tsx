@@ -27,16 +27,19 @@ import { formSchema } from "@/schemas/auth/sign-in";
 
 import { appToast } from "@/utils/app-toast";
 
+import { TURNSTILE_SITE_KEY } from "@/config/turnstile";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Turnstile } from "@marsidev/react-turnstile";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 
 export function SignInForm() {
   const [isVisible, setIsVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const captchaToken = useRef<string | undefined>(undefined);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -52,7 +55,7 @@ export function SignInForm() {
     setIsSubmitting(true);
 
     try {
-      const result = await signInAction(data);
+      const result = await signInAction(data, captchaToken.current);
 
       if (!result.success) {
         form.setError("password", {
@@ -87,7 +90,7 @@ export function SignInForm() {
           Gerencie suas finanças de forma simples e inteligente
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pb-4">
         <form id="form-sign-in" onSubmit={form.handleSubmit(handleSubmit)}>
           <FieldGroup>
             <Controller
@@ -159,6 +162,22 @@ export function SignInForm() {
         </form>
       </CardContent>
       <CardFooter className="flex flex-col gap-4">
+        <Turnstile
+          siteKey={TURNSTILE_SITE_KEY}
+          onSuccess={(token) => {
+            captchaToken.current = token;
+          }}
+          onExpire={() => {
+            captchaToken.current = undefined;
+          }}
+          options={{
+            theme: "auto",
+            language: "pt-br",
+            appearance: "interaction-only",
+            size: "flexible",
+            action: "sign-in",
+          }}
+        />
         <Field>
           <Button
             type="submit"

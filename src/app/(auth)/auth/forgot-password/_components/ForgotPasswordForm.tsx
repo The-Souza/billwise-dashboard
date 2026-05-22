@@ -20,15 +20,18 @@ import { Spinner } from "@/components/ui/spinner";
 import { appToast } from "@/utils/app-toast";
 
 import { forgotPasswordAction } from "@/actions/auth/forgot-password";
+import { TURNSTILE_SITE_KEY } from "@/config/turnstile";
 import { formSchema } from "@/schemas/auth/forgot-password";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Turnstile } from "@marsidev/react-turnstile";
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 
 export function ForgotPasswordForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const captchaToken = useRef<string | undefined>(undefined);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -44,7 +47,7 @@ export function ForgotPasswordForm() {
     setIsSubmitting(true);
 
     try {
-      const result = await forgotPasswordAction(data);
+      const result = await forgotPasswordAction(data, captchaToken.current);
       if (!result.success) {
         appToast.error(result.error);
 
@@ -78,7 +81,7 @@ export function ForgotPasswordForm() {
           Insira seu email para redefinir sua senha
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pb-4">
         <form
           id="form-forgot-password"
           onSubmit={form.handleSubmit(handleSubmit)}
@@ -112,6 +115,22 @@ export function ForgotPasswordForm() {
         </form>
       </CardContent>
       <CardFooter className="flex flex-col gap-4">
+        <Turnstile
+          siteKey={TURNSTILE_SITE_KEY}
+          onSuccess={(token) => {
+            captchaToken.current = token;
+          }}
+          onExpire={() => {
+            captchaToken.current = undefined;
+          }}
+          options={{
+            theme: "auto",
+            language: "pt-br",
+            appearance: "interaction-only",
+            size: "flexible",
+            action: "forgot-password",
+          }}
+        />
         <Field>
           <Button
             type="submit"

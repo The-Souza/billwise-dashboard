@@ -25,12 +25,14 @@ import { Spinner } from "@/components/ui/spinner";
 import { appToast } from "@/utils/app-toast";
 
 import { signUpAction } from "@/actions/auth/sign-up";
+import { TURNSTILE_SITE_KEY } from "@/config/turnstile";
 import { formSchema } from "@/schemas/auth/sign-up";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Turnstile } from "@marsidev/react-turnstile";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 
@@ -39,6 +41,7 @@ export function SignUpForm() {
     "password" | "confirmPassword" | null
   >(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const captchaToken = useRef<string | undefined>(undefined);
   const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -58,7 +61,7 @@ export function SignUpForm() {
     setIsSubmitting(true);
 
     try {
-      const result = await signUpAction(data);
+      const result = await signUpAction(data, captchaToken.current);
       if (!result.success) {
         appToast.error(result.error);
 
@@ -92,7 +95,7 @@ export function SignUpForm() {
           Comece a organizar suas finanças hoje mesmo
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pb-4">
         <form id="form-sign-up" onSubmit={form.handleSubmit(handleSubmit)}>
           <FieldGroup>
             <Controller
@@ -233,6 +236,22 @@ export function SignUpForm() {
         </form>
       </CardContent>
       <CardFooter className="flex flex-col gap-4">
+        <Turnstile
+          siteKey={TURNSTILE_SITE_KEY}
+          onSuccess={(token) => {
+            captchaToken.current = token;
+          }}
+          onExpire={() => {
+            captchaToken.current = undefined;
+          }}
+          options={{
+            theme: "auto",
+            language: "pt-br",
+            appearance: "interaction-only",
+            size: "flexible",
+            action: "sign-up",
+          }}
+        />
         <Field>
           <Button
             type="submit"

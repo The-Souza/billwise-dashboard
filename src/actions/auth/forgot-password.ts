@@ -12,6 +12,7 @@ type ForgotPasswordResult =
 
 export async function forgotPasswordAction(
   formData: z.infer<typeof formSchema>,
+  captchaToken?: string,
 ): Promise<ForgotPasswordResult> {
   const parsed = formSchema.safeParse(formData);
 
@@ -29,6 +30,7 @@ export async function forgotPasswordAction(
     const { error } = await supabase.auth.resetPasswordForEmail(
       parsed.data.email,
       {
+        captchaToken,
         redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/reset-password/callback`,
       },
     );
