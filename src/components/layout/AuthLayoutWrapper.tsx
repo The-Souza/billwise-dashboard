@@ -23,8 +23,8 @@ const FEATURES = [
 export function AuthLayoutWrapper({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-dvh flex">
-      {/* Left panel — branding */}
-      <div className="hidden lg:flex lg:w-[45%] flex-col justify-between bg-primary p-12 relative overflow-hidden">
+      {/* Left panel — sticky, doesn't scroll with the form */}
+      <div className="hidden lg:flex lg:w-[45%] lg:sticky lg:top-0 lg:self-start h-dvh shrink-0 flex-col justify-between bg-primary p-12 overflow-hidden">
         <div className="absolute inset-0 bg-linear-to-br from-primary via-primary to-primary/80 pointer-events-none" />
         <div className="absolute -top-48 -right-48 w-xl h-144 rounded-full bg-white/5 pointer-events-none" />
         <div className="absolute -bottom-48 -left-48 w-xl h-144 rounded-full bg-white/5 pointer-events-none" />
@@ -83,14 +83,16 @@ export function AuthLayoutWrapper({ children }: { children: React.ReactNode }) {
         </p>
       </div>
 
-      {/* Right panel — form */}
-      <div className="flex-1 flex flex-col">
-        <div className="flex justify-end p-5">
-          <ToggleTheme />
-        </div>
+      {/* Right panel — scrolls independently */}
+      <div className="flex-1 flex flex-col min-h-dvh">
         <main className="flex-1 flex items-center justify-center">
           {children}
         </main>
+      </div>
+
+      {/* Toggle — fixed, never scrolls, takes no layout space */}
+      <div className="fixed top-4 right-4 z-50">
+        <ToggleTheme />
       </div>
     </div>
   );
