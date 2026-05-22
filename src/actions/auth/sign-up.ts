@@ -12,6 +12,7 @@ type SignUpResult =
 
 export async function signUpAction(
   formData: z.infer<typeof formSchema>,
+  captchaToken?: string,
 ): Promise<SignUpResult> {
   const parsed = formSchema.safeParse(formData);
 
@@ -30,6 +31,7 @@ export async function signUpAction(
       email: parsed.data.email,
       password: parsed.data.password,
       options: {
+        captchaToken,
         emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/sign-up/callback`,
         data: {
           name: parsed.data.name,

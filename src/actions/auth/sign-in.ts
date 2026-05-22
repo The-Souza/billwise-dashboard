@@ -8,6 +8,7 @@ type SignInResult = { success: true; user?: string } | { success: false; error: 
 
 export async function signInAction(
   formData: z.infer<typeof formSchema>,
+  captchaToken?: string,
 ): Promise<SignInResult> {
   const parsed = formSchema.safeParse(formData);
 
@@ -18,7 +19,10 @@ export async function signInAction(
   try {
     const supabase = await createServerSupabase();
 
-    const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
+    const { data, error } = await supabase.auth.signInWithPassword({
+      ...parsed.data,
+      options: { captchaToken },
+    });
 
     if (error) {
       return { success: false, error: "Email ou senha incorretos" };
