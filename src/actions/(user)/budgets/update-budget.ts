@@ -31,7 +31,7 @@ export async function updateBudgetAction(
     }
 
     await prisma.budgets.update({
-      where: { id },
+      where: { id, user_id: user.id },
       data: { limit_amount: limitAmount },
     });
 
