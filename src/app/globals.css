@@ -181,7 +181,3 @@
   }
 }
 
-/* Override Cloudflare Turnstile inline width set by their JS */
-#cf-turnstile {
-  width: 100% !important;
-}
