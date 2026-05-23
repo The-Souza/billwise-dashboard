@@ -239,7 +239,6 @@ export function SignUpForm() {
       </CardContent>
       <CardFooter className="flex flex-col gap-4">
         <Turnstile
-          className="w-full!"
           siteKey={TURNSTILE_SITE_KEY}
           onSuccess={(token) => {
             captchaToken.current = token;
