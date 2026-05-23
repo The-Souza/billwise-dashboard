@@ -31,6 +31,7 @@ import { TURNSTILE_SITE_KEY } from "@/config/turnstile";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Turnstile } from "@marsidev/react-turnstile";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -40,6 +41,7 @@ export function SignInForm() {
   const [isVisible, setIsVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const captchaToken = useRef<string | undefined>(undefined);
+  const { resolvedTheme } = useTheme();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -163,6 +165,7 @@ export function SignInForm() {
       </CardContent>
       <CardFooter className="flex flex-col gap-4">
         <Turnstile
+          className="w-full!"
           siteKey={TURNSTILE_SITE_KEY}
           onSuccess={(token) => {
             captchaToken.current = token;
@@ -171,7 +174,7 @@ export function SignInForm() {
             captchaToken.current = undefined;
           }}
           options={{
-            theme: "auto",
+            theme: (resolvedTheme as "dark" | "light") ?? "light",
             language: "pt-br",
             appearance: "interaction-only",
             size: "flexible",
