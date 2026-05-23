@@ -180,3 +180,8 @@
     scrollbar-color: oklch(0.41 0.159 10.272 / 0.5) transparent;
   }
 }
+
+/* Override Cloudflare Turnstile inline width set by their JS */
+#cf-turnstile {
+  width: 100% !important;
+}
