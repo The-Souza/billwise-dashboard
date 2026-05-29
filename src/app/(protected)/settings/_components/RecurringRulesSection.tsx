@@ -12,14 +12,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { SWR_DEFAULT_OPTIONS } from "@/config/swr";
 import { formatCurrency } from "@/utils/format-currency";
 import { formatRuleEndDate } from "@/utils/format-date";
 import { capitalizeFirst, formatRecurrenceDuration } from "@/utils/format-text";
 import { icons, PencilIcon, RefreshCw, Trash2Icon } from "lucide-react";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import useSWR from "swr";
 import { DeleteRuleAlertDialog } from "./DeleteRuleAlertDialog";
 import { EditRuleDialog } from "./EditRuleDialog";
 import { RecurringRulesSkeleton } from "./RecurringRulesSkeleton";
@@ -28,8 +27,11 @@ export function RecurringRulesSection() {
   const {
     data: result,
     isLoading,
-    mutate,
-  } = useSWR("recurring-rules", getRecurringRulesAction, SWR_DEFAULT_OPTIONS);
+    refetch,
+  } = useQuery({
+    queryKey: ["recurring-rules"],
+    queryFn: getRecurringRulesAction,
+  });
 
   const rules = result?.success ? result.data : [];
 
@@ -155,7 +157,7 @@ export function RecurringRulesSection() {
         onClose={() => setEditRule(null)}
         onSaved={() => {
           setEditRule(null);
-          mutate();
+          refetch();
         }}
       />
 
@@ -164,7 +166,7 @@ export function RecurringRulesSection() {
         onClose={() => setDeleteRule(null)}
         onDeleted={() => {
           setDeleteRule(null);
-          mutate();
+          refetch();
         }}
       />
     </>

@@ -50,7 +50,7 @@ export function AccountsDataTable({
   const {
     filters,
     isLoading,
-    mutate,
+    refetch,
     accounts,
     total,
     page,
@@ -105,7 +105,7 @@ export function AccountsDataTable({
           categories={categories}
           onFiltersChange={handleFiltersChange}
           onDelete={handleDeleteSelected}
-          onImportSuccess={mutate}
+          onImportSuccess={refetch}
         />
       </div>
 

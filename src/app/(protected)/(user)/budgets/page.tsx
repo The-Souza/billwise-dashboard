@@ -6,11 +6,10 @@ import {
   getBudgetsAction,
 } from "@/actions/(user)/budgets/get-budgets";
 import { MonthPicker } from "@/components/ui/month-picker";
-import { SWR_DEFAULT_OPTIONS } from "@/config/swr";
 import { useDashboardMonth } from "@/hooks/use-dashboard-month";
 import { appToast } from "@/utils/app-toast";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import useSWR from "swr";
 import { AddBudgetCard } from "./_components/AddBudgetCard";
 import { BudgetCard } from "./_components/BudgetCard";
 import { BudgetFormDialog } from "./_components/BudgetFormDialog";
@@ -24,12 +23,12 @@ export default function BudgetsPage() {
   const {
     data: budgets,
     isLoading,
-    mutate,
-  } = useSWR(
-    ["budgets", month, year],
-    () => getBudgetsAction(month, year).then((r) => (r.success ? r.data : [])),
-    SWR_DEFAULT_OPTIONS,
-  );
+    refetch,
+  } = useQuery({
+    queryKey: ["budgets", month, year],
+    queryFn: () =>
+      getBudgetsAction(month, year).then((r) => (r.success ? r.data : [])),
+  });
 
   const [formDialog, setFormDialog] = useState<{
     open: boolean;
@@ -66,7 +65,7 @@ export default function BudgetsPage() {
     setDeleteDialog((prev) => ({ ...prev, isDeleting: true }));
     const result = await deleteBudgetAction(deleteDialog.budget.id);
     if (result.success) {
-      mutate();
+      refetch();
       setDeleteDialog({ open: false, budget: null, isDeleting: false });
       appToast.success("Orçamento excluído.");
     } else {
@@ -147,7 +146,7 @@ export default function BudgetsPage() {
         month={month}
         year={year}
         onClose={() => setFormDialog((prev) => ({ ...prev, open: false }))}
-        onSuccess={() => mutate()}
+        onSuccess={() => refetch()}
       />
 
       <DeleteBudgetDialog
