@@ -1,5 +1,6 @@
 "use server";
 
+import { verifyTurnstileToken } from "@/lib/turnstile/verify";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { formSchema } from "@/schemas/auth/sign-in";
 import z from "zod";
@@ -14,6 +15,11 @@ export async function signInAction(
 
   if (!parsed.success) {
     return { success: false, error: "Dados inválidos" };
+  }
+
+  const captcha = await verifyTurnstileToken(captchaToken);
+  if (!captcha.success) {
+    return { success: false, error: captcha.error ?? "Verificação de segurança falhou." };
   }
 
   try {
