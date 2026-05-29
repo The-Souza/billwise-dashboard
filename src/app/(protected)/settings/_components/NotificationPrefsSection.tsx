@@ -20,12 +20,11 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import { Switch } from "@/components/ui/switch";
-import { SWR_DEFAULT_OPTIONS } from "@/config/swr";
 import type { NotificationPrefs } from "@/schemas/settings/notification-prefs";
 import { appToast } from "@/utils/app-toast";
+import { useQuery } from "@tanstack/react-query";
 import { BellIcon, ClockIcon, RefreshCw, TrendingUpIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-import useSWR from "swr";
 
 const DUE_DAYS_OPTIONS = [
   { value: 1, label: "1 dia antes" },
@@ -44,12 +43,11 @@ export function NotificationPrefsSection() {
   const {
     data: result,
     isLoading,
-    mutate,
-  } = useSWR(
-    "notification-prefs",
-    getNotificationPrefsAction,
-    SWR_DEFAULT_OPTIONS,
-  );
+    refetch,
+  } = useQuery({
+    queryKey: ["notification-prefs"],
+    queryFn: getNotificationPrefsAction,
+  });
 
   const [prefs, setPrefs] = useState<NotificationPrefs>(DEFAULT_PREFS);
   const [isSaving, setIsSaving] = useState(false);
@@ -64,7 +62,7 @@ export function NotificationPrefsSection() {
     const res = await updateNotificationPrefsAction(prefs);
     if (res.success) {
       appToast.success("Preferências salvas com sucesso.");
-      mutate();
+      refetch();
     } else {
       appToast.error(res.error);
     }

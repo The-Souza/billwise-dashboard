@@ -6,13 +6,12 @@ import {
   AccountRow,
   getAccountsAction,
 } from "@/actions/(user)/accounts/get-accounts";
-import { SWR_DEFAULT_OPTIONS } from "@/config/swr";
 import { DashboardMonth } from "@/hooks/use-dashboard-month";
 import { AccountSortKey } from "@/schemas/accounts/get-accounts";
 import { appToast } from "@/utils/app-toast";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { RowSelectionState } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
-import useSWR from "swr";
 
 const PAGE_SIZE = 10;
 
@@ -51,10 +50,11 @@ export function useAccountsTable({ dashboardMonth }: UseAccountsTableProps) {
   const {
     data: result,
     isLoading,
-    mutate,
-  } = useSWR(["accounts", filters], () => getAccountsAction(filters), {
-    keepPreviousData: true,
-    ...SWR_DEFAULT_OPTIONS,
+    refetch,
+  } = useQuery({
+    queryKey: ["accounts", filters],
+    queryFn: () => getAccountsAction(filters),
+    placeholderData: keepPreviousData,
   });
 
   const accounts = result?.success ? result.data : [];
@@ -104,7 +104,7 @@ export function useAccountsTable({ dashboardMonth }: UseAccountsTableProps) {
           : `${res.deleted} contas excluídas com sucesso.`,
       );
       setRowSelection({});
-      mutate();
+      refetch();
     } else {
       appToast.error(res.error);
     }
@@ -116,7 +116,7 @@ export function useAccountsTable({ dashboardMonth }: UseAccountsTableProps) {
   return {
     filters,
     isLoading,
-    mutate,
+    refetch,
     accounts,
     total,
     page,

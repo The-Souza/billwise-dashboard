@@ -5,9 +5,8 @@ import { getChartDataAction } from "@/actions/(user)/dashboard/get-chart-data";
 import { getRecentAccountsAction } from "@/actions/(user)/dashboard/get-recent-accounts";
 import { getSummaryAction } from "@/actions/(user)/dashboard/get-summary";
 import { MonthPicker } from "@/components/ui/month-picker";
-import { SWR_DEFAULT_OPTIONS } from "@/config/swr";
 import { useDashboardMonth } from "@/hooks/use-dashboard-month";
-import useSWR from "swr";
+import { useQuery } from "@tanstack/react-query";
 import { BudgetProgress } from "./_components/BudgetProgress";
 import { RecentAccountTable } from "./_components/RecentAccountsTable";
 import { RevenueExpenseChart } from "./_components/RevenueExpenseChart";
@@ -17,41 +16,35 @@ export default function DashboardPage() {
   const dashboardMonth = useDashboardMonth();
   const { month, year, label } = dashboardMonth;
 
-  const swrOptions = SWR_DEFAULT_OPTIONS;
-
-  const { data: summary, isLoading: loadingSummary } = useSWR(
-    ["dashboard-summary", month, year],
-    () =>
+  const { data: summary, isLoading: loadingSummary } = useQuery({
+    queryKey: ["dashboard-summary", month, year],
+    queryFn: () =>
       getSummaryAction(month, year).then((r) => (r.success ? r.data : null)),
-    swrOptions,
-  );
+  });
 
-  const { data: chartData, isLoading: loadingChart } = useSWR(
-    ["dashboard-chart", month, year],
-    () =>
+  const { data: chartData, isLoading: loadingChart } = useQuery({
+    queryKey: ["dashboard-chart", month, year],
+    queryFn: () =>
       getChartDataAction(month, year, 12).then((r) =>
         r.success ? r.data : [],
       ),
-    swrOptions,
-  );
+  });
 
-  const { data: budgets, isLoading: loadingBudgets } = useSWR(
-    ["dashboard-budgets", month, year],
-    () =>
+  const { data: budgets, isLoading: loadingBudgets } = useQuery({
+    queryKey: ["dashboard-budgets", month, year],
+    queryFn: () =>
       getBudgetProgressAction(month, year).then((r) =>
         r.success ? r.data : [],
       ),
-    swrOptions,
-  );
+  });
 
-  const { data: accounts, isLoading: loadingAccounts } = useSWR(
-    ["dashboard-accounts", month, year],
-    () =>
+  const { data: accounts, isLoading: loadingAccounts } = useQuery({
+    queryKey: ["dashboard-accounts", month, year],
+    queryFn: () =>
       getRecentAccountsAction(month, year).then((r) =>
         r.success ? r.data : [],
       ),
-    swrOptions,
-  );
+  });
 
   function handleMonthSelect(m: number, y: number) {
     dashboardMonth.setMonth(m);
