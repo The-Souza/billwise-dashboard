@@ -57,9 +57,6 @@
     "xlsx": "^0.18.5",
     "zod": "^4.3.6"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": ["@prisma/engines", "prisma", "sharp", "unrs-resolver"]
-  },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.9.1",
@@ -74,7 +71,6 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "jsdom": "^29.0.2",
-    "msw": "^2.14.6",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vite-tsconfig-paths": "^6.1.1",
