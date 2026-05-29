@@ -2,12 +2,16 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
-vi.mock("swr", () => ({
-  default: vi.fn(() => ({
-    data: { success: true, expense: [], income: [] },
-    isLoading: false,
-  })),
-}));
+vi.mock("@tanstack/react-query", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@tanstack/react-query")>();
+  return {
+    ...actual,
+    useQuery: vi.fn(() => ({
+      data: { success: true, expense: [], income: [] },
+      isLoading: false,
+    })),
+  };
+});
 
 vi.mock("@/actions/(user)/budgets/create-budget", () => ({
   createBudgetAction: vi.fn(),

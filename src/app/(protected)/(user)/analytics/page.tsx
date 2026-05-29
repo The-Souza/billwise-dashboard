@@ -4,7 +4,7 @@ import { getAnalyticsEvolutionAction } from "@/actions/(user)/analytics/get-anal
 import { getAnalyticsSummaryAction } from "@/actions/(user)/analytics/get-analytics-summary";
 import { getCategoryBreakdownAction } from "@/actions/(user)/analytics/get-category-breakdown";
 import { useAnalyticsFilters } from "@/hooks/use-analytics-filters";
-import useSWR from "swr";
+import { useQuery } from "@tanstack/react-query";
 import { AnalyticsFilters } from "./_components/AnalyticsFilters";
 import { AnalyticsSummaryCards } from "./_components/AnalyticsSummaryCards";
 import { CategoryBreakdownChart } from "./_components/CategoryBreakdownChart";
@@ -15,49 +15,23 @@ export default function AnalyticsPage() {
   const filters = useAnalyticsFilters();
   const { startMonth, startYear, endMonth, endYear, type } = filters;
 
-  const summaryKey = [
-    "analytics-summary",
-    startMonth,
-    startYear,
-    endMonth,
-    endYear,
-  ];
-  const { data: summaryResult, isLoading: summaryLoading } = useSWR(
-    summaryKey,
-    () => getAnalyticsSummaryAction(startMonth, startYear, endMonth, endYear),
-  );
+  const { data: summaryResult, isLoading: summaryLoading } = useQuery({
+    queryKey: ["analytics-summary", startMonth, startYear, endMonth, endYear],
+    queryFn: () =>
+      getAnalyticsSummaryAction(startMonth, startYear, endMonth, endYear),
+  });
 
-  const breakdownKey = [
-    "analytics-breakdown",
-    startMonth,
-    startYear,
-    endMonth,
-    endYear,
-    type,
-  ];
-  const { data: breakdownResult, isLoading: breakdownLoading } = useSWR(
-    breakdownKey,
-    () =>
-      getCategoryBreakdownAction(
-        startMonth,
-        startYear,
-        endMonth,
-        endYear,
-        type,
-      ),
-  );
+  const { data: breakdownResult, isLoading: breakdownLoading } = useQuery({
+    queryKey: ["analytics-breakdown", startMonth, startYear, endMonth, endYear, type],
+    queryFn: () =>
+      getCategoryBreakdownAction(startMonth, startYear, endMonth, endYear, type),
+  });
 
-  const evolutionKey = [
-    "analytics-evolution",
-    startMonth,
-    startYear,
-    endMonth,
-    endYear,
-  ];
-  const { data: evolutionResult, isLoading: evolutionLoading } = useSWR(
-    evolutionKey,
-    () => getAnalyticsEvolutionAction(startMonth, startYear, endMonth, endYear),
-  );
+  const { data: evolutionResult, isLoading: evolutionLoading } = useQuery({
+    queryKey: ["analytics-evolution", startMonth, startYear, endMonth, endYear],
+    queryFn: () =>
+      getAnalyticsEvolutionAction(startMonth, startYear, endMonth, endYear),
+  });
 
   const summary = summaryResult?.success ? summaryResult.data : undefined;
   const breakdown = breakdownResult?.success ? breakdownResult.data : undefined;

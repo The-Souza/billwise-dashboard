@@ -12,8 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { WalletIcon } from "lucide-react";
-import { SWR_DEFAULT_OPTIONS } from "@/config/swr";
-import useSWR from "swr";
+import { useQuery } from "@tanstack/react-query";
 import { BudgetForm } from "./BudgetForm";
 
 const MONTH_NAMES = [
@@ -54,11 +53,11 @@ export function BudgetFormDialog({
 }: BudgetFormDialogProps) {
   const excludeId = mode === "edit" ? budget?.id : undefined;
 
-  const { data: categories, isLoading } = useSWR(
-    open ? ["budget-categories", month, year, excludeId] : null,
-    () => getCategoriesForBudgetAction(month, year, excludeId),
-    SWR_DEFAULT_OPTIONS,
-  );
+  const { data: categories, isLoading } = useQuery({
+    queryKey: ["budget-categories", month, year, excludeId],
+    queryFn: () => getCategoriesForBudgetAction(month, year, excludeId),
+    enabled: open,
+  });
 
   const budgetDetail =
     mode === "edit" && budget

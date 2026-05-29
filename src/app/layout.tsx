@@ -1,4 +1,5 @@
 import { Toaster } from "@/components/ui/sonner";
+import { QueryProvider } from "@/providers/QueryProvider";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import type { Metadata, Viewport } from "next";
 import { inter, poppins } from "./fonts";
@@ -114,15 +115,17 @@ export default function RootLayout({
       className={`${inter.variable} ${poppins.variable} antialiased`}
     >
       <body className="min-h-dvh font-sans">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Toaster />
-          {children}
-        </ThemeProvider>
+        <QueryProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Toaster />
+            {children}
+          </ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
   );

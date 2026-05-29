@@ -2,16 +2,17 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("swr", () => {
+vi.mock("@tanstack/react-query", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@tanstack/react-query")>();
   const stable = {
     data: {
       success: true,
       data: { dueDaysAhead: 3, onRecurringGenerated: true, onBudgetExceeded: true },
     },
     isLoading: false,
-    mutate: () => {},
+    refetch: () => {},
   };
-  return { default: () => stable };
+  return { ...actual, useQuery: () => stable };
 });
 
 vi.mock("@/actions/(user)/settings/get-notification-prefs", () => ({
