@@ -34,7 +34,7 @@ describe("notificationPrefsSchema", () => {
   });
 
   it("rejeita quando campo obrigatório está ausente", () => {
-    const { onBudgetExceeded: _, ...rest } = VALID;
+    const { onBudgetExceeded: _onBudgetExceeded, ...rest } = VALID;
     expect(notificationPrefsSchema.safeParse(rest).success).toBe(false);
   });
 });
