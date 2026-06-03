@@ -1,7 +1,7 @@
 "use server";
 
 import { account_status, category_type } from "@/generated/prisma/enums";
-import { requireAuth } from "@/lib/auth/guards";
+import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 import { uuidSchema } from "@/schemas/shared/params";
 
@@ -54,10 +54,10 @@ export async function getAccountByIdAction(
   }
 
   try {
-    const user = await requireAuth();
+    const ctx = await requireWorkspace();
 
     const row = await prisma.accounts.findFirst({
-      where: { id, user_id: user.id },
+      where: { id, workspace_id: ctx.workspaceId },
       include: {
         categories: {
           select: { type: true, is_utility: true },
@@ -87,7 +87,7 @@ export async function getAccountByIdAction(
       ? await prisma.accounts.findMany({
           where: {
             installment_group_id: row.installment_group_id,
-            user_id: user.id,
+            workspace_id: ctx.workspaceId,
           },
           select: {
             id: true,

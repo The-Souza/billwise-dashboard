@@ -1,6 +1,6 @@
 "use server";
 
-import { requireAuth } from "@/lib/auth/guards";
+import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 import { monthYearSchema } from "@/schemas/shared/params";
 
@@ -27,7 +27,7 @@ export async function getSummaryAction(
   year: number,
 ): Promise<GetSummaryResult> {
   try {
-    const user = await requireAuth();
+    const ctx = await requireWorkspace();
 
     const parsed = monthYearSchema.safeParse({ month, year });
     if (!parsed.success) {
@@ -46,7 +46,7 @@ export async function getSummaryAction(
           COALESCE(total_expense, 0)::float AS total_expense,
           COALESCE(balance, 0)::float       AS balance
         FROM public.income_vs_expense
-        WHERE user_id = ${user.id}::uuid
+        WHERE workspace_id = ${ctx.workspaceId}::uuid
           AND month = ${parsed.data.month}
           AND year  = ${parsed.data.year}
         LIMIT 1
@@ -59,7 +59,7 @@ export async function getSummaryAction(
           COALESCE(total_expense, 0)::float AS total_expense,
           COALESCE(balance, 0)::float       AS balance
         FROM public.income_vs_expense
-        WHERE user_id = ${user.id}::uuid
+        WHERE workspace_id = ${ctx.workspaceId}::uuid
           AND month = ${prevMonth}
           AND year  = ${prevYear}
         LIMIT 1

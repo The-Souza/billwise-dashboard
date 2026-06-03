@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@/lib/auth/guards", () => ({
-  requireAuth: vi.fn(),
+vi.mock("@/lib/auth/workspace", () => ({
+  requireWorkspace: vi.fn(),
 }));
 
 vi.mock("@/lib/prisma/client", () => ({
@@ -11,17 +11,21 @@ vi.mock("@/lib/prisma/client", () => ({
 }));
 
 import { getAnalyticsEvolutionAction } from "@/actions/(user)/analytics/get-analytics-evolution";
-import { requireAuth } from "@/lib/auth/guards";
+import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 
-const mockAuth = vi.mocked(requireAuth);
+const mockWorkspace = vi.mocked(requireWorkspace);
 const mockQueryRaw = vi.mocked(prisma.$queryRaw);
 
-const MOCK_USER = { id: "user-uuid-123", email: "u@test.com", name: "T", role: "user" as const, avatarUrl: null };
+const MOCK_WORKSPACE_CTX = {
+  user: { id: "user-uuid-123", email: "u@test.com", name: "T", avatarUrl: null },
+  workspaceId: "workspace-uuid-456",
+  workspaceRole: "owner" as const,
+};
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mockAuth.mockResolvedValue(MOCK_USER as never);
+  mockWorkspace.mockResolvedValue(MOCK_WORKSPACE_CTX as never);
 });
 
 afterEach(() => {
@@ -32,7 +36,7 @@ describe("getAnalyticsEvolutionAction", () => {
   it("retorna erro para parâmetros inválidos", async () => {
     const result = await getAnalyticsEvolutionAction(0, 2024, 12, 2024);
     expect(result).toEqual({ success: false, error: "Parâmetros inválidos" });
-    expect(mockAuth).not.toHaveBeenCalled();
+    expect(mockWorkspace).not.toHaveBeenCalled();
   });
 
   it("gera label correto para mês e ano", async () => {
@@ -68,7 +72,6 @@ describe("getAnalyticsEvolutionAction", () => {
   });
 
   it("preenche zeros para meses sem dados no banco", async () => {
-    // Apenas Mar/24 tem dados; Jan e Fev ficam zerados
     mockQueryRaw.mockResolvedValue([
       { month: 3, year: 2024, total_income: 2000, total_expense: 800 },
     ]);

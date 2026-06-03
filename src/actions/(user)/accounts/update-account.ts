@@ -3,7 +3,7 @@
 import { account_status } from "@/generated/prisma/enums";
 import { calcRecurringEndDate } from "@/helper/calc-recurring-end-date";
 import { parseDateParts } from "@/helper/parse-date";
-import { requireAuth } from "@/lib/auth/guards";
+import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 import { accountFormSchema } from "@/schemas/accounts/account-form";
 import { z } from "zod";
@@ -17,7 +17,7 @@ export async function updateAccountAction(
   data: z.infer<typeof accountFormSchema>,
 ): Promise<UpdateAccountResult> {
   try {
-    const user = await requireAuth();
+    const ctx = await requireWorkspace();
 
     const parsed = accountFormSchema.safeParse(data);
     if (!parsed.success) {
@@ -39,7 +39,7 @@ export async function updateAccountAction(
     } = parsed.data;
 
     const account = await prisma.accounts.findFirst({
-      where: { id, user_id: user.id },
+      where: { id, workspace_id: ctx.workspaceId },
       select: {
         recurring_rule_id: true,
         installment_group_id: true,
@@ -102,7 +102,7 @@ export async function updateAccountAction(
           const siblings = await tx.accounts.findMany({
             where: {
               installment_group_id: account.installment_group_id,
-              user_id: user.id,
+              workspace_id: ctx.workspaceId,
             },
             orderBy: { account_date: "asc" },
             select: { id: true },
@@ -123,7 +123,7 @@ export async function updateAccountAction(
               : null;
 
             await tx.accounts.update({
-              where: { id: sibling.id, user_id: user.id },
+              where: { id: sibling.id },
               data: {
                 title,
                 amount: installmentAmount,
@@ -152,7 +152,7 @@ export async function updateAccountAction(
         // -----------------------------
 
         await tx.accounts.update({
-          where: { id, user_id: user.id },
+          where: { id },
           data: {
             title,
             amount,

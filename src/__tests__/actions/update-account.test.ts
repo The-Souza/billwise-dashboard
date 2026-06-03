@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@/lib/auth/guards", () => ({
-  requireAuth: vi.fn(),
+vi.mock("@/lib/auth/workspace", () => ({
+  requireWorkspace: vi.fn(),
 }));
 
 vi.mock("@/lib/prisma/client", () => ({
@@ -14,10 +14,10 @@ vi.mock("@/lib/prisma/client", () => ({
 }));
 
 import { updateAccountAction } from "@/actions/(user)/accounts/update-account";
-import { requireAuth } from "@/lib/auth/guards";
+import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 
-const mockAuth = vi.mocked(requireAuth);
+const mockWorkspace = vi.mocked(requireWorkspace);
 const mockFindFirst = vi.mocked(prisma.accounts.findFirst);
 const mockTransaction = vi.mocked(prisma.$transaction);
 
@@ -25,13 +25,17 @@ const VALID_UUID = "123e4567-e89b-12d3-a456-426614174000";
 const CATEGORY_UUID = "223e4567-e89b-12d3-a456-426614174001";
 const RULE_UUID = "323e4567-e89b-12d3-a456-426614174002";
 const GROUP_UUID = "423e4567-e89b-12d3-a456-426614174003";
+const WORKSPACE_ID = "workspace-uuid-456";
 
-const MOCK_USER = {
-  id: "user-uuid-123",
-  email: "user@test.com",
-  name: "Test",
-  role: "user" as const,
-  avatarUrl: null,
+const MOCK_WORKSPACE_CTX = {
+  user: {
+    id: "user-uuid-123",
+    email: "user@test.com",
+    name: "Test",
+    avatarUrl: null,
+  },
+  workspaceId: WORKSPACE_ID,
+  workspaceRole: "owner" as const,
 };
 
 const BASE_DATA = {
@@ -82,7 +86,7 @@ function makeTxMock(siblings: { id: string }[] = []) {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mockAuth.mockResolvedValue(MOCK_USER as never);
+  mockWorkspace.mockResolvedValue(MOCK_WORKSPACE_CTX as never);
 });
 
 afterEach(() => {
@@ -96,7 +100,7 @@ describe("updateAccountAction", () => {
     expect(mockTransaction).not.toHaveBeenCalled();
   });
 
-  it("retorna erro quando conta não pertence ao usuário", async () => {
+  it("retorna erro quando conta não pertence ao workspace", async () => {
     mockFindFirst.mockResolvedValue(null);
 
     const result = await updateAccountAction(VALID_UUID, BASE_DATA);
@@ -104,7 +108,7 @@ describe("updateAccountAction", () => {
     expect(mockTransaction).not.toHaveBeenCalled();
   });
 
-  it("busca a conta filtrando por id e user_id", async () => {
+  it("busca a conta filtrando por id e workspace_id", async () => {
     mockFindFirst.mockResolvedValue(NORMAL_ACCOUNT as never);
     const tx = makeTxMock();
     mockTransaction.mockImplementation(async (fn) => fn(tx as never));
@@ -113,7 +117,7 @@ describe("updateAccountAction", () => {
 
     expect(mockFindFirst).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { id: VALID_UUID, user_id: MOCK_USER.id },
+        where: { id: VALID_UUID, workspace_id: WORKSPACE_ID },
       }),
     );
   });
@@ -208,7 +212,7 @@ describe("updateAccountAction", () => {
       expect(tx.accounts.update).toHaveBeenCalledTimes(3);
     });
 
-    it("busca irmãs filtrando por installment_group_id e user_id", async () => {
+    it("busca irmãs filtrando por installment_group_id e workspace_id", async () => {
       mockFindFirst.mockResolvedValue(INSTALLMENT_ACCOUNT as never);
       const tx = makeTxMock(SIBLINGS);
       mockTransaction.mockImplementation(async (fn) => fn(tx as never));
@@ -219,7 +223,7 @@ describe("updateAccountAction", () => {
         expect.objectContaining({
           where: expect.objectContaining({
             installment_group_id: GROUP_UUID,
-            user_id: MOCK_USER.id,
+            workspace_id: WORKSPACE_ID,
           }),
         }),
       );
@@ -254,7 +258,7 @@ describe("updateAccountAction", () => {
   });
 
   it("retorna erro quando usuário não está autenticado", async () => {
-    mockAuth.mockRejectedValue(new Error("Não autenticado"));
+    mockWorkspace.mockRejectedValue(new Error("Não autenticado"));
 
     const result = await updateAccountAction(VALID_UUID, BASE_DATA);
     expect(result).toEqual({ success: false, error: "Erro ao atualizar conta" });

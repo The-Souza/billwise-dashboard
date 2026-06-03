@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@/lib/auth/guards", () => ({
-  requireAuth: vi.fn(),
+vi.mock("@/lib/auth/workspace", () => ({
+  requireWorkspace: vi.fn(),
 }));
 
 vi.mock("@/lib/prisma/client", () => ({
@@ -14,20 +14,24 @@ vi.mock("@/lib/prisma/client", () => ({
 }));
 
 import { createBudgetAction } from "@/actions/(user)/budgets/create-budget";
-import { requireAuth } from "@/lib/auth/guards";
+import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 
-const mockAuth = vi.mocked(requireAuth);
+const mockWorkspace = vi.mocked(requireWorkspace);
 const mockFindFirst = vi.mocked(prisma.budgets.findFirst);
 const mockCreate = vi.mocked(prisma.budgets.create);
 
 const VALID_ID = "123e4567-e89b-12d3-a456-426614174000";
-const MOCK_USER = {
-  id: "user-uuid-123",
-  email: "user@test.com",
-  name: "Test",
-  role: "user" as const,
-  avatarUrl: null,
+const WORKSPACE_ID = "workspace-uuid-456";
+const MOCK_WORKSPACE_CTX = {
+  user: {
+    id: "user-uuid-123",
+    email: "user@test.com",
+    name: "Test",
+    avatarUrl: null,
+  },
+  workspaceId: WORKSPACE_ID,
+  workspaceRole: "owner" as const,
 };
 
 const VALID_DATA = {
@@ -39,7 +43,7 @@ const VALID_DATA = {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mockAuth.mockResolvedValue(MOCK_USER as never);
+  mockWorkspace.mockResolvedValue(MOCK_WORKSPACE_CTX as never);
 });
 
 afterEach(() => {
@@ -73,7 +77,8 @@ describe("createBudgetAction", () => {
     expect(mockCreate).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
-          user_id: MOCK_USER.id,
+          user_id: MOCK_WORKSPACE_CTX.user.id,
+          workspace_id: WORKSPACE_ID,
           category_id: VALID_DATA.categoryId,
           limit_amount: VALID_DATA.limitAmount,
           month: VALID_DATA.month,
@@ -83,7 +88,7 @@ describe("createBudgetAction", () => {
     );
   });
 
-  it("verifica isolamento por usuário ao buscar duplicata", async () => {
+  it("verifica isolamento por workspace ao buscar duplicata", async () => {
     mockFindFirst.mockResolvedValue(null);
     mockCreate.mockResolvedValue({} as never);
 
@@ -91,7 +96,7 @@ describe("createBudgetAction", () => {
 
     expect(mockFindFirst).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: expect.objectContaining({ user_id: MOCK_USER.id }),
+        where: expect.objectContaining({ workspace_id: WORKSPACE_ID }),
       }),
     );
   });
@@ -107,7 +112,7 @@ describe("createBudgetAction", () => {
   });
 
   it("retorna erro quando usuário não está autenticado", async () => {
-    mockAuth.mockRejectedValue(new Error("Não autenticado"));
+    mockWorkspace.mockRejectedValue(new Error("Não autenticado"));
 
     const result = await createBudgetAction(VALID_DATA);
     expect(result).toEqual({ success: false, error: "Erro ao criar orçamento" });

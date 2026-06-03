@@ -8,7 +8,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { UserRole } from "@/lib/auth/get-user-with-role";
 import { isUuid } from "@/utils/is-uuid";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -16,10 +15,8 @@ import React from "react";
 
 const routeLabels: Record<string, string> = {
   dashboard: "Dashboard",
-  users: "Usuários",
   accounts: "Contas",
   budgets: "Orçamentos",
-  metrics: "Métricas",
   profile: "Meu Perfil",
   settings: "Configurações",
   notifications: "Notificações",
@@ -33,19 +30,11 @@ const uuidContextLabels: Record<string, string> = {
   budgets: "Editar Orçamento",
 };
 
-const nonNavigableSegments = ["admin"];
-
-interface BreadcrumbProps {
-  userRole: UserRole;
-}
-
-export function HeaderBreadcrumb({ userRole }: BreadcrumbProps) {
+export function HeaderBreadcrumb() {
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
 
-  const homeHref = userRole === "admin" ? "/admin/dashboard" : "/dashboard";
-
-  const isDashboardPage = pathname === homeHref;
+  const isDashboardPage = pathname === "/dashboard";
 
   return (
     <Breadcrumb>
@@ -55,7 +44,7 @@ export function HeaderBreadcrumb({ userRole }: BreadcrumbProps) {
             <BreadcrumbPage>Dashboard</BreadcrumbPage>
           ) : (
             <BreadcrumbLink asChild>
-              <Link href={homeHref}>Home</Link>
+              <Link href="/dashboard">Home</Link>
             </BreadcrumbLink>
           )}
         </BreadcrumbItem>
@@ -70,19 +59,14 @@ export function HeaderBreadcrumb({ userRole }: BreadcrumbProps) {
                 ? (uuidContextLabels[segments[index - 1]] ?? "Editar")
                 : (routeLabels[segment] ?? segment);
 
-              if (
-                segment === "dashboard" ||
-                (segment === "admin" && userRole === "admin")
-              ) {
+              if (segment === "dashboard") {
                 return null;
               }
-
-              const isNavigable = !nonNavigableSegments.includes(segment);
 
               return (
                 <React.Fragment key={href}>
                   <BreadcrumbItem>
-                    {isLast || !isNavigable ? (
+                    {isLast ? (
                       <BreadcrumbPage>{label}</BreadcrumbPage>
                     ) : (
                       <BreadcrumbLink asChild>

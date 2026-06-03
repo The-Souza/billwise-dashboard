@@ -1,6 +1,6 @@
 "use server";
 
-import { requireAuth } from "@/lib/auth/guards";
+import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 import { exportParamsSchema } from "@/schemas/accounts/export-params";
 import type { ExportParamsInput } from "@/schemas/accounts/export-params";
@@ -21,12 +21,12 @@ export async function exportAccountsAction(
   }
 
   try {
-    const user = await requireAuth();
+    const ctx = await requireWorkspace();
     const { month, year } = parsed.data;
 
     const rows = await prisma.accounts.findMany({
       where: {
-        user_id: user.id,
+        workspace_id: ctx.workspaceId,
         ...(month !== undefined && { month }),
         ...(year !== undefined && { year }),
       },

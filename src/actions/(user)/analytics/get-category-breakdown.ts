@@ -1,7 +1,7 @@
 "use server";
 
 import { Prisma } from "@/generated/prisma/client";
-import { requireAuth } from "@/lib/auth/guards";
+import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 import { analyticsFiltersSchema } from "@/schemas/analytics/analytics-filters";
 
@@ -37,7 +37,7 @@ export async function getCategoryBreakdownAction(
   if (!parsed.success) return { success: false, error: "Parâmetros inválidos" };
 
   try {
-    const user = await requireAuth();
+    const ctx = await requireWorkspace();
     const {
       startMonth: sm,
       startYear: sy,
@@ -68,7 +68,7 @@ export async function getCategoryBreakdownAction(
         COUNT(a.id)::int     AS count
       FROM accounts a
       JOIN categories c ON a.category_id = c.id
-      WHERE a.user_id = ${user.id}::uuid
+      WHERE a.workspace_id = ${ctx.workspaceId}::uuid
         AND (a.year * 100 + a.month) >= (${sy} * 100 + ${sm})
         AND (a.year * 100 + a.month) <= (${ey} * 100 + ${em})
         ${typeCondition}

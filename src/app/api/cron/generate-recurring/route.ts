@@ -24,6 +24,7 @@ export async function GET(req: NextRequest) {
       select: {
         id: true,
         user_id: true,
+        workspace_id: true,
         title: true,
         amount: true,
         category_id: true,
@@ -52,6 +53,7 @@ export async function GET(req: NextRequest) {
       const account = await prisma.accounts.create({
         data: {
           user_id: rule.user_id,
+          workspace_id: rule.workspace_id,
           title: rule.title,
           amount: rule.amount,
           account_date: new Date(currentYear, currentMonth - 1, 1),

@@ -1,6 +1,6 @@
 "use server";
 
-import { requireAuth } from "@/lib/auth/guards";
+import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 import { budgetFormSchema } from "@/schemas/budgets/budget-form";
 import { z } from "zod";
@@ -11,7 +11,7 @@ export async function createBudgetAction(
   data: z.infer<typeof budgetFormSchema>,
 ): Promise<CreateBudgetResult> {
   try {
-    const user = await requireAuth();
+    const ctx = await requireWorkspace();
 
     const parsed = budgetFormSchema.safeParse(data);
     if (!parsed.success) {
@@ -21,7 +21,7 @@ export async function createBudgetAction(
     const { categoryId, limitAmount, month, year } = parsed.data;
 
     const existing = await prisma.budgets.findFirst({
-      where: { user_id: user.id, category_id: categoryId, month, year },
+      where: { workspace_id: ctx.workspaceId, category_id: categoryId, month, year },
       select: { id: true },
     });
 
@@ -34,7 +34,8 @@ export async function createBudgetAction(
 
     await prisma.budgets.create({
       data: {
-        user_id: user.id,
+        user_id: ctx.user.id,
+        workspace_id: ctx.workspaceId,
         category_id: categoryId,
         limit_amount: limitAmount,
         month,
