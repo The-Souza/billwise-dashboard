@@ -3,7 +3,7 @@
 import { account_status } from "@/generated/prisma/enums";
 import { calcRecurringEndDate } from "@/helper/calc-recurring-end-date";
 import { parseDateParts } from "@/helper/parse-date";
-import { requireAuth } from "@/lib/auth/guards";
+import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 import { accountFormSchema } from "@/schemas/accounts/account-form";
 import { randomUUID } from "crypto";
@@ -17,7 +17,7 @@ export async function createAccountAction(
   data: z.infer<typeof accountFormSchema>,
 ): Promise<CreateAccountResult> {
   try {
-    const user = await requireAuth();
+    const ctx = await requireWorkspace();
 
     const parsed = accountFormSchema.safeParse(data);
     if (!parsed.success) {
@@ -59,7 +59,8 @@ export async function createAccountAction(
 
           const recurring = await tx.recurring_rules.create({
             data: {
-              user_id: user.id,
+              user_id: ctx.user.id,
+              workspace_id: ctx.workspaceId,
               category_id: categoryId!,
               title,
               amount,
@@ -72,7 +73,8 @@ export async function createAccountAction(
 
           await tx.accounts.create({
             data: {
-              user_id: user.id,
+              user_id: ctx.user.id,
+              workspace_id: ctx.workspaceId,
               title,
               amount,
               account_date: accountDateObj,
@@ -119,7 +121,8 @@ export async function createAccountAction(
 
             accountsData.push({
               id: accountId,
-              user_id: user.id,
+              user_id: ctx.user.id,
+              workspace_id: ctx.workspaceId,
               title,
               amount: installmentAmount,
               account_date: installmentDate,
@@ -157,7 +160,8 @@ export async function createAccountAction(
 
         await tx.accounts.create({
           data: {
-            user_id: user.id,
+            user_id: ctx.user.id,
+            workspace_id: ctx.workspaceId,
             title,
             amount,
             account_date: accountDateObj,

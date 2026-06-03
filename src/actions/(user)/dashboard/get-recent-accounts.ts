@@ -1,7 +1,7 @@
 "use server";
 
 import { account_status, category_type } from "@/generated/prisma/enums";
-import { requireAuth } from "@/lib/auth/guards";
+import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 import { monthYearSchema } from "@/schemas/shared/params";
 
@@ -28,7 +28,7 @@ export async function getRecentAccountsAction(
   limit = 8,
 ): Promise<GetRecentAccountsResult> {
   try {
-    const user = await requireAuth();
+    const ctx = await requireWorkspace();
 
     const parsed = monthYearSchema.safeParse({ month, year });
     if (!parsed.success) {
@@ -39,7 +39,7 @@ export async function getRecentAccountsAction(
 
     const rows = await prisma.accounts.findMany({
       where: {
-        user_id: user.id,
+        workspace_id: ctx.workspaceId,
         month: parsed.data.month,
         year: parsed.data.year,
       },

@@ -1,7 +1,7 @@
 "use server";
 
 import { category_type } from "@/generated/prisma/enums";
-import { requireAuth } from "@/lib/auth/guards";
+import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 import { monthYearSchema } from "@/schemas/shared/params";
 
@@ -24,7 +24,7 @@ export async function getBudgetProgressAction(
   year: number,
 ): Promise<GetBudgetProgressResult> {
   try {
-    const user = await requireAuth();
+    const ctx = await requireWorkspace();
 
     const parsed = monthYearSchema.safeParse({ month, year });
     if (!parsed.success) {
@@ -65,7 +65,7 @@ export async function getBudgetProgressAction(
           ) AS rn
         FROM public.budget_vs_actual bva
         JOIN public.categories c ON c.id = bva.category_id
-        WHERE bva.user_id = ${user.id}::uuid
+        WHERE bva.workspace_id = ${ctx.workspaceId}::uuid
           AND bva.month = ${parsed.data.month}
           AND bva.year  = ${parsed.data.year}
       ) sub

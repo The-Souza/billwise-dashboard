@@ -1,6 +1,6 @@
 "use server";
 
-import { requireAuth } from "@/lib/auth/guards";
+import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 import { deleteAccountsSchema } from "@/schemas/accounts/delete-accounts";
 
@@ -12,7 +12,7 @@ export async function deleteAccountsAction(
   ids: string[],
 ): Promise<DeleteAccountsResult> {
   try {
-    const user = await requireAuth();
+    const ctx = await requireWorkspace();
 
     const parsed = deleteAccountsSchema.safeParse(ids);
     if (!parsed.success) {
@@ -20,7 +20,7 @@ export async function deleteAccountsAction(
     }
 
     const accounts = await prisma.accounts.findMany({
-      where: { id: { in: parsed.data }, user_id: user.id },
+      where: { id: { in: parsed.data }, workspace_id: ctx.workspaceId },
       select: { id: true, recurring_rule_id: true, installment_group_id: true },
     });
 
@@ -38,7 +38,7 @@ export async function deleteAccountsAction(
             await prisma.accounts.findMany({
               where: {
                 installment_group_id: { in: groupIds },
-                user_id: user.id,
+                workspace_id: ctx.workspaceId,
               },
               select: { id: true },
             })
@@ -58,7 +58,7 @@ export async function deleteAccountsAction(
         });
 
         await tx.accounts.deleteMany({
-          where: { id: { in: allIds }, user_id: user.id },
+          where: { id: { in: allIds }, workspace_id: ctx.workspaceId },
         });
 
         if (recurringRuleIds.length > 0) {

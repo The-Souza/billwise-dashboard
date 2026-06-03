@@ -136,8 +136,8 @@ export async function GET(req: NextRequest) {
 
     // -----------------------------
     // NOTIFICAR ORÇAMENTOS ULTRAPASSADOS
-    // Respeita a preferência onBudgetExceeded de cada usuário (padrão: true)
-    // category_id é embutido no corpo para deduplicação sem mudança de schema
+    // Gastos calculados por workspace_id (contexto compartilhado)
+    // Notificação enviada ao criador do orçamento (budget.user_id)
     // -----------------------------
 
     const currentMonth = today.getMonth() + 1;
@@ -152,16 +152,16 @@ export async function GET(req: NextRequest) {
     let budgetExceededCount = 0;
 
     if (budgets.length > 0) {
-      const userIds = [...new Set(budgets.map((b) => b.user_id))];
+      const workspaceIds = [...new Set(budgets.map((b) => b.workspace_id))];
       const categoryIds = [...new Set(budgets.map((b) => b.category_id))];
 
-      // Batch: soma de gastos por (user_id, category_id) no mês atual
+      // Soma de gastos por (workspace_id, category_id) no mês atual
       const spendingRows = await prisma.accounts.groupBy({
-        by: ["user_id", "category_id"],
+        by: ["workspace_id", "category_id"],
         where: {
           month: currentMonth,
           year: currentYear,
-          user_id: { in: userIds },
+          workspace_id: { in: workspaceIds },
           category_id: { in: categoryIds },
         },
         _sum: { amount: true },
@@ -171,18 +171,19 @@ export async function GET(req: NextRequest) {
       for (const row of spendingRows) {
         if (row.category_id) {
           spendingMap.set(
-            `${row.user_id}:${row.category_id}`,
+            `${row.workspace_id}:${row.category_id}`,
             Number(row._sum.amount ?? 0),
           );
         }
       }
 
       // Buscar notificações de orçamento já enviadas este mês para evitar duplicatas
+      const notifUserIds = [...new Set(budgets.map((b) => b.user_id))];
       const existingBudgetNotifs = await prisma.notifications.findMany({
         where: {
           type: "budget_exceeded",
           created_at: { gte: monthStart },
-          user_id: { in: userIds },
+          user_id: { in: notifUserIds },
         },
         select: { user_id: true, body: true },
       });
@@ -211,7 +212,7 @@ export async function GET(req: NextRequest) {
         if (alreadyNotified.has(dedupeKey)) continue;
 
         const spent =
-          spendingMap.get(`${budget.user_id}:${budget.category_id}`) ?? 0;
+          spendingMap.get(`${budget.workspace_id}:${budget.category_id}`) ?? 0;
         const limit = Number(budget.limit_amount);
         if (spent <= limit) continue;
 

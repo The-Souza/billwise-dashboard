@@ -1,6 +1,6 @@
 "use server";
 
-import { requireAuth } from "@/lib/auth/guards";
+import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 import { uuidSchema } from "@/schemas/shared/params";
 import { revalidatePath } from "next/cache";
@@ -16,10 +16,10 @@ export async function deleteRecurringRuleAction(
   if (!parsed.success) return { success: false, error: "ID inválido" };
 
   try {
-    const user = await requireAuth();
+    const ctx = await requireWorkspace();
 
     const rule = await prisma.recurring_rules.findFirst({
-      where: { id: parsed.data, user_id: user.id },
+      where: { id: parsed.data, workspace_id: ctx.workspaceId },
       select: { id: true },
     });
 
@@ -31,12 +31,12 @@ export async function deleteRecurringRuleAction(
       await tx.accounts.deleteMany({
         where: {
           recurring_rule_id: parsed.data,
-          user_id: user.id,
+          workspace_id: ctx.workspaceId,
           status: "pending",
         },
       });
 
-      await tx.recurring_rules.delete({ where: { id: parsed.data, user_id: user.id } });
+      await tx.recurring_rules.delete({ where: { id: parsed.data } });
     });
 
     revalidatePath("/settings");

@@ -1,7 +1,7 @@
 "use server";
 
 import { account_status, category_type } from "@/generated/prisma/enums";
-import { requireAuth } from "@/lib/auth/guards";
+import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 import { getAccountsFiltersSchema } from "@/schemas/accounts/get-accounts";
 import z from "zod";
@@ -29,7 +29,7 @@ export async function getAccountsAction(
   filters: AccountFilters = {},
 ): Promise<GetAccountsResult> {
   try {
-    const user = await requireAuth();
+    const ctx = await requireWorkspace();
 
     const parsed = getAccountsFiltersSchema.safeParse(filters);
     if (!parsed.success) {
@@ -67,7 +67,7 @@ export async function getAccountsAction(
     })();
 
     const where = {
-      user_id: user.id,
+      workspace_id: ctx.workspaceId,
       ...(month !== undefined && { month }),
       ...(year !== undefined && { year }),
       ...(status && { status }),

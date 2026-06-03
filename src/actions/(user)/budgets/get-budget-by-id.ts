@@ -1,6 +1,6 @@
 "use server";
 
-import { requireAuth } from "@/lib/auth/guards";
+import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 import { uuidSchema } from "@/schemas/shared/params";
 
@@ -26,10 +26,10 @@ export async function getBudgetByIdAction(
   }
 
   try {
-    const user = await requireAuth();
+    const ctx = await requireWorkspace();
 
     const row = await prisma.budgets.findFirst({
-      where: { id, user_id: user.id },
+      where: { id, workspace_id: ctx.workspaceId },
       select: {
         id: true,
         category_id: true,
