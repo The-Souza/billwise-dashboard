@@ -1,7 +1,7 @@
 "use server";
 
 import { Prisma } from "@/generated/prisma/client";
-import { requireAuth } from "@/lib/auth/guards";
+import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 import { analyticsFiltersSchema } from "@/schemas/analytics/analytics-filters";
 
@@ -16,18 +16,8 @@ type Result =
   | { success: false; error: string };
 
 const MONTH_LABELS = [
-  "Jan",
-  "Fev",
-  "Mar",
-  "Abr",
-  "Mai",
-  "Jun",
-  "Jul",
-  "Ago",
-  "Set",
-  "Out",
-  "Nov",
-  "Dez",
+  "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
+  "Jul", "Ago", "Set", "Out", "Nov", "Dez",
 ];
 
 export async function getAnalyticsEvolutionAction(
@@ -46,7 +36,7 @@ export async function getAnalyticsEvolutionAction(
   if (!parsed.success) return { success: false, error: "Parâmetros inválidos" };
 
   try {
-    const user = await requireAuth();
+    const ctx = await requireWorkspace();
     const {
       startMonth: sm,
       startYear: sy,
@@ -83,7 +73,7 @@ export async function getAnalyticsEvolutionAction(
         COALESCE(total_income, 0)::float  AS total_income,
         COALESCE(total_expense, 0)::float AS total_expense
       FROM public.income_vs_expense
-      WHERE user_id = ${user.id}::uuid
+      WHERE workspace_id = ${ctx.workspaceId}::uuid
         AND (
           ${Prisma.join(
             monthsToFetch.map(

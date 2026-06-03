@@ -1,6 +1,6 @@
 "use server";
 
-import { requireAuth } from "@/lib/auth/guards";
+import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 
 export type RecurringRuleRow = {
@@ -22,11 +22,11 @@ export type GetRecurringRulesResult =
 
 export async function getRecurringRulesAction(): Promise<GetRecurringRulesResult> {
   try {
-    const user = await requireAuth();
+    const ctx = await requireWorkspace();
 
     const rules = await prisma.recurring_rules.findMany({
       where: {
-        user_id: user.id,
+        workspace_id: ctx.workspaceId,
         OR: [{ end_date: null }, { end_date: { gte: new Date() } }],
       },
       include: {

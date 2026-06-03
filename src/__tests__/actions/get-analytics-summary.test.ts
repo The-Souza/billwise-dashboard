@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@/lib/auth/guards", () => ({
-  requireAuth: vi.fn(),
+vi.mock("@/lib/auth/workspace", () => ({
+  requireWorkspace: vi.fn(),
 }));
 
 vi.mock("@/lib/prisma/client", () => ({
@@ -11,17 +11,21 @@ vi.mock("@/lib/prisma/client", () => ({
 }));
 
 import { getAnalyticsSummaryAction } from "@/actions/(user)/analytics/get-analytics-summary";
-import { requireAuth } from "@/lib/auth/guards";
+import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 
-const mockAuth = vi.mocked(requireAuth);
+const mockWorkspace = vi.mocked(requireWorkspace);
 const mockQueryRaw = vi.mocked(prisma.$queryRaw);
 
-const MOCK_USER = { id: "user-uuid-123", email: "u@test.com", name: "T", role: "user" as const, avatarUrl: null };
+const MOCK_WORKSPACE_CTX = {
+  user: { id: "user-uuid-123", email: "u@test.com", name: "T", avatarUrl: null },
+  workspaceId: "workspace-uuid-456",
+  workspaceRole: "owner" as const,
+};
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mockAuth.mockResolvedValue(MOCK_USER as never);
+  mockWorkspace.mockResolvedValue(MOCK_WORKSPACE_CTX as never);
 });
 
 afterEach(() => {
@@ -32,7 +36,7 @@ describe("getAnalyticsSummaryAction", () => {
   it("retorna erro para parâmetros inválidos (mês 0)", async () => {
     const result = await getAnalyticsSummaryAction(0, 2024, 12, 2024);
     expect(result).toEqual({ success: false, error: "Parâmetros inválidos" });
-    expect(mockAuth).not.toHaveBeenCalled();
+    expect(mockWorkspace).not.toHaveBeenCalled();
   });
 
   it("retorna erro para ano inferior a 2020", async () => {

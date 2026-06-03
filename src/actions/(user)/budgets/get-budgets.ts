@@ -1,7 +1,7 @@
 "use server";
 
 import { category_type } from "@/generated/prisma/enums";
-import { requireAuth } from "@/lib/auth/guards";
+import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 import { monthYearSchema } from "@/schemas/shared/params";
 
@@ -28,7 +28,7 @@ export async function getBudgetsAction(
   year: number,
 ): Promise<GetBudgetsResult> {
   try {
-    const user = await requireAuth();
+    const ctx = await requireWorkspace();
 
     const parsed = monthYearSchema.safeParse({ month, year });
     if (!parsed.success) {
@@ -67,9 +67,9 @@ export async function getBudgetsAction(
         ON b.category_id = bva.category_id
         AND b.year = bva.year
         AND b.month = bva.month
-        AND b.user_id = bva.user_id
+        AND b.workspace_id = bva.workspace_id
       JOIN public.categories c ON c.id = bva.category_id
-      WHERE bva.user_id = ${user.id}::uuid
+      WHERE bva.workspace_id = ${ctx.workspaceId}::uuid
         AND bva.month = ${parsed.data.month}
         AND bva.year = ${parsed.data.year}
       ORDER BY c.type ASC, bva.used_percentage DESC

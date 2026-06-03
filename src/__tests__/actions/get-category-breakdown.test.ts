@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@/lib/auth/guards", () => ({
-  requireAuth: vi.fn(),
+vi.mock("@/lib/auth/workspace", () => ({
+  requireWorkspace: vi.fn(),
 }));
 
 vi.mock("@/lib/prisma/client", () => ({
@@ -11,13 +11,17 @@ vi.mock("@/lib/prisma/client", () => ({
 }));
 
 import { getCategoryBreakdownAction } from "@/actions/(user)/analytics/get-category-breakdown";
-import { requireAuth } from "@/lib/auth/guards";
+import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 
-const mockAuth = vi.mocked(requireAuth);
+const mockWorkspace = vi.mocked(requireWorkspace);
 const mockQueryRaw = vi.mocked(prisma.$queryRaw);
 
-const MOCK_USER = { id: "user-uuid-123", email: "u@test.com", name: "T", role: "user" as const, avatarUrl: null };
+const MOCK_WORKSPACE_CTX = {
+  user: { id: "user-uuid-123", email: "u@test.com", name: "T", avatarUrl: null },
+  workspaceId: "workspace-uuid-456",
+  workspaceRole: "owner" as const,
+};
 
 const makeRow = (overrides: Partial<{
   category_id: string;
@@ -38,7 +42,7 @@ const makeRow = (overrides: Partial<{
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mockAuth.mockResolvedValue(MOCK_USER as never);
+  mockWorkspace.mockResolvedValue(MOCK_WORKSPACE_CTX as never);
 });
 
 afterEach(() => {
@@ -49,7 +53,7 @@ describe("getCategoryBreakdownAction", () => {
   it("retorna erro para parâmetros inválidos", async () => {
     const result = await getCategoryBreakdownAction(0, 2024, 12, 2024, "all");
     expect(result).toEqual({ success: false, error: "Parâmetros inválidos" });
-    expect(mockAuth).not.toHaveBeenCalled();
+    expect(mockWorkspace).not.toHaveBeenCalled();
   });
 
   it("retorna array vazio quando não há categorias", async () => {

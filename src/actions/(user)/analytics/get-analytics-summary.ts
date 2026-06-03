@@ -1,6 +1,6 @@
 "use server";
 
-import { requireAuth } from "@/lib/auth/guards";
+import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 import { analyticsFiltersSchema } from "@/schemas/analytics/analytics-filters";
 
@@ -33,7 +33,7 @@ export async function getAnalyticsSummaryAction(
   if (!parsed.success) return { success: false, error: "Parâmetros inválidos" };
 
   try {
-    const user = await requireAuth();
+    const ctx = await requireWorkspace();
     const {
       startMonth: sm,
       startYear: sy,
@@ -49,7 +49,7 @@ export async function getAnalyticsSummaryAction(
         COALESCE(SUM(total_expense), 0)::float AS total_expense,
         COALESCE(SUM(balance), 0)::float       AS balance
       FROM public.income_vs_expense
-      WHERE user_id = ${user.id}::uuid
+      WHERE workspace_id = ${ctx.workspaceId}::uuid
         AND (year * 100 + month) >= (${sy} * 100 + ${sm})
         AND (year * 100 + month) <= (${ey} * 100 + ${em})
     `;

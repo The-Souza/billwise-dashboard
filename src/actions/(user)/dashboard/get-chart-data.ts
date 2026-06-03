@@ -1,7 +1,7 @@
 "use server";
 
 import { Prisma } from "@/generated/prisma/client";
-import { requireAuth } from "@/lib/auth/guards";
+import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 import { chartParamsSchema } from "@/schemas/dashboard/chart-params";
 
@@ -26,7 +26,7 @@ export async function getChartDataAction(
   periods: number,
 ): Promise<GetChartDataResult> {
   try {
-    const user = await requireAuth();
+    const ctx = await requireWorkspace();
 
     const parsed = chartParamsSchema.safeParse({ month: currentMonth, year: currentYear, periods });
     if (!parsed.success) {
@@ -61,7 +61,7 @@ export async function getChartDataAction(
         COALESCE(total_income, 0)::float  AS total_income,
         COALESCE(total_expense, 0)::float AS total_expense
       FROM public.income_vs_expense
-      WHERE user_id = ${user.id}::uuid
+      WHERE workspace_id = ${ctx.workspaceId}::uuid
         AND (
           ${Prisma.join(
             monthsToFetch.map(

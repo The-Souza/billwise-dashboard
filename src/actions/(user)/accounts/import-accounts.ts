@@ -1,6 +1,6 @@
 "use server";
 
-import { requireAuth } from "@/lib/auth/guards";
+import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 import { importRowSchema } from "@/schemas/accounts/import-row";
 import type { ImportRowInput } from "@/schemas/accounts/import-row";
@@ -22,7 +22,7 @@ export async function importAccountsAction(
   }
 
   try {
-    const user = await requireAuth();
+    const ctx = await requireWorkspace();
 
     const validRows = rows
       .map((row) => importRowSchema.safeParse(row))
@@ -50,7 +50,8 @@ export async function importAccountsAction(
           : null;
 
         return {
-          user_id: user.id,
+          user_id: ctx.user.id,
+          workspace_id: ctx.workspaceId,
           title: row.title,
           amount: row.amount,
           month: row.month,

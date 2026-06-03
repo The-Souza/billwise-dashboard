@@ -1,6 +1,6 @@
 "use server";
 
-import { requireAuth } from "@/lib/auth/guards";
+import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 import { uuidSchema } from "@/schemas/shared/params";
 
@@ -10,7 +10,7 @@ export async function deleteBudgetAction(
   id: string,
 ): Promise<DeleteBudgetResult> {
   try {
-    const user = await requireAuth();
+    const ctx = await requireWorkspace();
 
     const parsed = uuidSchema.safeParse(id);
     if (!parsed.success) {
@@ -18,7 +18,7 @@ export async function deleteBudgetAction(
     }
 
     const budget = await prisma.budgets.findFirst({
-      where: { id: parsed.data, user_id: user.id },
+      where: { id: parsed.data, workspace_id: ctx.workspaceId },
       select: { id: true },
     });
 
@@ -26,7 +26,7 @@ export async function deleteBudgetAction(
       return { success: false, error: "Orçamento não encontrado" };
     }
 
-    await prisma.budgets.delete({ where: { id: parsed.data, user_id: user.id } });
+    await prisma.budgets.delete({ where: { id: parsed.data } });
 
     return { success: true };
   } catch (error) {

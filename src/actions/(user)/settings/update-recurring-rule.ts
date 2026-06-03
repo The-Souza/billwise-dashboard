@@ -1,6 +1,6 @@
 "use server";
 
-import { requireAuth } from "@/lib/auth/guards";
+import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 import { updateRecurringRuleSchema } from "@/schemas/settings/update-recurring-rule";
 import { revalidatePath } from "next/cache";
@@ -14,7 +14,7 @@ export async function updateRecurringRuleAction(
   data: z.infer<typeof updateRecurringRuleSchema>,
 ): Promise<UpdateRecurringRuleResult> {
   try {
-    const user = await requireAuth();
+    const ctx = await requireWorkspace();
 
     const parsed = updateRecurringRuleSchema.safeParse(data);
     if (!parsed.success) {
@@ -23,7 +23,7 @@ export async function updateRecurringRuleAction(
     const { id, endDate, recurrenceMonths } = parsed.data;
 
     const rule = await prisma.recurring_rules.findFirst({
-      where: { id, user_id: user.id },
+      where: { id, workspace_id: ctx.workspaceId },
       select: { id: true },
     });
 
@@ -32,7 +32,7 @@ export async function updateRecurringRuleAction(
     }
 
     await prisma.recurring_rules.update({
-      where: { id, user_id: user.id },
+      where: { id },
       data: {
         end_date: endDate ? new Date(endDate) : null,
         recurrence_months: recurrenceMonths ?? null,

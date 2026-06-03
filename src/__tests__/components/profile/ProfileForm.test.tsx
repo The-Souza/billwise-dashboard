@@ -30,7 +30,6 @@ const user: AuthUser = {
   id: "user-1",
   name: "Guilherme Souza",
   email: "guilherme@test.com",
-  role: "user",
   avatarUrl: null,
 };
 

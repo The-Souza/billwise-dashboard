@@ -1,9 +1,9 @@
-import { requireUser } from "@/lib/auth/guards";
+import { requireAuth } from "@/lib/auth/guards";
 
 export default async function UserLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  await requireUser();
+  await requireAuth();
 
   return <>{children}</>;
 }
