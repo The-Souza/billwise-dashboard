@@ -20,7 +20,7 @@ export function SidebarRoot({ user }: User) {
         <BillwiseLogo />
       </SidebarHeader>
       <SidebarContent>
-        <SidebarNavigation user={user} />
+        <SidebarNavigation />
       </SidebarContent>
       <SidebarFooter>
         <SidebarUser user={user} />

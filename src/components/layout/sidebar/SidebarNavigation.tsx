@@ -12,20 +12,17 @@ import {
 import { navigation } from "@/config/navigation";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { User } from "./SidebarRoot";
 
-export function SidebarNavigation({ user }: User) {
+export function SidebarNavigation() {
   const pathname = usePathname();
   const { isMobile, setOpenMobile } = useSidebar();
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>
-        {user.role === "admin" ? "Menu Administrativo" : "Menu"}
-      </SidebarGroupLabel>
+      <SidebarGroupLabel>Menu</SidebarGroupLabel>
       <SidebarGroupContent>
         <SidebarMenu>
-          {navigation[user.role].map((item) => (
+          {navigation.map((item) => (
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton
                 asChild
