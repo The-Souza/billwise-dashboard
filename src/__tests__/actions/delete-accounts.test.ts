@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@/lib/auth/guards", () => ({
-  requireAuth: vi.fn(),
+vi.mock("@/lib/auth/workspace", () => ({
+  requireWorkspace: vi.fn(),
 }));
 
 vi.mock("@/lib/prisma/client", () => ({
@@ -20,26 +20,30 @@ vi.mock("@/lib/prisma/client", () => ({
 }));
 
 import { deleteAccountsAction } from "@/actions/(user)/accounts/delete-accounts";
-import { requireAuth } from "@/lib/auth/guards";
+import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 
-const mockAuth = vi.mocked(requireAuth);
+const mockWorkspace = vi.mocked(requireWorkspace);
 const mockFindMany = vi.mocked(prisma.accounts.findMany);
 const mockTransaction = vi.mocked(prisma.$transaction);
 
 const VALID_ID = "123e4567-e89b-12d3-a456-426614174000";
 const VALID_ID_2 = "223e4567-e89b-12d3-a456-426614174001";
-const MOCK_USER = {
-  id: "user-uuid-123",
-  email: "user@test.com",
-  name: "Test",
-  role: "user" as const,
-  avatarUrl: null,
+const WORKSPACE_ID = "workspace-uuid-456";
+const MOCK_WORKSPACE_CTX = {
+  user: {
+    id: "user-uuid-123",
+    email: "user@test.com",
+    name: "Test",
+    avatarUrl: null,
+  },
+  workspaceId: WORKSPACE_ID,
+  workspaceRole: "owner" as const,
 };
 
 beforeEach(() => {
   vi.resetAllMocks();
-  mockAuth.mockResolvedValue(MOCK_USER as never);
+  mockWorkspace.mockResolvedValue(MOCK_WORKSPACE_CTX as never);
 });
 
 afterEach(() => {
@@ -53,16 +57,16 @@ describe("deleteAccountsAction", () => {
       success: false,
       error: "Nenhuma conta selecionada",
     });
-    expect(mockAuth).toHaveBeenCalled();
+    expect(mockWorkspace).toHaveBeenCalled();
   });
 
   it("retorna erro para UUID inválido", async () => {
     const result = await deleteAccountsAction(["nao-é-uuid"]);
     expect(result).toEqual({ success: false, error: "ID inválido" });
-    expect(mockAuth).toHaveBeenCalled();
+    expect(mockWorkspace).toHaveBeenCalled();
   });
 
-  it("retorna erro quando nenhuma conta é encontrada para o usuário", async () => {
+  it("retorna erro quando nenhuma conta é encontrada para o workspace", async () => {
     mockFindMany.mockResolvedValue([]);
 
     const result = await deleteAccountsAction([VALID_ID]);
@@ -134,7 +138,7 @@ describe("deleteAccountsAction", () => {
   });
 
   it("retorna erro quando usuário não está autenticado", async () => {
-    mockAuth.mockRejectedValue(new Error("Não autenticado"));
+    mockWorkspace.mockRejectedValue(new Error("Não autenticado"));
 
     const result = await deleteAccountsAction([VALID_ID]);
     expect(result).toEqual({ success: false, error: "Erro ao excluir contas" });

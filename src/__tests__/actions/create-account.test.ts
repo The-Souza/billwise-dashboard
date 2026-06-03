@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@/lib/auth/guards", () => ({
-  requireAuth: vi.fn(),
+vi.mock("@/lib/auth/workspace", () => ({
+  requireWorkspace: vi.fn(),
 }));
 
 vi.mock("@/lib/prisma/client", () => ({
@@ -11,19 +11,23 @@ vi.mock("@/lib/prisma/client", () => ({
 }));
 
 import { createAccountAction } from "@/actions/(user)/accounts/create-account";
-import { requireAuth } from "@/lib/auth/guards";
+import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 
-const mockAuth = vi.mocked(requireAuth);
+const mockWorkspace = vi.mocked(requireWorkspace);
 const mockTransaction = vi.mocked(prisma.$transaction);
 
 const CATEGORY_UUID = "223e4567-e89b-12d3-a456-426614174001";
-const MOCK_USER = {
-  id: "user-uuid-123",
-  email: "user@test.com",
-  name: "Test",
-  role: "user" as const,
-  avatarUrl: null,
+const WORKSPACE_ID = "workspace-uuid-456";
+const MOCK_WORKSPACE_CTX = {
+  user: {
+    id: "user-uuid-123",
+    email: "user@test.com",
+    name: "Test",
+    avatarUrl: null,
+  },
+  workspaceId: WORKSPACE_ID,
+  workspaceRole: "owner" as const,
 };
 
 const BASE_DATA = {
@@ -53,7 +57,7 @@ function makeTxMock() {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mockAuth.mockResolvedValue(MOCK_USER as never);
+  mockWorkspace.mockResolvedValue(MOCK_WORKSPACE_CTX as never);
 });
 
 afterEach(() => {
@@ -85,7 +89,7 @@ describe("createAccountAction", () => {
 
       expect(tx.accounts.create).toHaveBeenCalledWith(
         expect.objectContaining({
-          data: expect.objectContaining({ user_id: MOCK_USER.id }),
+          data: expect.objectContaining({ user_id: MOCK_WORKSPACE_CTX.user.id }),
         }),
       );
     });
@@ -221,7 +225,7 @@ describe("createAccountAction", () => {
   });
 
   it("retorna erro quando usuário não está autenticado", async () => {
-    mockAuth.mockRejectedValue(new Error("Não autenticado"));
+    mockWorkspace.mockRejectedValue(new Error("Não autenticado"));
 
     const result = await createAccountAction(BASE_DATA);
     expect(result).toEqual({ success: false, error: "Erro ao criar conta" });

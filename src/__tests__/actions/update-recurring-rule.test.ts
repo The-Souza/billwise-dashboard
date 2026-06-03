@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@/lib/auth/guards", () => ({
-  requireAuth: vi.fn(),
+vi.mock("@/lib/auth/workspace", () => ({
+  requireWorkspace: vi.fn(),
 }));
 
 vi.mock("next/cache", () => ({
@@ -18,20 +18,24 @@ vi.mock("@/lib/prisma/client", () => ({
 }));
 
 import { updateRecurringRuleAction } from "@/actions/(user)/settings/update-recurring-rule";
-import { requireAuth } from "@/lib/auth/guards";
+import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 
-const mockAuth = vi.mocked(requireAuth);
+const mockWorkspace = vi.mocked(requireWorkspace);
 const mockFindFirst = vi.mocked(prisma.recurring_rules.findFirst);
 const mockUpdate = vi.mocked(prisma.recurring_rules.update);
 
 const VALID_UUID = "123e4567-e89b-12d3-a456-426614174000";
-const MOCK_USER = {
-  id: "user-uuid-123",
-  email: "user@test.com",
-  name: "Test",
-  role: "user" as const,
-  avatarUrl: null,
+const WORKSPACE_ID = "workspace-uuid-456";
+const MOCK_WORKSPACE_CTX = {
+  user: {
+    id: "user-uuid-123",
+    email: "user@test.com",
+    name: "Test",
+    avatarUrl: null,
+  },
+  workspaceId: WORKSPACE_ID,
+  workspaceRole: "owner" as const,
 };
 
 const VALID_DATA = {
@@ -42,7 +46,7 @@ const VALID_DATA = {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mockAuth.mockResolvedValue(MOCK_USER as never);
+  mockWorkspace.mockResolvedValue(MOCK_WORKSPACE_CTX as never);
 });
 
 afterEach(() => {
@@ -57,10 +61,10 @@ describe("updateRecurringRuleAction", () => {
       recurrenceMonths: null,
     });
     expect(result).toEqual({ success: false, error: "ID inválido" });
-    expect(mockAuth).toHaveBeenCalled();
+    expect(mockWorkspace).toHaveBeenCalled();
   });
 
-  it("retorna erro quando regra não pertence ao usuário", async () => {
+  it("retorna erro quando regra não pertence ao workspace", async () => {
     mockFindFirst.mockResolvedValue(null);
 
     const result = await updateRecurringRuleAction(VALID_DATA);
@@ -76,7 +80,7 @@ describe("updateRecurringRuleAction", () => {
     expect(result).toEqual({ success: true });
     expect(mockUpdate).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { id: VALID_UUID, user_id: MOCK_USER.id },
+        where: { id: VALID_UUID },
         data: expect.objectContaining({
           recurrence_months: VALID_DATA.recurrenceMonths,
         }),
@@ -101,14 +105,14 @@ describe("updateRecurringRuleAction", () => {
     );
   });
 
-  it("verifica isolamento por usuário ao buscar a regra", async () => {
+  it("verifica isolamento por workspace ao buscar a regra", async () => {
     mockFindFirst.mockResolvedValue(null);
 
     await updateRecurringRuleAction(VALID_DATA);
 
     expect(mockFindFirst).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: expect.objectContaining({ user_id: MOCK_USER.id }),
+        where: expect.objectContaining({ workspace_id: WORKSPACE_ID }),
       }),
     );
   });
@@ -124,7 +128,7 @@ describe("updateRecurringRuleAction", () => {
   });
 
   it("retorna erro quando usuário não está autenticado", async () => {
-    mockAuth.mockRejectedValue(new Error("Não autenticado"));
+    mockWorkspace.mockRejectedValue(new Error("Não autenticado"));
 
     const result = await updateRecurringRuleAction(VALID_DATA);
     expect(result).toEqual({ success: false, error: "Erro ao atualizar regra recorrente" });

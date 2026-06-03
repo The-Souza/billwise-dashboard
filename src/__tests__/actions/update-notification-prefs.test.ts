@@ -23,7 +23,6 @@ const MOCK_USER = {
   id: "user-uuid-123",
   email: "user@test.com",
   name: "Test",
-  role: "user" as const,
   avatarUrl: null,
 };
 
