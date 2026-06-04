@@ -1,6 +1,5 @@
 "use server";
 
-import { verifyTurnstileToken } from "@/lib/turnstile/verify";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { formSchema } from "@/schemas/auth/sign-up";
 import z from "zod";
@@ -23,11 +22,6 @@ export async function signUpAction(
       field: parsed.error.issues[0].path[0] as Fields,
       error: parsed.error.issues[0].message,
     };
-  }
-
-  const captcha = await verifyTurnstileToken(captchaToken);
-  if (!captcha.success) {
-    return { success: false, error: captcha.error ?? "Verificação de segurança falhou." };
   }
 
   try {
