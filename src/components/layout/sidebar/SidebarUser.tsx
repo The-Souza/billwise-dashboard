@@ -17,12 +17,12 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { dropdownItems } from "@/config/dropdown-itens";
+import { AuthUser } from "@/lib/auth/get-user-with-role";
 import { getInitials } from "@/utils/get-initials";
 import { ChevronsUpDown } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { User } from "./SidebarRoot";
 
-export function SidebarUser({ user }: User) {
+export function SidebarUser({ user }: { user: AuthUser }) {
   const router = useRouter();
   const { isMobile, setOpenMobile } = useSidebar();
 
