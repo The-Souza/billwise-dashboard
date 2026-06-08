@@ -28,11 +28,12 @@ const INVITED_USER_ID = "c3000000-0000-4000-8000-000000000003";
 
 const MOCK_USER = { id: OWNER_ID, name: "Owner", email: "owner@test.com", avatarUrl: null };
 
-const OWNER_MEMBERSHIP: workspace_members = {
+const OWNER_MEMBERSHIP: workspace_members & { workspace: { name: string } } = {
   workspace_id: WORKSPACE_ID,
   user_id: OWNER_ID,
   role: workspace_member_role.owner,
   joined_at: new Date(),
+  workspace: { name: "Workspace de Teste" },
 };
 
 beforeEach(() => {

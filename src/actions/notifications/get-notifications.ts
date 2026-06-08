@@ -1,6 +1,7 @@
 "use server";
 
 import { requireAuth } from "@/lib/auth/guards";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 
 export type NotificationItem = {
@@ -61,6 +62,7 @@ export async function getNotificationsAction(): Promise<GetNotificationsResult> 
       })),
     };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error fetching notifications:", error);
     return { success: false, error: "Erro ao buscar notificações" };
   }
