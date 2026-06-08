@@ -1,9 +1,11 @@
 "use server";
 
 import { requireAuth } from "@/lib/auth/guards";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 import { switchWorkspaceSchema } from "@/schemas/workspaces";
 import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 type Result = { success: true } | { success: false; error: string };
@@ -36,8 +38,11 @@ export async function switchWorkspaceAction(
       path: "/",
     });
 
+    revalidatePath("/", "layout");
+
     return { success: true };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in switchWorkspaceAction:", error);
     return { success: false, error: "Erro ao trocar workspace" };
   }

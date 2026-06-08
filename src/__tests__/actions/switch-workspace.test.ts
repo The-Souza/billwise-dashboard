@@ -4,6 +4,7 @@ import { workspace_member_role } from "@/generated/prisma/enums";
 
 vi.mock("@/lib/auth/guards", () => ({ requireAuth: vi.fn() }));
 vi.mock("next/headers", () => ({ cookies: vi.fn() }));
+vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 vi.mock("@/lib/prisma/client", () => ({
   prisma: {
     workspace_members: { findUnique: vi.fn() },

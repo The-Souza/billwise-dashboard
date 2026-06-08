@@ -1,6 +1,7 @@
 "use server";
 
 import { requireAuth } from "@/lib/auth/guards";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 import { workspaceIdSchema, userIdSchema } from "@/schemas/workspaces";
 
@@ -43,6 +44,7 @@ export async function removeMemberAction(
 
     return { success: true };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in removeMemberAction:", error);
     return { success: false, error: "Erro ao remover membro" };
   }

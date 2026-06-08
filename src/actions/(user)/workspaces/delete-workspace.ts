@@ -1,6 +1,7 @@
 "use server";
 
 import { requireAuth } from "@/lib/auth/guards";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 import { workspaceIdSchema } from "@/schemas/workspaces";
 
@@ -36,6 +37,7 @@ export async function deleteWorkspaceAction(workspaceId: string): Promise<Result
 
     return { success: true };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in deleteWorkspaceAction:", error);
     return { success: false, error: "Erro ao deletar workspace" };
   }

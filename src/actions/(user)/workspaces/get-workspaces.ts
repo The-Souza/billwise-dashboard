@@ -1,9 +1,10 @@
 "use server";
 
 import { requireAuth } from "@/lib/auth/guards";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 
-type WorkspaceSummary = {
+export type WorkspaceSummary = {
   id: string;
   name: string;
   isPersonal: boolean;
@@ -38,6 +39,7 @@ export async function getWorkspacesAction(): Promise<Result> {
 
     return { success: true, data };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in getWorkspacesAction:", error);
     return { success: false, error: "Erro ao buscar workspaces" };
   }

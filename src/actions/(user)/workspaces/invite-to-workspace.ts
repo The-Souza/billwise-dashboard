@@ -1,6 +1,7 @@
 "use server";
 
 import { requireAuth } from "@/lib/auth/guards";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 import { inviteToWorkspaceSchema } from "@/schemas/workspaces";
 import { Prisma } from "@/generated/prisma/client";
@@ -23,6 +24,7 @@ export async function inviteToWorkspaceAction(
 
     const requesterMembership = await prisma.workspace_members.findUnique({
       where: { workspace_id_user_id: { workspace_id: workspaceId, user_id: user.id } },
+      include: { workspace: { select: { name: true } } },
     });
 
     if (!requesterMembership) {
@@ -70,7 +72,7 @@ export async function inviteToWorkspaceAction(
         data: {
           user_id: invitedUserId,
           title: "Convite para workspace",
-          body: `${user.name} convidou você para o workspace`,
+          body: `${user.name} convidou você para o workspace "${requesterMembership.workspace.name}"`,
           type: "workspace_invite",
           workspace_invite_id: invite.id,
         },
@@ -79,6 +81,7 @@ export async function inviteToWorkspaceAction(
 
     return { success: true };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in inviteToWorkspaceAction:", error);
     return { success: false, error: "Erro ao enviar convite" };
   }

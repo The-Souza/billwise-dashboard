@@ -1,6 +1,7 @@
 "use server";
 
 import { requireAuth } from "@/lib/auth/guards";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 import { renameWorkspaceSchema } from "@/schemas/workspaces";
 import { z } from "zod";
@@ -39,6 +40,7 @@ export async function renameWorkspaceAction(
 
     return { success: true };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in renameWorkspaceAction:", error);
     return { success: false, error: "Erro ao renomear workspace" };
   }

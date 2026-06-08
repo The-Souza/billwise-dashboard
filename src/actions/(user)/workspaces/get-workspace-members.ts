@@ -1,10 +1,11 @@
 "use server";
 
 import { requireAuth } from "@/lib/auth/guards";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 import { workspaceIdSchema } from "@/schemas/workspaces";
 
-type MemberSummary = {
+export type MemberSummary = {
   userId: string;
   name: string;
   avatarUrl: string | null;
@@ -48,6 +49,7 @@ export async function getWorkspaceMembersAction(workspaceId: string): Promise<Re
 
     return { success: true, data };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in getWorkspaceMembersAction:", error);
     return { success: false, error: "Erro ao buscar membros" };
   }

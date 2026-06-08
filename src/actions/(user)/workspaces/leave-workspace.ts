@@ -1,6 +1,7 @@
 "use server";
 
 import { requireAuth } from "@/lib/auth/guards";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 import { workspaceIdSchema } from "@/schemas/workspaces";
 
@@ -42,6 +43,7 @@ export async function leaveWorkspaceAction(workspaceId: string): Promise<Result>
 
     return { success: true };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in leaveWorkspaceAction:", error);
     return { success: false, error: "Erro ao sair do workspace" };
   }

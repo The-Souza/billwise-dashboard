@@ -1,6 +1,7 @@
 "use server";
 
 import { requireAuth } from "@/lib/auth/guards";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 import { createWorkspaceSchema } from "@/schemas/workspaces";
 import { z } from "zod";
@@ -38,6 +39,7 @@ export async function createWorkspaceAction(
 
     return { success: true, workspaceId: workspace.id };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in createWorkspaceAction:", error);
     return { success: false, error: "Erro ao criar workspace" };
   }
