@@ -23,6 +23,7 @@ const routeLabels: Record<string, string> = {
   "change-password": "Alterar Senha",
   "add-account": "Nova Conta",
   analytics: "Análises",
+  workspaces: "Workspaces",
 };
 
 const uuidContextLabels: Record<string, string> = {
