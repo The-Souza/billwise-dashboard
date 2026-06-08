@@ -9,7 +9,8 @@ type FilterType =
   | "overdue"
   | "due_soon"
   | "budget_exceeded"
-  | "recurring_generated";
+  | "recurring_generated"
+  | "workspace_invite";
 
 const FILTER_OPTIONS: { value: FilterType; label: string }[] = [
   { value: "all", label: "Todas" },
@@ -17,6 +18,7 @@ const FILTER_OPTIONS: { value: FilterType; label: string }[] = [
   { value: "due_soon", label: "Prestes a vencer" },
   { value: "budget_exceeded", label: "Orçamento" },
   { value: "recurring_generated", label: "Recorrentes" },
+  { value: "workspace_invite", label: "Convites" },
 ];
 
 export function NotificationsToolbar() {
@@ -25,7 +27,7 @@ export function NotificationsToolbar() {
 
   return (
     <div className="flex flex-col lg:flex-row items-center justify-between gap-2">
-      <div className="grid grid-cols-3 sm:grid-cols-5 items-center gap-1 w-full lg:w-auto">
+      <div className="grid grid-cols-3 sm:grid-cols-6 items-center gap-1 w-full lg:w-auto">
         {FILTER_OPTIONS.map((opt) => (
           <Button
             key={opt.value}
