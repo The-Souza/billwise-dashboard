@@ -85,7 +85,7 @@ export function ProfileForm({ user }: User) {
     }
   }
 
-  async function handleSubmit(data: z.infer<typeof updateAccountSchema>) {
+  async function onSubmit(data: z.infer<typeof updateAccountSchema>) {
     if (isSubmitting) return;
 
     setIsSubmitting(true);
@@ -227,10 +227,7 @@ export function ProfileForm({ user }: User) {
               )}
             </CardHeader>
             <CardContent className="px-0">
-              <form
-                id="form-profile"
-                onSubmit={form.handleSubmit(handleSubmit)}
-              >
+              <form id="form-profile" onSubmit={form.handleSubmit(onSubmit)}>
                 <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Controller
                     name="name"
