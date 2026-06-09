@@ -4,6 +4,7 @@ import { requireAuth } from "@/lib/auth/guards";
 import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 import { workspaceIdSchema } from "@/schemas/workspaces";
+import { cookies } from "next/headers";
 
 type Result = { success: true } | { success: false; error: string };
 
@@ -34,6 +35,11 @@ export async function deleteWorkspaceAction(workspaceId: string): Promise<Result
     }
 
     await prisma.workspaces.delete({ where: { id: workspaceId } });
+
+    const cookieStore = await cookies();
+    if (cookieStore.get("active_workspace_id")?.value === workspaceId) {
+      cookieStore.delete("active_workspace_id");
+    }
 
     return { success: true };
   } catch (error) {
