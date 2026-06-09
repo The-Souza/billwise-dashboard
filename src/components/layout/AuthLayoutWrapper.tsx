@@ -1,5 +1,5 @@
 import { ToggleTheme } from "@/components/ui/toggle-theme";
-import { BarChart3, PiggyBank, RefreshCw } from "lucide-react";
+import { BarChart3, PiggyBank, RefreshCw, Users } from "lucide-react";
 import Image from "next/image";
 
 const FEATURES = [
@@ -17,6 +17,11 @@ const FEATURES = [
     icon: RefreshCw,
     title: "Pagamentos recorrentes",
     desc: "Cadastre cobranças fixas e nunca perca um vencimento.",
+  },
+  {
+    icon: Users,
+    title: "Workspaces colaborativos",
+    desc: "Gerencie finanças em conjunto com família ou amigos.",
   },
 ];
 
@@ -50,11 +55,11 @@ export function AuthLayoutWrapper({ children }: { children: React.ReactNode }) {
         <div className="relative z-10 flex flex-col gap-10">
           <div className="flex flex-col gap-3">
             <h2 className="text-3xl font-bold font-heading text-white leading-snug">
-              Controle total das suas finanças
+              Organize, acompanhe e planeje suas finanças
             </h2>
             <p className="text-white/70 text-base leading-relaxed">
-              Gerencie contas, orçamentos e pagamentos recorrentes em um só
-              lugar.
+              Gerencie suas finanças pessoais ou em conjunto com família e
+              amigos, tudo em um só lugar.
             </p>
           </div>
 
