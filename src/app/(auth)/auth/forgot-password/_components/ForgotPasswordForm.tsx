@@ -43,7 +43,7 @@ export function ForgotPasswordForm() {
     },
   });
 
-  async function handleSubmit(data: z.infer<typeof formSchema>) {
+  async function onSubmit(data: z.infer<typeof formSchema>) {
     if (isSubmitting) return;
 
     setIsSubmitting(true);
@@ -84,10 +84,7 @@ export function ForgotPasswordForm() {
         </CardDescription>
       </CardHeader>
       <CardContent className="pb-4">
-        <form
-          id="form-forgot-password"
-          onSubmit={form.handleSubmit(handleSubmit)}
-        >
+        <form id="form-forgot-password" onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
             <Controller
               name="email"

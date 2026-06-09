@@ -7,7 +7,11 @@ vi.mock("@tanstack/react-query", async (importOriginal) => {
   const stable = {
     data: {
       success: true,
-      data: { dueDaysAhead: 3, onRecurringGenerated: true, onBudgetExceeded: true },
+      data: {
+        dueDaysAhead: 3,
+        onRecurringGenerated: true,
+        onBudgetExceeded: true,
+      },
     },
     isLoading: false,
     refetch: () => {},
@@ -27,8 +31,8 @@ vi.mock("@/utils/app-toast", () => ({
   appToast: { success: vi.fn(), error: vi.fn() },
 }));
 
-import { NotificationPrefsSection } from "@/app/(protected)/settings/_components/NotificationPrefsSection";
 import { updateNotificationPrefsAction } from "@/actions/(user)/settings/update-notification-prefs";
+import { NotificationPrefsSection } from "@/app/(protected)/(user)//settings/_components/NotificationPrefsSection";
 import { appToast } from "@/utils/app-toast";
 
 const mockUpdate = vi.mocked(updateNotificationPrefsAction);
@@ -65,7 +69,10 @@ describe("NotificationPrefsSection", () => {
   });
 
   it("exibe toast de erro quando action retorna falha", async () => {
-    mockUpdate.mockResolvedValueOnce({ success: false, error: "Erro ao salvar" });
+    mockUpdate.mockResolvedValueOnce({
+      success: false,
+      error: "Erro ao salvar",
+    });
     const user = userEvent.setup();
     render(<NotificationPrefsSection />);
 

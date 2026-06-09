@@ -12,7 +12,7 @@ vi.mock("@/utils/app-toast", () => ({
 
 import { deleteRecurringRuleAction } from "@/actions/(user)/settings/delete-recurring-rule";
 import type { RecurringRuleRow } from "@/actions/(user)/settings/get-recurring-rules";
-import { DeleteRuleAlertDialog } from "@/app/(protected)/settings/_components/DeleteRuleAlertDialog";
+import { DeleteRuleAlertDialog } from "@/app/(protected)/(user)//settings/_components/DeleteRuleAlertDialog";
 import { appToast } from "@/utils/app-toast";
 
 const mockDelete = vi.mocked(deleteRecurringRuleAction);

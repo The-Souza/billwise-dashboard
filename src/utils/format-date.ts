@@ -29,6 +29,12 @@ export const formatNotificationDateTime = (dateString: string) =>
     minute: "2-digit",
   });
 
+export const formatJoinDate = (date: Date | string) =>
+  new Intl.DateTimeFormat("pt-BR", {
+    month: "short",
+    year: "numeric",
+  }).format(typeof date === "string" ? new Date(date) : date);
+
 export function computeRecurrenceEndDate(startIso: string, months: number): string {
   const start = new Date(startIso);
   const end = new Date(

@@ -1,4 +1,4 @@
-import { NotificationItem } from "@/actions/notifications/get-notifications";
+import { NotificationItem } from "@/actions/(user)/notifications/get-notifications";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatNotificationDate } from "@/utils/format-date";
 import {
@@ -28,6 +28,11 @@ const TYPE_ICON: Record<string, React.ReactNode> = {
   recurring_generated: (
     <div className="p-1.5 rounded-md bg-primary/10 shrink-0">
       <RefreshCwIcon className="size-3.5 text-primary" />
+    </div>
+  ),
+  workspace_invite: (
+    <div className="p-1.5 rounded-md bg-violet-500/10 shrink-0">
+      <BellIcon className="size-3.5 text-violet-500" />
     </div>
   ),
 };
