@@ -2,15 +2,19 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
+import { cn } from "@/lib/utils";
 import { formatNotificationDateTime } from "@/utils/format-date";
 import {
   AlertCircleIcon,
   AlertTriangleIcon,
   BellIcon,
   CheckCheckIcon,
+  CheckIcon,
   RefreshCwIcon,
   TrendingUpIcon,
   UsersIcon,
+  XIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -79,18 +83,17 @@ function WorkspaceInviteActions({
   const { handleRespondToInvite } = useNotifications();
   const [loading, setLoading] = useState<"accepted" | "declined" | null>(null);
 
-  if (inviteStatus === "accepted") {
+  if (inviteStatus === "accepted" || inviteStatus === "declined") {
     return (
-      <span className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mt-2">
-        Convite aceito
-      </span>
-    );
-  }
-
-  if (inviteStatus === "declined") {
-    return (
-      <span className="text-xs text-muted-foreground font-medium mt-2">
-        Convite recusado
+      <span
+        className={cn(
+          "text-xs font-medium shrink-0",
+          inviteStatus === "accepted"
+            ? "text-emerald-600 dark:text-emerald-400"
+            : "text-muted-foreground",
+        )}
+      >
+        {inviteStatus === "accepted" ? "Convite aceito" : "Convite recusado"}
       </span>
     );
   }
@@ -102,24 +105,32 @@ function WorkspaceInviteActions({
   }
 
   return (
-    <div className="flex items-center gap-2 mt-2">
+    <div className="flex items-center gap-1.5 shrink-0">
       <Button
-        size="sm"
-        variant="default"
-        className="h-7 text-xs"
+        size="icon"
+        variant="ghost"
+        className="size-7 text-emerald-600 hover:text-emerald-600 hover:bg-emerald-500/10 dark:text-emerald-400"
         disabled={loading !== null}
-        onClick={(e) => { e.stopPropagation(); respond("accepted"); }}
+        aria-label="Aceitar convite"
+        onClick={(e) => {
+          e.stopPropagation();
+          respond("accepted");
+        }}
       >
-        {loading === "accepted" ? "Aceitando..." : "Aceitar"}
+        {loading === "accepted" ? <Spinner /> : <CheckIcon />}
       </Button>
       <Button
-        size="sm"
-        variant="outline"
-        className="h-7 text-xs"
+        size="icon"
+        variant="ghost"
+        className="size-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
         disabled={loading !== null}
-        onClick={(e) => { e.stopPropagation(); respond("declined"); }}
+        aria-label="Recusar convite"
+        onClick={(e) => {
+          e.stopPropagation();
+          respond("declined");
+        }}
       >
-        {loading === "declined" ? "Recusando..." : "Recusar"}
+        {loading === "declined" ? <Spinner /> : <XIcon />}
       </Button>
     </div>
   );
@@ -201,19 +212,20 @@ export function NotificationsClient() {
                   </span>
                 )}
 
-                {isInvite && n.workspaceInviteId ? (
-                  <WorkspaceInviteActions
-                    inviteId={n.workspaceInviteId}
-                    notificationId={n.id}
-                    inviteStatus={n.inviteStatus}
-                  />
-                ) : (
-                  <div className="flex items-center justify-between gap-2 mt-1">
-                    <span className="text-xs text-muted-foreground tabular-nums">
-                      {formatNotificationDateTime(n.createdAt)}
-                    </span>
+                <div className="flex min-h-7 items-center justify-between gap-2 mt-1">
+                  <span className="text-xs text-muted-foreground tabular-nums shrink-0">
+                    {formatNotificationDateTime(n.createdAt)}
+                  </span>
 
-                    {isUnread && !n.accountId && (
+                  {isInvite && n.workspaceInviteId ? (
+                    <WorkspaceInviteActions
+                      inviteId={n.workspaceInviteId}
+                      notificationId={n.id}
+                      inviteStatus={n.inviteStatus}
+                    />
+                  ) : (
+                    isUnread &&
+                    !n.accountId && (
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -224,15 +236,9 @@ export function NotificationsClient() {
                         <CheckCheckIcon className="h-3 w-3" />
                         Marcar como lida
                       </button>
-                    )}
-                  </div>
-                )}
-
-                {isInvite && (
-                  <span className="text-xs text-muted-foreground tabular-nums mt-1">
-                    {formatNotificationDateTime(n.createdAt)}
-                  </span>
-                )}
+                    )
+                  )}
+                </div>
               </div>
             </Card>
           </CardWrapper>
