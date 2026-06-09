@@ -50,7 +50,7 @@ export function UpdatePasswordForm() {
     },
   });
 
-  async function handleSubmit(data: z.infer<typeof formSchema>) {
+  async function onSubmit(data: z.infer<typeof formSchema>) {
     if (isSubmitting) return;
 
     setIsSubmitting(true);
@@ -81,10 +81,7 @@ export function UpdatePasswordForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form
-          id="form-update-password"
-          onSubmit={form.handleSubmit(handleSubmit)}
-        >
+        <form id="form-update-password" onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
             <Controller
               name="password"

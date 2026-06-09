@@ -57,7 +57,7 @@ export function SignUpForm() {
     },
   });
 
-  async function handleSubmit(data: z.infer<typeof formSchema>) {
+  async function onSubmit(data: z.infer<typeof formSchema>) {
     if (isSubmitting) return;
 
     setIsSubmitting(true);
@@ -98,7 +98,7 @@ export function SignUpForm() {
         </CardDescription>
       </CardHeader>
       <CardContent className="pb-4">
-        <form id="form-sign-up" onSubmit={form.handleSubmit(handleSubmit)}>
+        <form id="form-sign-up" onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
             <Controller
               name="name"

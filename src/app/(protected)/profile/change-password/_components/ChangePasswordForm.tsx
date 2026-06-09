@@ -63,7 +63,7 @@ export default function ChangePasswordForm() {
     </li>
   );
 
-  async function handleSubmit(data: z.infer<typeof formSchema>) {
+  async function onSubmit(data: z.infer<typeof formSchema>) {
     if (isSubmitting) return;
 
     setIsSubmitting(true);
@@ -105,7 +105,7 @@ export default function ChangePasswordForm() {
         <CardContent className="flex flex-col gap-6 px-0">
           <form
             id="form-change-password"
-            onSubmit={form.handleSubmit(handleSubmit)}
+            onSubmit={form.handleSubmit(onSubmit)}
           >
             <FieldGroup>
               <Controller

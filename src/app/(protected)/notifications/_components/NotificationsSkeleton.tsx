@@ -5,8 +5,8 @@ export function NotificationsSkeleton() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center">
-        <div className="grid grid-cols-3 sm:grid-cols-5 items-center gap-1 w-full lg:w-auto">
-          {Array.from({ length: 5 }).map((_, i) => (
+        <div className="grid grid-cols-3 sm:grid-cols-6 items-center gap-1 w-full lg:w-auto">
+          {Array.from({ length: 6 }).map((_, i) => (
             <Skeleton key={i} className="h-8 lg:w-32 rounded-md" />
           ))}
         </div>
@@ -15,7 +15,7 @@ export function NotificationsSkeleton() {
         {Array.from({ length: 10 }).map((_, i) => (
           <Card
             key={i}
-            className="flex items-start gap-3 rounded-md border border-border px-4 py-3"
+            className="flex h-26.25 items-start gap-3 rounded-md border border-border px-4 py-3"
           >
             <Skeleton className="h-8 w-8 rounded-md shrink-0" />
             <div className="flex flex-col gap-3 flex-1">

@@ -30,6 +30,11 @@ const TYPE_ICON: Record<string, React.ReactNode> = {
       <RefreshCwIcon className="size-3.5 text-primary" />
     </div>
   ),
+  workspace_invite: (
+    <div className="p-1.5 rounded-md bg-violet-500/10 shrink-0">
+      <BellIcon className="size-3.5 text-violet-500" />
+    </div>
+  ),
 };
 
 export function NotificationsList({

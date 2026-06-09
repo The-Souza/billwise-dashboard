@@ -1,5 +1,6 @@
 "use client";
 
+import { WorkspaceSummary } from "@/actions/(user)/workspaces/get-workspaces";
 import {
   Sidebar,
   SidebarContent,
@@ -7,17 +8,26 @@ import {
   SidebarHeader,
 } from "@/components/ui/sidebar";
 import { AuthUser } from "@/lib/auth/get-user-with-role";
-import { BillwiseLogo, SidebarNavigation, SidebarUser } from "./index";
+import { SidebarNavigation, SidebarUser, WorkspaceSwitcher } from "./index";
 
-export type User = {
+export type SidebarRootProps = {
   user: AuthUser;
+  workspaces: WorkspaceSummary[];
+  currentWorkspaceId: string;
 };
 
-export function SidebarRoot({ user }: User) {
+export function SidebarRoot({
+  user,
+  workspaces,
+  currentWorkspaceId,
+}: SidebarRootProps) {
   return (
     <Sidebar variant="sidebar" collapsible="icon">
       <SidebarHeader>
-        <BillwiseLogo />
+        <WorkspaceSwitcher
+          workspaces={workspaces}
+          currentWorkspaceId={currentWorkspaceId}
+        />
       </SidebarHeader>
       <SidebarContent>
         <SidebarNavigation />
