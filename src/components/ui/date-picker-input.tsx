@@ -49,7 +49,7 @@ export function DatePickerInput({
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-70 min-h-78 h-auto max-h-90 overflow-auto p-0"
+          className="w-70 h-full max-h-90 overflow-auto p-0"
           align="start"
           collisionPadding={16}
         >
@@ -61,6 +61,7 @@ export function DatePickerInput({
               onChange(date ? formatDateLocal(date) : "");
               setOpen(false);
             }}
+            className="[--cell-size:2.5rem]"
           />
         </PopoverContent>
       </Popover>
