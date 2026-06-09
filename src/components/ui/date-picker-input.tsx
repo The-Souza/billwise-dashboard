@@ -49,7 +49,7 @@ export function DatePickerInput({
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-70 min-h-78 h-auto overflow-auto p-0"
+          className="w-70 min-h-78 h-auto max-h-90 overflow-auto p-0"
           align="start"
           collisionPadding={16}
         >
