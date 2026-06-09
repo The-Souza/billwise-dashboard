@@ -1,55 +1,32 @@
 "use client";
 
 import { WorkspaceSummary } from "@/actions/(user)/workspaces/get-workspaces";
-import { renameWorkspaceAction } from "@/actions/(user)/workspaces/rename-workspace";
-import {
-  AlertDialog,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
-import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
-import { renameWorkspaceSchema } from "@/schemas/workspaces";
-import { appToast } from "@/utils/app-toast";
+import { formatJoinDate } from "@/utils/format-date";
 import { getInitials } from "@/utils/get-initials";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ChevronDownIcon,
   ChevronUpIcon,
-  MailIcon,
+  LogOutIcon,
+  PencilIcon,
   Trash2Icon,
   UserMinusIcon,
+  UserPlusIcon,
   UsersIcon,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { Controller, useForm } from "react-hook-form";
-import { z } from "zod";
+import { useState } from "react";
 import { useWorkspaceCard } from "../_hooks/useWorkspaceCard";
-
-type RenameValues = z.infer<typeof renameWorkspaceSchema>;
+import { WorkspaceDeleteAlert } from "./WorkspaceDeleteAlert";
+import { WorkspaceInviteDialog } from "./WorkspaceInviteDialog";
+import { WorkspaceLeaveAlert } from "./WorkspaceLeaveAlert";
+import { WorkspaceRemoveMemberAlert } from "./WorkspaceRemoveMemberAlert";
+import { WorkspaceRenameDialog } from "./WorkspaceRenameDialog";
 
 interface WorkspaceCardProps {
   workspace: WorkspaceSummary;
@@ -60,18 +37,18 @@ export function WorkspaceCard({
   workspace,
   currentUserId,
 }: WorkspaceCardProps) {
-  const router = useRouter();
   const isOwner = workspace.role === "owner";
+
+  const [inviteOpen, setInviteOpen] = useState(false);
 
   const {
     expanded,
     setExpanded,
     members,
     loadingMembers,
-    inviteEmail,
-    setInviteEmail,
-    inviting,
     removing,
+    removeTarget,
+    setRemoveTarget,
     deleting,
     leaving,
     renameOpen,
@@ -80,35 +57,10 @@ export function WorkspaceCard({
     setDeleteOpen,
     leaveOpen,
     setLeaveOpen,
-    handleInvite,
-    handleRemoveMember,
+    confirmRemoveMember,
     handleDelete,
     handleLeave,
   } = useWorkspaceCard(workspace);
-
-  const {
-    control,
-    handleSubmit,
-    reset: resetRename,
-    formState: { isSubmitting: renaming },
-  } = useForm<RenameValues>({
-    resolver: zodResolver(renameWorkspaceSchema),
-    defaultValues: { workspaceId: workspace.id, name: workspace.name },
-  });
-
-  async function handleRename(values: RenameValues) {
-    const result = await renameWorkspaceAction(values);
-
-    if (!result.success) {
-      appToast.error(result.error);
-      return;
-    }
-
-    appToast.success("Workspace renomeado");
-    setRenameOpen(false);
-    resetRename({ workspaceId: workspace.id, name: values.name });
-    router.refresh();
-  }
 
   return (
     <>
@@ -120,12 +72,14 @@ export function WorkspaceCard({
       >
         <div className="flex items-center justify-between gap-2">
           <div className="flex flex-col gap-0.5 flex-1 min-w-0">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 min-w-0">
               <span className="font-semibold font-heading text-sm truncate first-letter:uppercase">
                 {workspace.name}
               </span>
               {workspace.isPersonal && (
-                <span className="text-xs text-muted-foreground">(Pessoal)</span>
+                <span className="text-xs text-muted-foreground shrink-0">
+                  (Pessoal)
+                </span>
               )}
             </div>
             <div className="flex items-center gap-1.5 mt-0.5">
@@ -147,62 +101,74 @@ export function WorkspaceCard({
             </div>
           </div>
 
-          <div className="flex items-center gap-1 shrink-0">
-            {isOwner && (
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setRenameOpen(true);
-                }}
-                className="text-xs h-7"
-              >
-                Renomear
-              </Button>
-            )}
-            {!workspace.isPersonal &&
-              (isOwner ? (
+          <div className="flex items-center gap-1.5 shrink-0">
+            {isOwner ? (
+              <>
                 <Button
                   size="icon"
                   variant="ghost"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setDeleteOpen(true);
+                    setRenameOpen(true);
                   }}
-                  className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
+                  className="h-7 w-7"
+                  aria-label="Renomear workspace"
                 >
-                  <Trash2Icon className="size-4" />
+                  <PencilIcon className="size-4" />
                 </Button>
-              ) : (
                 <Button
-                  size="sm"
+                  size="icon"
+                  variant="ghost"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setInviteOpen(true);
+                  }}
+                  className="h-7 w-7"
+                  aria-label="Convidar membro"
+                >
+                  <UserPlusIcon className="size-4" />
+                </Button>
+                {!workspace.isPersonal && (
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setDeleteOpen(true);
+                    }}
+                    className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
+                    aria-label="Deletar workspace"
+                  >
+                    <Trash2Icon className="size-4" />
+                  </Button>
+                )}
+              </>
+            ) : (
+              !workspace.isPersonal && (
+                <Button
+                  size="icon"
                   variant="ghost"
                   onClick={(e) => {
                     e.stopPropagation();
                     setLeaveOpen(true);
                   }}
-                  className="text-xs h-7 text-destructive hover:text-destructive hover:bg-destructive/10"
+                  className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
+                  aria-label="Sair do workspace"
                 >
-                  {leaving ? (
-                    <>
-                      <Spinner data-icon="inline-start" />
-                      Saindo...
-                    </>
-                  ) : (
-                    "Sair"
-                  )}
+                  <LogOutIcon className="size-4" />
                 </Button>
-              ))}
+              )
+            )}
+            <Separator orientation="vertical" className="h-5" />
             <Button
-              size="sm"
+              size="icon"
               variant="ghost"
               onClick={(e) => {
                 e.stopPropagation();
                 setExpanded((v) => !v);
               }}
-              className="h-7 w-7 p-0"
-              aria-label={expanded ? "Recolher" : "Expandir"}
+              className="h-7 w-7"
+              aria-label={expanded ? "Recolher membros" : "Expandir membros"}
             >
               {expanded ? (
                 <ChevronUpIcon className="size-4" />
@@ -221,32 +187,37 @@ export function WorkspaceCard({
         >
           <div className="overflow-hidden min-h-0">
             <Separator className="mb-3" />
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center gap-1.5">
-                <UsersIcon className="size-4 text-muted-foreground" />
-                <span className="text-sm font-medium">Membros</span>
-              </div>
+            <div className="flex items-center gap-1.5 mb-3">
+              <UsersIcon className="size-4 text-muted-foreground" />
+              <span className="text-sm font-medium">Membros</span>
+            </div>
 
-              {loadingMembers ? (
-                <div className="flex flex-col gap-2">
-                  {Array.from({
+            <div className="flex flex-col">
+              {loadingMembers
+                ? Array.from({
                     length:
                       workspace.memberCount > 0
                         ? Math.min(workspace.memberCount, 4)
                         : 2,
                   }).map((_, i) => (
-                    <div key={i} className="flex items-center gap-2">
-                      <Skeleton className="h-6 w-6 rounded-md shrink-0" />
-                      <Skeleton className="h-3 flex-1 rounded" />
-                      <Skeleton className="h-4 w-20 rounded-md" />
+                    <div
+                      key={i}
+                      className="grid grid-cols-[2rem_1fr_2rem] items-center gap-3 border-b border-border/60 px-2 py-2 last:border-0"
+                    >
+                      <Skeleton className="h-8 w-8 rounded-md" />
+                      <div className="flex flex-col gap-1.5">
+                        <Skeleton className="h-3 w-28 rounded" />
+                        <Skeleton className="h-2.5 w-40 rounded" />
+                      </div>
+                      <span />
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="flex flex-col gap-2">
-                  {(members ?? []).map((m) => (
-                    <div key={m.userId} className="flex items-center gap-2">
-                      <Avatar className="h-6 w-6 rounded-md shrink-0">
+                  ))
+                : (members ?? []).map((m) => (
+                    <div
+                      key={m.userId}
+                      className="grid grid-cols-[2rem_1fr_2rem] items-center gap-3 border-b border-border/60 px-2 py-2 transition-colors last:border-0 hover:bg-muted/50"
+                    >
+                      <Avatar className="h-8 w-8 rounded-md shrink-0">
                         <AvatarImage
                           src={m.avatarUrl ?? undefined}
                           alt={m.name}
@@ -256,225 +227,79 @@ export function WorkspaceCard({
                           {getInitials(m.name)}
                         </AvatarFallback>
                       </Avatar>
-                      <span className="text-xs flex-1 truncate">{m.name}</span>
-                      <Badge
-                        variant="outline"
-                        className={cn(
-                          "text-xs px-1.5 py-2 h-4 font-normal shrink-0",
-                          m.role === "owner"
-                            ? "border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400"
-                            : "border-muted-foreground/30 bg-muted/50 text-muted-foreground",
+                      <div className="flex flex-col min-w-0">
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <span className="text-sm font-medium truncate min-w-0">
+                            {m.name}
+                          </span>
+                          {m.role === "owner" && (
+                            <span className="text-xs text-amber-600 dark:text-amber-400 shrink-0">
+                              · Proprietário(a)
+                            </span>
+                          )}
+                          {m.userId === currentUserId && (
+                            <span className="text-xs text-muted-foreground shrink-0">
+                              (Você)
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-xs text-muted-foreground">
+                          entrou em {formatJoinDate(m.joinedAt)}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-center">
+                        {isOwner && m.userId !== currentUserId && (
+                          <Button
+                            size="icon-sm"
+                            variant="ghost"
+                            className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                            disabled={removing === m.userId}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setRemoveTarget(m);
+                            }}
+                            aria-label={`Remover ${m.name} do workspace`}
+                          >
+                            <UserMinusIcon className="size-4" />
+                          </Button>
                         )}
-                      >
-                        {m.role === "owner" ? "Proprietário" : "Membro"}
-                      </Badge>
-                      {isOwner && m.userId !== currentUserId && (
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
-                          disabled={removing === m.userId}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRemoveMember(m.userId);
-                          }}
-                          aria-label="Remover membro"
-                        >
-                          <UserMinusIcon className="size-3.5" />
-                        </Button>
-                      )}
+                      </div>
                     </div>
                   ))}
-                </div>
-              )}
-
-              {isOwner && (
-                <>
-                  <Separator />
-                  <div className="flex flex-col gap-3">
-                    <label className="text-sm flex items-center gap-1.5 font-medium leading-none">
-                      <MailIcon className="size-4 text-muted-foreground" />
-                      Convidar por email
-                    </label>
-                    <div className="flex gap-2">
-                      <InputGroup className="flex-1">
-                        <InputGroupInput
-                          type="email"
-                          placeholder="email@exemplo.com"
-                          value={inviteEmail}
-                          onChange={(e) => setInviteEmail(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                              e.preventDefault();
-                              handleInvite();
-                            }
-                          }}
-                          onClick={(e) => e.stopPropagation()}
-                          disabled={inviting}
-                        />
-                      </InputGroup>
-                      <Button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleInvite();
-                        }}
-                        disabled={inviting || !inviteEmail.trim()}
-                      >
-                        {inviting ? (
-                          <>
-                            <Spinner data-icon="inline-start" />
-                            Enviando...
-                          </>
-                        ) : (
-                          "Convidar"
-                        )}
-                      </Button>
-                    </div>
-                  </div>
-                </>
-              )}
             </div>
           </div>
         </div>
       </Card>
 
-      {/* Rename Dialog */}
-      <Dialog
+      <WorkspaceRenameDialog
         open={renameOpen}
-        onOpenChange={(o) => {
-          if (!o) setRenameOpen(false);
-        }}
-      >
-        <DialogContent
-          className="max-w-md"
-          aria-describedby={undefined}
-          showCloseButton={false}
-        >
-          <DialogHeader>
-            <DialogTitle>Renomear workspace</DialogTitle>
-          </DialogHeader>
-          <form
-            onSubmit={handleSubmit(handleRename)}
-            className="flex flex-col gap-4 pt-2"
-          >
-            <Controller
-              name="workspaceId"
-              control={control}
-              render={({ field }) => <input type="hidden" {...field} />}
-            />
-            <FieldGroup>
-              <Controller
-                name="name"
-                control={control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name}>Novo nome</FieldLabel>
-                    <InputGroup>
-                      <InputGroupInput
-                        id={field.name}
-                        {...field}
-                        aria-invalid={fieldState.invalid}
-                      />
-                    </InputGroup>
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
-            </FieldGroup>
-            <div className="flex justify-end gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setRenameOpen(false)}
-                disabled={renaming}
-              >
-                Cancelar
-              </Button>
-              <Button type="submit" disabled={renaming}>
-                {renaming ? (
-                  <>
-                    <Spinner data-icon="inline-start" />
-                    Salvando...
-                  </>
-                ) : (
-                  "Salvar"
-                )}
-              </Button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
-
-      {/* Delete Alert */}
-      <AlertDialog
+        onOpenChange={setRenameOpen}
+        workspaceId={workspace.id}
+        workspaceName={workspace.name}
+      />
+      <WorkspaceInviteDialog
+        open={inviteOpen}
+        onOpenChange={setInviteOpen}
+        workspaceId={workspace.id}
+      />
+      <WorkspaceRemoveMemberAlert
+        target={removeTarget}
+        removing={removing}
+        onClose={() => setRemoveTarget(null)}
+        onConfirm={confirmRemoveMember}
+      />
+      <WorkspaceDeleteAlert
         open={deleteOpen}
-        onOpenChange={(o) => {
-          if (!o && !deleting) setDeleteOpen(false);
-        }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Deletar workspace</AlertDialogTitle>
-            <AlertDialogDescription>
-              Todos os dados deste workspace serão removidos permanentemente.
-              Esta ação não pode ser desfeita.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting}>Cancelar</AlertDialogCancel>
-            <Button
-              variant="destructive"
-              onClick={handleDelete}
-              disabled={deleting}
-            >
-              {deleting ? (
-                <>
-                  <Spinner data-icon="inline-start" />
-                  Deletando...
-                </>
-              ) : (
-                "Deletar"
-              )}
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      {/* Leave Alert */}
-      <AlertDialog
+        onOpenChange={setDeleteOpen}
+        deleting={deleting}
+        onConfirm={handleDelete}
+      />
+      <WorkspaceLeaveAlert
         open={leaveOpen}
-        onOpenChange={(o) => {
-          if (!o && !leaving) setLeaveOpen(false);
-        }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Sair do workspace</AlertDialogTitle>
-            <AlertDialogDescription>
-              Você perderá acesso a este workspace e seus dados.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={leaving}>Cancelar</AlertDialogCancel>
-            <Button
-              variant="destructive"
-              onClick={handleLeave}
-              disabled={leaving}
-            >
-              {leaving ? (
-                <>
-                  <Spinner data-icon="inline-start" />
-                  Saindo...
-                </>
-              ) : (
-                "Sair"
-              )}
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        onOpenChange={setLeaveOpen}
+        leaving={leaving}
+        onConfirm={handleLeave}
+      />
     </>
   );
 }
