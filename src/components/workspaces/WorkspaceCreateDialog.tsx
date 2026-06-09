@@ -65,7 +65,10 @@ export function WorkspaceCreateDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-md" showCloseButton={false}>
+      <DialogContent
+        className="w-[calc(100vw-2rem)] rounded-md max-w-md"
+        showCloseButton={false}
+      >
         <DialogHeader>
           <DialogTitle>Criar workspace</DialogTitle>
           <DialogDescription>
