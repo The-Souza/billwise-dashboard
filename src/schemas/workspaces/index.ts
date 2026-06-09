@@ -23,5 +23,10 @@ export const renameWorkspaceSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório").max(50, "Nome muito longo"),
 });
 
+export const transferOwnershipSchema = z.object({
+  workspaceId: z.string().uuid("Workspace inválido"),
+  newOwnerId: z.string().uuid("Usuário inválido"),
+});
+
 export const workspaceIdSchema = z.string().uuid("Workspace inválido");
 export const userIdSchema = z.string().uuid("Usuário inválido");
