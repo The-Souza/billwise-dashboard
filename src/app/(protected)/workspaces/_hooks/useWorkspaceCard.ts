@@ -1,10 +1,13 @@
 "use client";
 
 import { deleteWorkspaceAction } from "@/actions/(user)/workspaces/delete-workspace";
-import { getWorkspaceMembersAction, MemberSummary } from "@/actions/(user)/workspaces/get-workspace-members";
+import {
+  getWorkspaceMembersAction,
+  MemberSummary,
+} from "@/actions/(user)/workspaces/get-workspace-members";
+import { WorkspaceSummary } from "@/actions/(user)/workspaces/get-workspaces";
 import { leaveWorkspaceAction } from "@/actions/(user)/workspaces/leave-workspace";
 import { removeMemberAction } from "@/actions/(user)/workspaces/remove-member";
-import { WorkspaceSummary } from "@/actions/(user)/workspaces/get-workspaces";
 import { appToast } from "@/utils/app-toast";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -23,6 +26,11 @@ export function useWorkspaceCard(workspace: WorkspaceSummary) {
   const [leaveOpen, setLeaveOpen] = useState(false);
 
   const loadingMembers = expanded && members === null;
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMembers(null);
+  }, [workspace.role, workspace.id]);
 
   useEffect(() => {
     if (!expanded || members !== null) return;

@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import { formatJoinDate } from "@/utils/format-date";
 import { getInitials } from "@/utils/get-initials";
 import {
+  ArrowRightLeftIcon,
   ChevronDownIcon,
   ChevronUpIcon,
   LogOutIcon,
@@ -27,6 +28,7 @@ import { WorkspaceInviteDialog } from "./WorkspaceInviteDialog";
 import { WorkspaceLeaveAlert } from "./WorkspaceLeaveAlert";
 import { WorkspaceRemoveMemberAlert } from "./WorkspaceRemoveMemberAlert";
 import { WorkspaceRenameDialog } from "./WorkspaceRenameDialog";
+import { WorkspaceTransferDialog } from "./WorkspaceTransferDialog";
 
 interface WorkspaceCardProps {
   workspace: WorkspaceSummary;
@@ -40,6 +42,7 @@ export function WorkspaceCard({
   const isOwner = workspace.role === "owner";
 
   const [inviteOpen, setInviteOpen] = useState(false);
+  const [transferOpen, setTransferOpen] = useState(false);
 
   const {
     expanded,
@@ -202,7 +205,7 @@ export function WorkspaceCard({
                   }).map((_, i) => (
                     <div
                       key={i}
-                      className="grid grid-cols-[2rem_1fr_2rem] items-center gap-3 border-b border-border/60 px-2 py-2 last:border-0"
+                      className="grid grid-cols-[2rem_1fr_2rem] min-h-13.5 items-center gap-3 border-b border-border/60 px-2 py-2 last:border-0"
                     >
                       <Skeleton className="h-8 w-8 rounded-md" />
                       <div className="flex flex-col gap-1.5">
@@ -215,7 +218,7 @@ export function WorkspaceCard({
                 : (members ?? []).map((m) => (
                     <div
                       key={m.userId}
-                      className="grid grid-cols-[2rem_1fr_2rem] items-center gap-3 border-b border-border/60 px-2 py-2 transition-colors last:border-0 hover:bg-muted/50"
+                      className="grid grid-cols-[2rem_1fr_2rem] items-center gap-3 border-b min-h-13.5 border-border/60 p-2 transition-colors last:border-0 hover:bg-muted/50"
                     >
                       <Avatar className="h-8 w-8 rounded-md shrink-0">
                         <AvatarImage
@@ -248,7 +251,22 @@ export function WorkspaceCard({
                         </span>
                       </div>
                       <div className="flex items-center justify-center">
-                        {isOwner && m.userId !== currentUserId && (
+                        {isOwner &&
+                        m.userId === currentUserId &&
+                        !workspace.isPersonal ? (
+                          <Button
+                            size="icon-sm"
+                            variant="ghost"
+                            className="text-muted-foreground hover:text-amber-600 hover:bg-amber-500/10"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setTransferOpen(true);
+                            }}
+                            aria-label="Transferir propriedade do workspace"
+                          >
+                            <ArrowRightLeftIcon className="size-4" />
+                          </Button>
+                        ) : isOwner && m.userId !== currentUserId ? (
                           <Button
                             size="icon-sm"
                             variant="ghost"
@@ -262,7 +280,7 @@ export function WorkspaceCard({
                           >
                             <UserMinusIcon className="size-4" />
                           </Button>
-                        )}
+                        ) : null}
                       </div>
                     </div>
                   ))}
@@ -299,6 +317,12 @@ export function WorkspaceCard({
         onOpenChange={setLeaveOpen}
         leaving={leaving}
         onConfirm={handleLeave}
+      />
+      <WorkspaceTransferDialog
+        open={transferOpen}
+        onOpenChange={setTransferOpen}
+        workspaceId={workspace.id}
+        currentUserId={currentUserId}
       />
     </>
   );
