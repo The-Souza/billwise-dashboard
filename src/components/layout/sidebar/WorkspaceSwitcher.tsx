@@ -13,6 +13,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { WorkspaceCreateDialog } from "@/components/workspaces/WorkspaceCreateDialog";
 import { useMounted } from "@/hooks/use-mounted";
@@ -42,6 +43,7 @@ export function WorkspaceSwitcher({
   const { resolvedTheme } = useTheme();
   const [createOpen, setCreateOpen] = useState(false);
   const [switching, setSwitching] = useState(false);
+  const { isMobile, setOpenMobile } = useSidebar();
 
   const current =
     workspaces.find((w) => w.id === currentWorkspaceId) ?? workspaces[0];
@@ -103,7 +105,10 @@ export function WorkspaceSwitcher({
               {workspaces.map((ws) => (
                 <DropdownMenuItem
                   key={ws.id}
-                  onClick={() => handleSwitch(ws.id)}
+                  onClick={() => {
+                    if (isMobile) setOpenMobile(false);
+                    handleSwitch(ws.id);
+                  }}
                   className="flex items-center gap-2"
                 >
                   <span className="flex-1 truncate first-letter:uppercase">
@@ -116,7 +121,10 @@ export function WorkspaceSwitcher({
               ))}
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() => setCreateOpen(true)}
+                onClick={() => {
+                  if (isMobile) setOpenMobile(false);
+                  setCreateOpen(true);
+                }}
                 className="gap-2"
                 disabled={workspaces.length >= 3}
               >
@@ -125,7 +133,10 @@ export function WorkspaceSwitcher({
               </DropdownMenuItem>
 
               <DropdownMenuItem
-                onClick={() => router.push("/workspaces")}
+                onClick={() => {
+                  if (isMobile) setOpenMobile(false);
+                  router.push("/workspaces");
+                }}
                 className="gap-2"
               >
                 <SettingsIcon className="size-4" />
