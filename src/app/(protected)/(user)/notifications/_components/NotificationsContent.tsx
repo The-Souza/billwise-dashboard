@@ -1,4 +1,4 @@
-import { getNotificationsAction } from "@/actions/notifications/get-notifications";
+import { getNotificationsAction } from "@/actions/(user)/notifications/get-notifications";
 import { NotificationsShell } from "./NotificationsShell";
 
 export async function NotificationsContent() {

@@ -1,6 +1,6 @@
 "use client";
 
-import { changePasswordAction } from "@/actions/profile/change-password";
+import { changePasswordAction } from "@/actions/(user)/profile/change-password";
 import { Button } from "@/components/ui/button";
 import {
   CardContent,

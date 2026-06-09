@@ -4,7 +4,7 @@ vi.mock("@/lib/supabase/server", () => ({
   createServerSupabase: vi.fn(),
 }));
 
-import { changePasswordAction } from "@/actions/profile/change-password";
+import { changePasswordAction } from "@/actions/(user)/profile/change-password";
 import { createServerSupabase } from "@/lib/supabase/server";
 
 const mockCreateSupabase = vi.mocked(createServerSupabase);

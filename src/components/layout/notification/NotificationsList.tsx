@@ -1,4 +1,4 @@
-import { NotificationItem } from "@/actions/notifications/get-notifications";
+import { NotificationItem } from "@/actions/(user)/notifications/get-notifications";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatNotificationDate } from "@/utils/format-date";
 import {

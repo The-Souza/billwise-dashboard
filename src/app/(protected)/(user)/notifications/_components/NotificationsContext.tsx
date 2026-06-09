@@ -1,8 +1,8 @@
 "use client";
 
-import { NotificationItem } from "@/actions/notifications/get-notifications";
+import { NotificationItem } from "@/actions/(user)/notifications/get-notifications";
 import { respondToInviteAction } from "@/actions/(user)/workspaces/respond-to-invite";
-import { markNotificationsReadAction } from "@/actions/notifications/mark-notifications-read";
+import { markNotificationsReadAction } from "@/actions/(user)/notifications/mark-notifications-read";
 import { createContext, useContext, useState } from "react";
 
 type FilterType =

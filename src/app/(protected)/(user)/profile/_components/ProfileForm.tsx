@@ -1,8 +1,8 @@
 "use client";
 
-import { removeAvatarAction } from "@/actions/profile/remove-avatar";
-import { updateAccountAction } from "@/actions/profile/update-account";
-import { updateAvatarAction } from "@/actions/profile/update-avatar";
+import { removeAvatarAction } from "@/actions/(user)/profile/remove-avatar";
+import { updateAccountAction } from "@/actions/(user)/profile/update-account";
+import { updateAvatarAction } from "@/actions/(user)/profile/update-avatar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {

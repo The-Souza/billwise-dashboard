@@ -12,7 +12,7 @@ vi.mock("@/utils/app-toast", () => ({
 
 import type { RecurringRuleRow } from "@/actions/(user)/settings/get-recurring-rules";
 import { updateRecurringRuleAction } from "@/actions/(user)/settings/update-recurring-rule";
-import { EditRuleDialog } from "@/app/(protected)/settings/_components/EditRuleDialog";
+import { EditRuleDialog } from "@/app/(protected)/(user)//settings/_components/EditRuleDialog";
 import { appToast } from "@/utils/app-toast";
 
 const mockUpdate = vi.mocked(updateRecurringRuleAction);

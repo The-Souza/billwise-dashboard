@@ -3,8 +3,8 @@
 import {
   getNotificationsAction,
   NotificationItem,
-} from "@/actions/notifications/get-notifications";
-import { markNotificationsReadAction } from "@/actions/notifications/mark-notifications-read";
+} from "@/actions/(user)/notifications/get-notifications";
+import { markNotificationsReadAction } from "@/actions/(user)/notifications/mark-notifications-read";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
