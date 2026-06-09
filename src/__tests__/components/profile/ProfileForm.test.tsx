@@ -2,15 +2,15 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@/actions/profile/update-account", () => ({
+vi.mock("@/actions/(user)/profile/update-account", () => ({
   updateAccountAction: vi.fn(),
 }));
 
-vi.mock("@/actions/profile/update-avatar", () => ({
+vi.mock("@/actions/(user)/profile/update-avatar", () => ({
   updateAvatarAction: vi.fn(),
 }));
 
-vi.mock("@/actions/profile/remove-avatar", () => ({
+vi.mock("@/actions/(user)/profile/remove-avatar", () => ({
   removeAvatarAction: vi.fn(),
 }));
 
@@ -18,10 +18,10 @@ vi.mock("@/utils/app-toast", () => ({
   appToast: { success: vi.fn(), error: vi.fn() },
 }));
 
-import { ProfileForm } from "@/app/(protected)/profile/_components/ProfileForm";
-import { updateAccountAction } from "@/actions/profile/update-account";
-import { appToast } from "@/utils/app-toast";
+import { updateAccountAction } from "@/actions/(user)/profile/update-account";
+import { ProfileForm } from "@/app/(protected)/(user)/profile/_components/ProfileForm";
 import type { AuthUser } from "@/lib/auth/get-user-with-role";
+import { appToast } from "@/utils/app-toast";
 
 const mockUpdate = vi.mocked(updateAccountAction);
 const mockToast = vi.mocked(appToast);
@@ -59,7 +59,9 @@ describe("ProfileForm", () => {
     expect(screen.getByLabelText("Nome Completo")).toBeEnabled();
     expect(screen.getByLabelText("Email")).toBeEnabled();
     expect(screen.getByRole("button", { name: /salvar/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /cancelar/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /cancelar/i }),
+    ).toBeInTheDocument();
   });
 
   it("volta para modo visualização ao clicar em Cancelar", async () => {
@@ -83,12 +85,17 @@ describe("ProfileForm", () => {
 
     await waitFor(() => {
       expect(mockUpdate).toHaveBeenCalled();
-      expect(mockToast.success).toHaveBeenCalledWith("Dados atualizados com sucesso");
+      expect(mockToast.success).toHaveBeenCalledWith(
+        "Dados atualizados com sucesso",
+      );
     });
   });
 
   it("exibe toast de erro quando updateAccountAction retorna falha", async () => {
-    mockUpdate.mockResolvedValueOnce({ success: false, error: "Erro ao salvar" });
+    mockUpdate.mockResolvedValueOnce({
+      success: false,
+      error: "Erro ao salvar",
+    });
     const userEvent_ = userEvent.setup();
     render(<ProfileForm user={user} />);
 

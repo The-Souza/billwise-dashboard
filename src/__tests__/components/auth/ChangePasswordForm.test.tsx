@@ -2,7 +2,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@/actions/profile/change-password", () => ({
+vi.mock("@/actions/(user)/profile/change-password", () => ({
   changePasswordAction: vi.fn(),
 }));
 
@@ -10,8 +10,8 @@ vi.mock("@/utils/app-toast", () => ({
   appToast: { success: vi.fn(), error: vi.fn() },
 }));
 
-import ChangePasswordForm from "@/app/(protected)/profile/change-password/_components/ChangePasswordForm";
-import { changePasswordAction } from "@/actions/profile/change-password";
+import { changePasswordAction } from "@/actions/(user)/profile/change-password";
+import ChangePasswordForm from "@/app/(protected)/(user)/profile/change-password/_components/ChangePasswordForm";
 import { appToast } from "@/utils/app-toast";
 
 const mockChangePassword = vi.mocked(changePasswordAction);
@@ -23,10 +23,16 @@ const VALID_DATA = {
   confirmNewPassword: "NovaSenha@1",
 };
 
-async function fillForm(user: ReturnType<typeof userEvent.setup>, data = VALID_DATA) {
+async function fillForm(
+  user: ReturnType<typeof userEvent.setup>,
+  data = VALID_DATA,
+) {
   await user.type(screen.getByLabelText("Senha Atual"), data.currentPassword);
   await user.type(screen.getByLabelText("Nova Senha"), data.newPassword);
-  await user.type(screen.getByLabelText("Confirmar Nova Senha"), data.confirmNewPassword);
+  await user.type(
+    screen.getByLabelText("Confirmar Nova Senha"),
+    data.confirmNewPassword,
+  );
 }
 
 describe("ChangePasswordForm", () => {
@@ -39,7 +45,9 @@ describe("ChangePasswordForm", () => {
     expect(screen.getByLabelText("Senha Atual")).toBeInTheDocument();
     expect(screen.getByLabelText("Nova Senha")).toBeInTheDocument();
     expect(screen.getByLabelText("Confirmar Nova Senha")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /mudar senha/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /mudar senha/i }),
+    ).toBeInTheDocument();
   });
 
   it("botão está desabilitado com formulário vazio", () => {
@@ -59,9 +67,12 @@ describe("ChangePasswordForm", () => {
     const user = userEvent.setup();
     render(<ChangePasswordForm />);
 
-    const [toggleCurrent, toggleNew, toggleConfirm] = screen.getAllByRole("button", {
-      name: /view-password/i,
-    });
+    const [toggleCurrent, toggleNew, toggleConfirm] = screen.getAllByRole(
+      "button",
+      {
+        name: /view-password/i,
+      },
+    );
 
     const currentInput = screen.getByLabelText("Senha Atual");
     const newInput = screen.getByLabelText("Nova Senha");
@@ -98,7 +109,9 @@ describe("ChangePasswordForm", () => {
 
     await waitFor(() => {
       expect(mockChangePassword).toHaveBeenCalledWith(VALID_DATA);
-      expect(mockToast.success).toHaveBeenCalledWith("Senha alterada com sucesso!");
+      expect(mockToast.success).toHaveBeenCalledWith(
+        "Senha alterada com sucesso!",
+      );
     });
   });
 

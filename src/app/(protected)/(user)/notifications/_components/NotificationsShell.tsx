@@ -1,6 +1,6 @@
 "use client";
 
-import { NotificationItem } from "@/actions/notifications/get-notifications";
+import { NotificationItem } from "@/actions/(user)/notifications/get-notifications";
 import { NotificationsClient } from "./NotificationsClient";
 import { NotificationsProvider } from "./NotificationsContext";
 import { NotificationsToolbar } from "./NotificationsToolbar";
