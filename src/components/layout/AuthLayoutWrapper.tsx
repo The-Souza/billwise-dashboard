@@ -79,7 +79,7 @@ export function AuthLayoutWrapper({ children }: { children: React.ReactNode }) {
 
         {/* Footer */}
         <p className="relative z-10 text-white/40 text-xs">
-          © 2025 Billwise. Todos os direitos reservados.
+          © 2026 Billwise. Todos os direitos reservados.
         </p>
       </div>
 
