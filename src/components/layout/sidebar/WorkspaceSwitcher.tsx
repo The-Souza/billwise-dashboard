@@ -121,10 +121,7 @@ export function WorkspaceSwitcher({
               ))}
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() => {
-                  if (isMobile) setOpenMobile(false);
-                  setCreateOpen(true);
-                }}
+                onClick={() => setCreateOpen(true)}
                 className="gap-2"
                 disabled={workspaces.length >= 3}
               >
