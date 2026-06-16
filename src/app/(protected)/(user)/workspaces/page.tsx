@@ -13,9 +13,7 @@ export default async function WorkspacesPage() {
   return (
     <div className="flex flex-col gap-6 min-h-full">
       <div className="flex flex-col gap-1">
-        <h1 className="text-lg font-bold font-heading tracking-tight">
-          Workspaces
-        </h1>
+        <h1 className="font-heading text-2xl font-bold">Workspaces</h1>
         <p className="text-sm text-muted-foreground">
           Gerencie seus contextos financeiros e membros.
         </p>

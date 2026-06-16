@@ -22,9 +22,22 @@ export default function AnalyticsPage() {
   });
 
   const { data: breakdownResult, isLoading: breakdownLoading } = useQuery({
-    queryKey: ["analytics-breakdown", startMonth, startYear, endMonth, endYear, type],
+    queryKey: [
+      "analytics-breakdown",
+      startMonth,
+      startYear,
+      endMonth,
+      endYear,
+      type,
+    ],
     queryFn: () =>
-      getCategoryBreakdownAction(startMonth, startYear, endMonth, endYear, type),
+      getCategoryBreakdownAction(
+        startMonth,
+        startYear,
+        endMonth,
+        endYear,
+        type,
+      ),
   });
 
   const { data: evolutionResult, isLoading: evolutionLoading } = useQuery({

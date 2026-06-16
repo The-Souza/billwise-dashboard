@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { AppAlert } from "@/components/ui/app-alert";
 import { Spinner } from "@/components/ui/spinner";
-import { AlertTriangleIcon } from "lucide-react";
 
 interface DeleteAccountDialogProps {
   open: boolean;
@@ -40,10 +39,7 @@ export function DeleteAccountDialog({
     <AlertDialog open={open}>
       <AlertDialogContent className="w-[calc(100vw-2rem)] rounded-md max-w-md">
         <AlertDialogHeader>
-          <AlertDialogTitle className="font-heading flex gap-2 items-center">
-            <div className="p-2 rounded-md bg-destructive/10">
-              <AlertTriangleIcon className="h-4 w-4 text-destructive" />
-            </div>
+          <AlertDialogTitle className="font-heading">
             {isSingle
               ? `Excluir "${accounts[0].title}"?`
               : `Excluir ${count} contas?`}

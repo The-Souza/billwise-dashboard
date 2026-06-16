@@ -69,10 +69,10 @@ export function MonthPicker({
 
   return (
     <div className="flex items-center">
-      <ButtonGroup aria-label="Button group">
+      <ButtonGroup aria-label="Button group" className="w-full sm:w-auto">
         <Button
           variant="outline"
-          className="bg-popover"
+          className="bg-popover w-32 sm:w-10"
           size="icon-sm"
           onClick={prev}
         >
@@ -89,13 +89,16 @@ export function MonthPicker({
           <PopoverTrigger asChild>
             <Button
               variant="outline"
-              className="h-8 px-3 gap-1.5 text-xs font-medium bg-popover capitalize min-w-40 justify-between"
+              className="w-full sm:max-w-40 h-8 px-3 gap-1.5 text-xs font-medium bg-popover capitalize min-w-40 justify-between"
             >
               <CalendarIcon className="text-muted-foreground shrink-0" />
               <span className="flex-1 text-center">{label}</span>
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-50 sm:w-40 p-3" align="center">
+          <PopoverContent
+            className="w-[calc(100vw-11rem)] sm:w-40 p-3"
+            align="center"
+          >
             <div className="flex items-center justify-between mb-3">
               <Button
                 variant="ghost"
@@ -144,7 +147,7 @@ export function MonthPicker({
         {/* Botão próximo — faz parte do grupo visual */}
         <Button
           variant="outline"
-          className="bg-popover"
+          className="bg-popover w-32 sm:w-10"
           size="icon-sm"
           onClick={next}
           disabled={isCurrentMonth}

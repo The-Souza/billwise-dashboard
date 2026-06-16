@@ -15,7 +15,6 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { appToast } from "@/utils/app-toast";
 import { capitalizeFirst } from "@/utils/format-text";
-import { Trash2Icon } from "lucide-react";
 import { useState } from "react";
 
 interface DeleteRuleAlertDialogProps {
@@ -51,16 +50,12 @@ export function DeleteRuleAlertDialog({
     <AlertDialog open={!!rule}>
       <AlertDialogContent className="w-[calc(100vw-2rem)] rounded-md max-w-md">
         <AlertDialogHeader>
-          <AlertDialogTitle className="font-heading flex gap-2 items-center">
-            <div className="p-2 rounded-md bg-destructive/10">
-              <Trash2Icon className="h-4 w-4 text-destructive" />
-            </div>
+          <AlertDialogTitle className="font-heading">
             Excluir &ldquo;{capitalizeFirst(rule?.title ?? "")}&rdquo;?
           </AlertDialogTitle>
           <AlertDialogDescription>
-            A regra e todas as contas com status{" "}
-            <strong>pendente</strong> vinculadas a ela serão removidas. Esta
-            ação não pode ser desfeita.
+            A regra e todas as contas com status <strong>pendente</strong>{" "}
+            vinculadas a ela serão removidas. Esta ação não pode ser desfeita.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

@@ -79,10 +79,13 @@ export default function BudgetsPage() {
 
   return (
     <div className="flex flex-col gap-6 pb-8">
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
-        <h1 className="text-lg font-bold font-heading tracking-tight">
-          Orçamentos
-        </h1>
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+        <div className="flex flex-col gap-1">
+          <h1 className="font-heading text-2xl font-bold">Orçamentos</h1>
+          <p className="text-sm text-muted-foreground">
+            Defina e acompanhe limites de gastos por categoria.
+          </p>
+        </div>
         <MonthPicker {...dashboardMonth} onSelect={handleMonthSelect} />
       </div>
 
