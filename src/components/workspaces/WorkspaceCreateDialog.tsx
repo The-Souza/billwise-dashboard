@@ -111,10 +111,15 @@ export function WorkspaceCreateDialog({
               variant="outline"
               onClick={() => handleOpenChange(false)}
               disabled={isSubmitting}
+              className="w-full sm:w-auto transition-transform ease-in hover:scale-103 active:scale-97"
             >
               Cancelar
             </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full sm:w-auto transition-transform ease-in hover:scale-103 active:scale-97"
+            >
               {isSubmitting ? (
                 <>
                   <Spinner data-icon="inline-start" />
