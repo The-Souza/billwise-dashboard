@@ -53,10 +53,13 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-4 min-h-full">
-      <div className="flex flex-col sm:flex-row items-center justify-between">
-        <h1 className="text-lg font-bold font-heading tracking-tight">
-          Visão geral das suas finanças
-        </h1>
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+        <div className="flex flex-col gap-1">
+          <h1 className="font-heading text-2xl font-bold">Dashboard</h1>
+          <p className="text-sm text-muted-foreground">
+            Visão geral das suas finanças.
+          </p>
+        </div>
         <MonthPicker {...dashboardMonth} onSelect={handleMonthSelect} />
       </div>
 

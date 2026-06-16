@@ -21,9 +21,12 @@ export default async function EditAccountPage({
 
   return (
     <div className="flex flex-col gap-6 w-full">
-      <h1 className="text-lg font-bold font-heading tracking-tight">
-        Atualize os dados da conta
-      </h1>
+      <div className="flex flex-col gap-1">
+        <h1 className="font-heading text-2xl font-bold">Editar Conta</h1>
+        <p className="text-sm text-muted-foreground">
+          Atualize os dados da conta.
+        </p>
+      </div>
 
       <EditAccountClient
         id={id}
