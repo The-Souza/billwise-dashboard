@@ -34,7 +34,9 @@ export function AccountFormFooter() {
         ) : (
           <SaveIcon className="h-4 w-4" />
         )}
-        {isEditing ? "Salvar alterações" : "Criar conta"}
+        {isEditing
+          ? isSubmitting ? "Salvando..." : "Salvar alterações"
+          : isSubmitting ? "Criando..." : "Criar conta"}
       </Button>
     </div>
   );
