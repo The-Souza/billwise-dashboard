@@ -105,7 +105,7 @@ export function AccountFormFields() {
                   showClear={!!field.value}
                 />
                 <ComboboxContent>
-                  <ComboboxEmpty>Nenhuma categoria encontrada.</ComboboxEmpty>
+                  <ComboboxEmpty>Sem resultados.</ComboboxEmpty>
                   <ComboboxList>
                     {(group, index) => (
                       <ComboboxGroup key={group.label} items={group.items}>

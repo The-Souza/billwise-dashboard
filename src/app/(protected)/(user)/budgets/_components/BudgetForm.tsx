@@ -155,7 +155,7 @@ export function BudgetForm({
                     showTrigger
                   />
                   <ComboboxContent container={formEl}>
-                    <ComboboxEmpty>Nenhuma categoria encontrada.</ComboboxEmpty>
+                    <ComboboxEmpty>Sem resultados.</ComboboxEmpty>
                     <ComboboxList>
                       {(group, index) => (
                         <ComboboxGroup key={group.label} items={group.items}>
