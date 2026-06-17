@@ -112,7 +112,7 @@ function ComboboxContent({
         align={align}
         alignOffset={alignOffset}
         anchor={anchor}
-        collisionPadding={8}
+        collisionPadding={32}
         className="isolate z-50"
       >
         <ComboboxPrimitive.Popup
