@@ -141,7 +141,7 @@ export function AccountsFilters({
                 showClear={!!filters.categoryId}
               />
               <ComboboxContent className="w-auto">
-                <ComboboxEmpty>Nenhuma categoria encontrada.</ComboboxEmpty>
+                <ComboboxEmpty>Sem resultados.</ComboboxEmpty>
                 <ComboboxList>
                   {(group, index) => (
                     <ComboboxGroup key={group.label} items={group.items}>

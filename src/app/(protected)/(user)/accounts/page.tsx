@@ -26,10 +26,13 @@ export default function AccountsPage() {
 
   return (
     <div className="flex flex-col gap-4 min-h-full">
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
-        <h1 className="text-lg font-bold font-heading tracking-tight">
-          Gerencie todas as suas contas
-        </h1>
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+        <div className="flex flex-col gap-1">
+          <h1 className="font-heading text-2xl font-bold">Contas</h1>
+          <p className="text-sm text-muted-foreground">
+            Gerencie todas as suas contas.
+          </p>
+        </div>
         <MonthPicker {...dashboardMonth} onSelect={handleMonthSelect} />
       </div>
 

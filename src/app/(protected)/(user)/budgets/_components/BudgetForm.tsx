@@ -155,7 +155,7 @@ export function BudgetForm({
                     showTrigger
                   />
                   <ComboboxContent container={formEl}>
-                    <ComboboxEmpty>Nenhuma categoria encontrada.</ComboboxEmpty>
+                    <ComboboxEmpty>Sem resultados.</ComboboxEmpty>
                     <ComboboxList>
                       {(group, index) => (
                         <ComboboxGroup key={group.label} items={group.items}>
@@ -234,7 +234,9 @@ export function BudgetForm({
           ) : (
             <SaveIcon className="h-4 w-4" />
           )}
-          {isEditing ? "Salvar alterações" : "Criar orçamento"}
+          {isEditing
+            ? form.formState.isSubmitting ? "Salvando..." : "Salvar alterações"
+            : form.formState.isSubmitting ? "Criando..." : "Criar orçamento"}
         </Button>
       </div>
     </form>

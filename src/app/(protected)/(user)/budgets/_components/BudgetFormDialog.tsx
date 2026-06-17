@@ -11,7 +11,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { WalletIcon } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { BudgetForm } from "./BudgetForm";
 
@@ -85,17 +84,14 @@ export function BudgetFormDialog({
         className="w-[calc(100vw-2rem)] rounded-md max-w-md"
       >
         <DialogHeader>
-          <DialogTitle className="font-heading flex items-center gap-2">
-            <div className="p-2 rounded-md bg-primary/10">
-              <WalletIcon className="h-4 w-4 text-primary" />
-            </div>
+          <DialogTitle className="font-heading">
             {mode === "edit"
               ? "Editar orçamento"
               : categoryType === "income"
                 ? "Nova meta de receita"
                 : "Novo orçamento de despesa"}
           </DialogTitle>
-          <DialogDescription className="text-start">
+          <DialogDescription>
             {mode === "edit"
               ? `Ajuste o limite para ${MONTH_NAMES[month - 1]} de ${year}.`
               : categoryType === "income"

@@ -20,7 +20,6 @@ import {
   formatRuleEndDate,
 } from "@/utils/format-date";
 import { capitalizeFirst } from "@/utils/format-text";
-import { PencilIcon } from "lucide-react";
 import { useState } from "react";
 
 interface EditRuleDialogProps {
@@ -84,10 +83,7 @@ export function EditRuleDialog({
         className="w-[calc(100vw-2rem)] rounded-md max-w-md"
       >
         <DialogHeader>
-          <DialogTitle className="font-heading flex items-center gap-2">
-            <div className="p-2 rounded-md bg-primary/10">
-              <PencilIcon className="h-4 w-4 text-primary" />
-            </div>
+          <DialogTitle className="font-heading">
             Editar regra recorrente
           </DialogTitle>
           <DialogDescription>
@@ -131,7 +127,7 @@ export function EditRuleDialog({
             </InputGroup>
           </div>
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-start justify-between">
             <p className="text-xs text-muted-foreground">
               Término estimado:{" "}
               {(() => {
@@ -162,14 +158,14 @@ export function EditRuleDialog({
         <div className="flex justify-end gap-2 pt-1">
           <Button
             variant="outline"
-            className="transition-transform ease-in hover:scale-103 active:scale-97"
+            className="w-full sm:w-auto transition-transform ease-in hover:scale-103 active:scale-97"
             onClick={onClose}
             disabled={isSaving}
           >
             Cancelar
           </Button>
           <Button
-            className="transition-transform ease-in hover:scale-103 active:scale-97"
+            className="w-full sm:w-auto transition-transform ease-in hover:scale-103 active:scale-97"
             onClick={handleSave}
             disabled={isSaving}
           >
