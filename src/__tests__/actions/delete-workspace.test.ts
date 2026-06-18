@@ -3,6 +3,7 @@ import type { workspace_members, workspaces } from "@/generated/prisma/client";
 import { workspace_member_role } from "@/generated/prisma/enums";
 
 vi.mock("@/lib/auth/guards", () => ({ requireAuth: vi.fn() }));
+vi.mock("next/headers", () => ({ cookies: vi.fn() }));
 vi.mock("@/lib/prisma/client", () => ({
   prisma: {
     workspace_members: { findUnique: vi.fn() },
@@ -12,12 +13,16 @@ vi.mock("@/lib/prisma/client", () => ({
 
 import { deleteWorkspaceAction } from "@/actions/(user)/workspaces/delete-workspace";
 import { requireAuth } from "@/lib/auth/guards";
+import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma/client";
 
 const mockAuth = vi.mocked(requireAuth);
+const mockCookies = vi.mocked(cookies);
 const mockMemberFindUnique = vi.mocked(prisma.workspace_members.findUnique);
 const mockWorkspaceFindUnique = vi.mocked(prisma.workspaces.findUnique);
 const mockDelete = vi.mocked(prisma.workspaces.delete);
+const mockCookieGet = vi.fn();
+const mockCookieDelete = vi.fn();
 
 const OWNER_ID = "a1000000-0000-4000-8000-000000000001";
 const WORKSPACE_ID = "b2000000-0000-4000-8000-000000000002";
@@ -45,6 +50,11 @@ beforeEach(() => {
   mockMemberFindUnique.mockResolvedValue(OWNER_MEMBERSHIP);
   mockWorkspaceFindUnique.mockResolvedValue(NON_PERSONAL_WORKSPACE);
   mockDelete.mockResolvedValue(NON_PERSONAL_WORKSPACE);
+  mockCookieGet.mockReturnValue(undefined);
+  mockCookies.mockResolvedValue({
+    get: mockCookieGet,
+    delete: mockCookieDelete,
+  } as unknown as Awaited<ReturnType<typeof cookies>>);
 });
 
 describe("deleteWorkspaceAction", () => {
