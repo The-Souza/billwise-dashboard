@@ -27,7 +27,7 @@ export function BudgetCard({ budget, onEdit, onDelete }: BudgetCardProps) {
   const classes = getStatusClasses(budget.usedPercentage, isIncome);
 
   return (
-    <Card className={cn("flex flex-col gap-3 p-4 border-l-2", classes.accent)}>
+    <Card className="flex flex-col gap-3 p-4">
       <CardHeader className="flex flex-row items-center justify-between p-0 gap-2">
         <span className="flex items-center gap-2 text-sm font-medium min-w-0">
           {IconComponent && (
