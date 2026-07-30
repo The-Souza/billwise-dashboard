@@ -29,7 +29,7 @@ export function AccountFormInstallments() {
 
           const statusClass =
             sib.status === "paid"
-              ? "text-emerald-500"
+              ? "text-foreground"
               : sib.status === "overdue"
                 ? "text-destructive"
                 : "text-muted-foreground";

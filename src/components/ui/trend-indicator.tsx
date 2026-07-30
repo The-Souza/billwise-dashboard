@@ -14,14 +14,14 @@ export function TrendIndicator({ trend, isGood, label }: TrendProps) {
     <p className="text-sm text-muted-foreground flex items-center gap-1">
       {positive ? (
         <ArrowUpRight
-          className={`h-4 w-4 ${isGreenCase ? "text-emerald-500" : "text-destructive"}`}
+          className={`h-4 w-4 ${isGreenCase ? "text-foreground" : "text-destructive"}`}
         />
       ) : (
         <ArrowDownRight
-          className={`h-4 w-4 ${isGreenCase ? "text-emerald-500" : "text-destructive"}`}
+          className={`h-4 w-4 ${isGreenCase ? "text-foreground" : "text-destructive"}`}
         />
       )}
-      <span className={isGreenCase ? "text-emerald-500" : "text-destructive"}>
+      <span className={isGreenCase ? "text-foreground" : "text-destructive"}>
         {Math.abs(trend)}%
       </span>
       {label && <span>{label}</span>}

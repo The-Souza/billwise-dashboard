@@ -91,7 +91,7 @@ export function WorkspaceCard({
                 className={cn(
                   "text-xs px-1.5 py-2 h-4 font-normal",
                   isOwner
-                    ? "border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                    ? "border-foreground/20 bg-foreground/5 text-foreground"
                     : "border-muted-foreground/30 bg-muted/50 text-muted-foreground",
                 )}
               >
@@ -236,7 +236,7 @@ export function WorkspaceCard({
                             {m.name}
                           </span>
                           {m.role === "owner" && (
-                            <span className="text-xs text-amber-600 dark:text-amber-400 shrink-0">
+                            <span className="text-xs text-foreground shrink-0">
                               · Proprietário(a)
                             </span>
                           )}
@@ -257,7 +257,7 @@ export function WorkspaceCard({
                           <Button
                             size="icon-sm"
                             variant="ghost"
-                            className="text-muted-foreground hover:text-amber-600 hover:bg-amber-500/10"
+                            className="text-muted-foreground hover:text-primary hover:bg-primary/10"
                             onClick={(e) => {
                               e.stopPropagation();
                               setTransferOpen(true);

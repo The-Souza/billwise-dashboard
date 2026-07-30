@@ -110,7 +110,7 @@ export function RecurringRulesSection() {
                       <span
                         className={`text-sm font-semibold tabular-nums ${
                           rule.categoryType === "income"
-                            ? "text-emerald-500"
+                            ? "text-foreground"
                             : "text-destructive"
                         }`}
                       >

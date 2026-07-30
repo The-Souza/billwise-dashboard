@@ -52,7 +52,7 @@ export default function ChangePasswordForm() {
 
   const RequirementItem = ({ met, text }: { met: boolean; text: string }) => (
     <li
-      className={`flex items-center gap-2 transition-colors duration-300 ${met ? "text-green-500" : "text-muted-foreground"}`}
+      className={`flex items-center gap-2 transition-colors duration-300 ${met ? "text-foreground" : "text-muted-foreground"}`}
     >
       {met ? (
         <CheckCircle2 className="size-4" />

@@ -197,7 +197,7 @@ export function accountColumns(
         return (
           <span
             className={`block text-right font-medium ${
-              isIncome ? "text-emerald-500" : "text-destructive"
+              isIncome ? "text-foreground" : "text-destructive"
             }`}
           >
             {isIncome ? "+" : "-"} {formatCurrency(row.getValue("amount"))}

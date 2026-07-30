@@ -141,7 +141,7 @@ export function RecentAccountTable({
                     <TableCell className="text-right font-medium">
                       <span
                         className={
-                          isIncome ? "text-emerald-500" : "text-destructive"
+                          isIncome ? "text-foreground" : "text-destructive"
                         }
                       >
                         {isIncome ? "+" : "-"} {formatCurrency(account.amount)}
