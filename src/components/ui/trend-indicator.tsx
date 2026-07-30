@@ -1,12 +1,20 @@
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 
 type TrendProps = {
-  trend: number;
+  trend: number | null;
   isGood: boolean;
   label?: string;
 };
 
 export function TrendIndicator({ trend, isGood, label }: TrendProps) {
+  if (trend === null) {
+    return (
+      <p className="text-sm text-muted-foreground">
+        Sem dados do {label ?? "período anterior"} para comparar
+      </p>
+    );
+  }
+
   const positive = trend >= 0;
   const isGreenCase = isGood ? positive : !positive;
 

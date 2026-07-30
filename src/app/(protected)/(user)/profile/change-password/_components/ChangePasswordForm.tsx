@@ -113,7 +113,11 @@ export default function ChangePasswordForm() {
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name} className="text-md">
+                    <FieldLabel
+                      htmlFor={field.name}
+                      className="text-md"
+                      required
+                    >
                       Senha Atual
                     </FieldLabel>
                     <InputGroup>
@@ -160,7 +164,11 @@ export default function ChangePasswordForm() {
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name} className="text-md">
+                    <FieldLabel
+                      htmlFor={field.name}
+                      className="text-md"
+                      required
+                    >
                       Nova Senha
                     </FieldLabel>
                     <InputGroup>
@@ -205,7 +213,11 @@ export default function ChangePasswordForm() {
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name} className="text-md">
+                    <FieldLabel
+                      htmlFor={field.name}
+                      className="text-md"
+                      required
+                    >
                       Confirmar Nova Senha
                     </FieldLabel>
                     <InputGroup>

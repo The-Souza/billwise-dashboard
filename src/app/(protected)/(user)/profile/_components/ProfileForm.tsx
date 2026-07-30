@@ -234,7 +234,11 @@ export function ProfileForm({ user }: User) {
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field>
-                        <FieldLabel htmlFor={field.name} className="text-md">
+                        <FieldLabel
+                          htmlFor={field.name}
+                          className="text-md"
+                          required
+                        >
                           Nome Completo
                         </FieldLabel>
                         <InputGroup>
@@ -258,7 +262,11 @@ export function ProfileForm({ user }: User) {
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid}>
-                        <FieldLabel htmlFor={field.name} className="text-md">
+                        <FieldLabel
+                          htmlFor={field.name}
+                          className="text-md"
+                          required
+                        >
                           Email
                         </FieldLabel>
                         <InputGroup>

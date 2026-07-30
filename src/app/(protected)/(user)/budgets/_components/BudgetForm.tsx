@@ -107,6 +107,7 @@ export function BudgetForm({
                 <FieldLabel
                   htmlFor={field.name}
                   className="text-sm font-medium"
+                  required
                 >
                   Categoria
                 </FieldLabel>
@@ -133,7 +134,11 @@ export function BudgetForm({
 
           return (
             <Field>
-              <FieldLabel htmlFor={field.name} className="text-sm font-medium">
+              <FieldLabel
+                htmlFor={field.name}
+                className="text-sm font-medium"
+                required
+              >
                 Categoria
               </FieldLabel>
               {!isLoadingCategories && noCategories ? (
@@ -187,7 +192,11 @@ export function BudgetForm({
         control={form.control}
         render={({ field, fieldState }) => (
           <Field>
-            <FieldLabel htmlFor={field.name} className="text-sm font-medium">
+            <FieldLabel
+              htmlFor={field.name}
+              className="text-sm font-medium"
+              required
+            >
               Valor limite (R$)
             </FieldLabel>
             {isEditing && isLoadingCategories ? (

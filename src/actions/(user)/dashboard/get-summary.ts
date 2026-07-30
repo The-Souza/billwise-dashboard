@@ -8,17 +8,17 @@ export type MonthlySummary = {
   balance: number;
   totalIncome: number;
   totalExpense: number;
-  balanceTrend: number;
-  incomeTrend: number;
-  expenseTrend: number;
+  balanceTrend: number | null;
+  incomeTrend: number | null;
+  expenseTrend: number | null;
 };
 
 type GetSummaryResult =
   | { success: true; data: MonthlySummary }
   | { success: false; error: string };
 
-function calcTrend(current: number, previous: number): number {
-  if (previous === 0) return 0;
+function calcTrend(current: number, previous: number): number | null {
+  if (previous === 0) return null;
   return Number((((current - previous) / previous) * 100).toFixed(1));
 }
 
