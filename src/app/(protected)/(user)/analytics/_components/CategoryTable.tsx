@@ -167,8 +167,7 @@ export function CategoryTable({ data = [], isLoading }: CategoryTableProps) {
             <div className="flex items-center gap-1">
               <Button
                 variant="ghost"
-                size="icon"
-                className="h-7 w-7"
+                size="icon-sm"
                 disabled={page === 0}
                 onClick={() => setPage((p) => p - 1)}
               >
@@ -176,8 +175,7 @@ export function CategoryTable({ data = [], isLoading }: CategoryTableProps) {
               </Button>
               <Button
                 variant="ghost"
-                size="icon"
-                className="h-7 w-7"
+                size="icon-sm"
                 disabled={page >= totalPages - 1}
                 onClick={() => setPage((p) => p + 1)}
               >

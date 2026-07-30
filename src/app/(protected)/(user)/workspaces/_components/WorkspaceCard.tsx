@@ -108,38 +108,36 @@ export function WorkspaceCard({
             {isOwner ? (
               <>
                 <Button
-                  size="icon"
+                  size="icon-sm"
                   variant="ghost"
                   onClick={(e) => {
                     e.stopPropagation();
                     setRenameOpen(true);
                   }}
-                  className="h-7 w-7"
                   aria-label="Renomear workspace"
                 >
                   <PencilIcon className="size-4" />
                 </Button>
                 <Button
-                  size="icon"
+                  size="icon-sm"
                   variant="ghost"
                   onClick={(e) => {
                     e.stopPropagation();
                     setInviteOpen(true);
                   }}
-                  className="h-7 w-7"
                   aria-label="Convidar membro"
                 >
                   <UserPlusIcon className="size-4" />
                 </Button>
                 {!workspace.isPersonal && (
                   <Button
-                    size="icon"
+                    size="icon-sm"
                     variant="ghost"
                     onClick={(e) => {
                       e.stopPropagation();
                       setDeleteOpen(true);
                     }}
-                    className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
                     aria-label="Deletar workspace"
                   >
                     <Trash2Icon className="size-4" />
@@ -149,13 +147,13 @@ export function WorkspaceCard({
             ) : (
               !workspace.isPersonal && (
                 <Button
-                  size="icon"
+                  size="icon-sm"
                   variant="ghost"
                   onClick={(e) => {
                     e.stopPropagation();
                     setLeaveOpen(true);
                   }}
-                  className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
+                  className="text-destructive hover:text-destructive hover:bg-destructive/10"
                   aria-label="Sair do workspace"
                 >
                   <LogOutIcon className="size-4" />
@@ -164,13 +162,12 @@ export function WorkspaceCard({
             )}
             <Separator orientation="vertical" className="h-5" />
             <Button
-              size="icon"
+              size="icon-sm"
               variant="ghost"
               onClick={(e) => {
                 e.stopPropagation();
                 setExpanded((v) => !v);
               }}
-              className="h-7 w-7"
               aria-label={expanded ? "Recolher membros" : "Expandir membros"}
             >
               {expanded ? (

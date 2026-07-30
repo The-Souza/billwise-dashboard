@@ -126,8 +126,8 @@ export function RecurringRulesSection() {
                     <div className="flex items-center gap-0.5 shrink-0">
                       <Button
                         variant="ghost"
-                        size="icon"
-                        className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                        size="icon-sm"
+                        className="text-muted-foreground hover:text-foreground"
                         onClick={() => setEditRule(rule)}
                       >
                         <PencilIcon className="h-3.5 w-3.5" />
@@ -135,8 +135,8 @@ export function RecurringRulesSection() {
                       </Button>
                       <Button
                         variant="ghost"
-                        size="icon"
-                        className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                        size="icon-sm"
+                        className="text-muted-foreground hover:text-destructive"
                         onClick={() => setDeleteRule(rule)}
                       >
                         <Trash2Icon className="h-3.5 w-3.5" />

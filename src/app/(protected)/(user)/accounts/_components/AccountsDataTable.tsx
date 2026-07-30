@@ -197,8 +197,8 @@ export function AccountsDataTable({
         <div className="flex items-center gap-1">
           <Button
             variant="outline"
-            size="icon"
-            className="h-7 w-7 transition-transform ease-in hover:scale-103 active:scale-97"
+            size="icon-sm"
+            className="transition-transform ease-in hover:scale-103 active:scale-97"
             onClick={() => handleFiltersChange({ page: page - 1 })}
             disabled={page <= 1 || isLoading}
           >
@@ -209,8 +209,8 @@ export function AccountsDataTable({
           </span>
           <Button
             variant="outline"
-            size="icon"
-            className="h-7 w-7 transition-transform ease-in hover:scale-103 active:scale-97"
+            size="icon-sm"
+            className="transition-transform ease-in hover:scale-103 active:scale-97"
             onClick={() => handleFiltersChange({ page: page + 1 })}
             disabled={page >= totalPages || isLoading}
           >

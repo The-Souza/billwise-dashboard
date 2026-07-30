@@ -41,8 +41,8 @@ export function BudgetCard({ budget, onEdit, onDelete }: BudgetCardProps) {
         <div className="flex shrink-0 items-center gap-0.5">
           <Button
             variant="ghost"
-            size="icon"
-            className="h-7 w-7 text-muted-foreground hover:text-foreground"
+            size="icon-sm"
+            className="text-muted-foreground hover:text-foreground"
             onClick={() => onEdit(budget)}
           >
             <PencilIcon className="h-3.5 w-3.5" />
@@ -50,8 +50,8 @@ export function BudgetCard({ budget, onEdit, onDelete }: BudgetCardProps) {
           </Button>
           <Button
             variant="ghost"
-            size="icon"
-            className="h-7 w-7 text-muted-foreground hover:text-destructive"
+            size="icon-sm"
+            className="text-muted-foreground hover:text-destructive"
             onClick={() => onDelete(budget)}
           >
             <Trash2Icon className="h-3.5 w-3.5" />

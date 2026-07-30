@@ -214,8 +214,8 @@ export function accountColumns(
         <div className="flex items-center justify-center gap-1">
           <Button
             variant="ghost"
-            size="icon"
-            className="h-7 w-7 text-muted-foreground hover:text-foreground"
+            size="icon-sm"
+            className="text-muted-foreground hover:text-foreground"
             asChild
           >
             <Link href={`/accounts/${row.original.id}`}>
@@ -225,8 +225,8 @@ export function accountColumns(
           </Button>
           <Button
             variant="ghost"
-            size="icon"
-            className="h-7 w-7 text-muted-foreground hover:text-destructive"
+            size="icon-sm"
+            className="text-muted-foreground hover:text-destructive"
             onClick={() => onDelete(row.original)}
           >
             <Trash2Icon className="h-3.5 w-3.5" />

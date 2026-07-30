@@ -100,9 +100,9 @@ function WorkspaceInviteActions({
   return (
     <div className="flex items-center gap-1.5 shrink-0">
       <Button
-        size="icon"
+        size="icon-sm"
         variant="ghost"
-        className="size-7 text-foreground hover:text-foreground hover:bg-secondary"
+        className="text-foreground hover:text-foreground hover:bg-secondary"
         disabled={loading !== null}
         aria-label="Aceitar convite"
         onClick={(e) => {
@@ -113,9 +113,9 @@ function WorkspaceInviteActions({
         {loading === "accepted" ? <Spinner /> : <CheckIcon />}
       </Button>
       <Button
-        size="icon"
+        size="icon-sm"
         variant="ghost"
-        className="size-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+        className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
         disabled={loading !== null}
         aria-label="Recusar convite"
         onClick={(e) => {
