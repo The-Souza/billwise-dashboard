@@ -25,7 +25,7 @@ const MAX_LIMIT = 50;
 export async function getRecentAccountsAction(
   month: number,
   year: number,
-  limit = 8,
+  limit = 4,
 ): Promise<GetRecentAccountsResult> {
   try {
     const ctx = await requireWorkspace();

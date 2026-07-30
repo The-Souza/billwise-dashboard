@@ -91,7 +91,7 @@ function BudgetItem({ budget }: { budget: BudgetProgressItem }) {
 function BudgetSkeleton() {
   return (
     <>
-      {Array.from({ length: 6 }).map((_, i) => (
+      {Array.from({ length: 4 }).map((_, i) => (
         <div key={i} className="flex flex-col gap-2 h-17">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
@@ -107,6 +107,16 @@ function BudgetSkeleton() {
         </div>
       ))}
     </>
+  );
+}
+
+function MoreLink({ count }: { count: number }) {
+  return (
+    <Button variant="link" size="sm" className="text-xs h-auto p-0 self-start" asChild>
+      <Link href="/budgets">
+        +{count} {count === 1 ? "orçamento" : "orçamentos"}
+      </Link>
+    </Button>
   );
 }
 
@@ -126,8 +136,10 @@ export function BudgetProgress({
   label,
   isLoading,
 }: BudgetProgressProps) {
-  const expense = (data ?? []).filter((b) => b.type === "expense").slice(0, 6);
-  const income = (data ?? []).filter((b) => b.type === "income").slice(0, 6);
+  const allExpense = (data ?? []).filter((b) => b.type === "expense");
+  const allIncome = (data ?? []).filter((b) => b.type === "income");
+  const expense = allExpense.slice(0, 4);
+  const income = allIncome.slice(0, 4);
 
   return (
     <Card className="lg:col-span-2">
@@ -161,7 +173,14 @@ export function BudgetProgress({
             ) : expense.length === 0 ? (
               <EmptyState message="Nenhum orçamento de despesa definido." />
             ) : (
-              expense.map((b) => <BudgetItem key={b.id} budget={b} />)
+              <>
+                {expense.map((b) => (
+                  <BudgetItem key={b.id} budget={b} />
+                ))}
+                {allExpense.length > expense.length && (
+                  <MoreLink count={allExpense.length - expense.length} />
+                )}
+              </>
             )}
           </TabsContent>
 
@@ -171,7 +190,14 @@ export function BudgetProgress({
             ) : income.length === 0 ? (
               <EmptyState message="Nenhuma meta de receita definida." />
             ) : (
-              income.map((b) => <BudgetItem key={b.id} budget={b} />)
+              <>
+                {income.map((b) => (
+                  <BudgetItem key={b.id} budget={b} />
+                ))}
+                {allIncome.length > income.length && (
+                  <MoreLink count={allIncome.length - income.length} />
+                )}
+              </>
             )}
           </TabsContent>
         </Tabs>

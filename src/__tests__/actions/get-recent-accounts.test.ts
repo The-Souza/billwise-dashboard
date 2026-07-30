@@ -53,11 +53,11 @@ describe("getRecentAccountsAction", () => {
     expect(mockFindMany).not.toHaveBeenCalled();
   });
 
-  it("usa limit padrão de 8", async () => {
+  it("usa limit padrão de 4", async () => {
     await getRecentAccountsAction(3, 2024);
 
     expect(mockFindMany).toHaveBeenCalledWith(
-      expect.objectContaining({ take: 8 }),
+      expect.objectContaining({ take: 4 }),
     );
   });
 

@@ -82,7 +82,7 @@ export function RecentAccountTable({
           </TableHeader>
           <TableBody>
             {isLoading || !data ? (
-              Array.from({ length: 8 }).map((_, i) => (
+              Array.from({ length: 4 }).map((_, i) => (
                 <TableRow
                   key={i}
                   className="*:border-border [&>:not(:last-child)]:border-r odd:bg-muted/50 odd:hover:bg-muted/50 hover:bg-transparent h-11"
