@@ -11,7 +11,7 @@ colors:
   neutral-surface-foreground: "oklch(0.21 0.006 285.885)"
   muted-foreground: "oklch(0.552 0.016 285.938)"
   border: "oklch(0.92 0.004 286.32)"
-  destructive: "oklch(0.577 0.245 27.325)"
+  destructive: "oklch(0.577 0.245 40)"
   chart-1: "oklch(0.81 0.117 11.638)"
   chart-2: "oklch(0.645 0.246 16.439)"
   chart-3: "oklch(0.586 0.253 17.585)"
@@ -97,7 +97,7 @@ A paleta é deliberadamente curta: um único acento saturado sobre uma base neut
 - **Border** (`oklch(0.92 0.004 286.32)`): divisórias e contornos de input.
 
 ### Status
-- **Destructive** (`oklch(0.577 0.245 27.325)`): erros, exclusões, despesas quando o contexto exige distinção explícita de "saída de dinheiro".
+- **Destructive** (`oklch(0.577 0.245 40)`): erros, exclusões, despesas quando o contexto exige distinção explícita de "saída de dinheiro". Hue deliberadamente afastado (~40°) do Confident Berry (~17.6°) para permanecer distinguível dele — o hue anterior (27.325°) ficava a apenas ~10° de distância, quase indistinguível em UI compacta.
 
 ### Chart Ramp
 - **Chart 1 → 5** (`oklch(0.81 0.117 11.638)` → `oklch(0.455 0.188 13.697)`): uma única família de cor (mesmo hue ~11–17°) variando em luminosidade. Gráficos não introduzem cores fora dessa família — multisséries usam o degradê, não cores arbitrárias.
