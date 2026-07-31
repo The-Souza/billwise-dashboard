@@ -22,7 +22,12 @@ export function SidebarRoot({
   currentWorkspaceId,
 }: SidebarRootProps) {
   return (
-    <Sidebar variant="sidebar" collapsible="icon">
+    <Sidebar
+      variant="sidebar"
+      collapsible="icon"
+      role="navigation"
+      aria-label="Navegação principal"
+    >
       <SidebarHeader>
         <WorkspaceSwitcher
           workspaces={workspaces}
