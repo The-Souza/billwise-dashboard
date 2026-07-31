@@ -74,7 +74,9 @@ export function RecentAccountTable({
               {tableHeaders.map((header) => (
                 <TableHead
                   key={header.label}
-                  className={`text-${header.align || "left"}`}
+                  className={
+                    header.align === "right" ? "text-right" : "text-left"
+                  }
                 >
                   {header.label}
                 </TableHead>

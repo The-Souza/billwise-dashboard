@@ -89,7 +89,7 @@ export function MonthPicker({
           <PopoverTrigger asChild>
             <Button
               variant="outline"
-              className="w-full sm:max-w-40 h-8 px-3 gap-1.5 text-xs font-medium bg-popover capitalize min-w-40 justify-between"
+              className="w-full sm:max-w-40 h-8 px-3 gap-1.5 text-xs font-medium bg-popover min-w-40 justify-between"
             >
               <CalendarIcon className="text-muted-foreground shrink-0" />
               <span className="flex-1 text-center">{label}</span>

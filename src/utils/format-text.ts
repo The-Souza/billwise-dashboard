@@ -5,7 +5,9 @@ export const formatPercentageOverflow = (value: number): string =>
   `+${(value - 100).toFixed(0)}%`;
 
 export const formatCurrencyCompact = (value: number): string =>
-  `R$${(value / 1000).toFixed(0)}k`;
+  Math.abs(value) < 1000
+    ? `R$${value.toFixed(0)}`
+    : `R$${(value / 1000).toFixed(0)}k`;
 
 export function capitalizeFirst(str: string): string {
   if (!str) return str;
