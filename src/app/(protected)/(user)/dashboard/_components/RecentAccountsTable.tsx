@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { CategoryIcon } from "@/components/ui/category-icon";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -20,7 +21,7 @@ import {
 import { formatCurrency } from "@/utils/format-currency";
 import { formatDate } from "@/utils/format-date";
 import { capitalizeFirst } from "@/utils/format-text";
-import { ArrowRight, icons } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 interface RecentAccountTableProps {
@@ -111,11 +112,6 @@ export function RecentAccountTable({
             ) : (
               data.map((account) => {
                 const isIncome = account.categoryType === "income";
-                const IconComponent = account.categoryIcon
-                  ? (icons[
-                      account.categoryIcon as keyof typeof icons
-                    ] as React.ElementType)
-                  : null;
                 return (
                   <TableRow
                     key={account.id}
@@ -126,9 +122,10 @@ export function RecentAccountTable({
                     </TableCell>
                     <TableCell>
                       <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                        {IconComponent && (
-                          <IconComponent className="h-3.5 w-3.5" />
-                        )}
+                        <CategoryIcon
+                          name={account.categoryIcon}
+                          className="h-3.5 w-3.5"
+                        />
                         {account.category}
                       </span>
                     </TableCell>

@@ -12,10 +12,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { CategoryIcon } from "@/components/ui/category-icon";
 import { formatCurrency } from "@/utils/format-currency";
 import { formatRuleEndDate } from "@/utils/format-date";
 import { capitalizeFirst, formatRecurrenceDuration } from "@/utils/format-text";
-import { icons, PencilIcon, RefreshCw, Trash2Icon } from "lucide-react";
+import { PencilIcon, RefreshCw, Trash2Icon } from "lucide-react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -77,20 +78,17 @@ export function RecurringRulesSection() {
           ) : (
             <div className="divide-y divide-border">
               {rules.map((rule) => {
-                const IconComponent = rule.categoryIcon
-                  ? (icons[
-                      rule.categoryIcon as keyof typeof icons
-                    ] as React.ElementType)
-                  : null;
-
                 return (
                   <div
                     key={rule.id}
                     className="flex items-center gap-3 px-6 py-3.5 hover:bg-muted/30 transition-colors"
                   >
                     <div className="p-2 rounded-lg bg-primary/10 shrink-0">
-                      {IconComponent ? (
-                        <IconComponent className="h-4 w-4 text-primary" />
+                      {rule.categoryIcon ? (
+                        <CategoryIcon
+                          name={rule.categoryIcon}
+                          className="h-4 w-4 text-primary"
+                        />
                       ) : (
                         <RefreshCw className="h-4 w-4 text-primary" />
                       )}

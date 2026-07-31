@@ -3,11 +3,11 @@
 import { BudgetRow } from "@/actions/(user)/budgets/get-budgets";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { CategoryIcon } from "@/components/ui/category-icon";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/utils/format-currency";
 import { getStatusClasses } from "@/utils/get-status-classes";
-import { icons, PencilIcon, Trash2Icon } from "lucide-react";
-import React from "react";
+import { PencilIcon, Trash2Icon } from "lucide-react";
 import { PercentageBadge } from "./PercentageBadge";
 import { StatusLabel } from "./StatusLabel";
 
@@ -18,10 +18,6 @@ interface BudgetCardProps {
 }
 
 export function BudgetCard({ budget, onEdit, onDelete }: BudgetCardProps) {
-  const IconComponent = budget.categoryIcon
-    ? (icons[budget.categoryIcon as keyof typeof icons] as React.ElementType)
-    : null;
-
   const isIncome = budget.categoryType === "income";
   const percentage = Math.min(budget.usedPercentage, 100);
   const classes = getStatusClasses(budget.usedPercentage, isIncome);
@@ -30,9 +26,9 @@ export function BudgetCard({ budget, onEdit, onDelete }: BudgetCardProps) {
     <Card className="flex flex-col gap-3 p-4">
       <CardHeader className="flex flex-row items-center justify-between p-0 gap-2">
         <span className="flex items-center gap-2 text-sm font-medium min-w-0">
-          {IconComponent && (
+          {budget.categoryIcon && (
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary/10">
-              <IconComponent className="h-3.5 w-3.5 text-primary" />
+              <CategoryIcon name={budget.categoryIcon} className="h-3.5 w-3.5 text-primary" />
             </span>
           )}
           <span className="truncate">{budget.categoryName}</span>

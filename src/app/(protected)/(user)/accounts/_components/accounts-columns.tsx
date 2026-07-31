@@ -3,13 +3,14 @@
 import { AccountRow } from "@/actions/(user)/accounts/get-accounts";
 import { AppBadge, AppBadgeVariant } from "@/components/ui/app-badge";
 import { Button } from "@/components/ui/button";
+import { CategoryIcon } from "@/components/ui/category-icon";
 import { Checkbox } from "@/components/ui/checkbox";
 import { AccountSortKey } from "@/schemas/accounts/get-accounts";
 import { formatCurrency } from "@/utils/format-currency";
 import { formatDate } from "@/utils/format-date";
 import { capitalizeFirst } from "@/utils/format-text";
 import { ColumnDef } from "@tanstack/react-table";
-import { icons, PencilIcon, RefreshCw, Trash2Icon } from "lucide-react";
+import { PencilIcon, RefreshCw, Trash2Icon } from "lucide-react";
 import Link from "next/link";
 
 interface SortState {
@@ -104,19 +105,15 @@ export function accountColumns(
         ) : (
           "Categoria"
         ),
-      cell: ({ row }) => {
-        const icon = row.original.categoryIcon;
-        const IconComponent = icon
-          ? (icons[icon as keyof typeof icons] as React.ElementType)
-          : null;
-
-        return (
-          <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-            {IconComponent && <IconComponent className="h-3.5 w-3.5" />}
-            {row.getValue("category")}
-          </span>
-        );
-      },
+      cell: ({ row }) => (
+        <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          <CategoryIcon
+            name={row.original.categoryIcon}
+            className="h-3.5 w-3.5"
+          />
+          {row.getValue("category")}
+        </span>
+      ),
     },
 
     {

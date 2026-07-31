@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { CategoryIcon } from "@/components/ui/category-icon";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
@@ -16,7 +17,7 @@ import {
   formatPercentageOverflow,
 } from "@/utils/format-text";
 import { getStatusClasses } from "@/utils/get-status-classes";
-import { ArrowRight, icons } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 interface BudgetProgressProps {
@@ -26,10 +27,6 @@ interface BudgetProgressProps {
 }
 
 function BudgetItem({ budget }: { budget: BudgetProgressItem }) {
-  const IconComponent = budget.icon
-    ? (icons[budget.icon as keyof typeof icons] as React.ElementType)
-    : null;
-
   const isIncome = budget.type === "income";
   const isOver = budget.usedPercentage > 100;
   const percentage = Math.min(budget.usedPercentage, 100);
@@ -50,9 +47,9 @@ function BudgetItem({ budget }: { budget: BudgetProgressItem }) {
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between gap-3">
         <span className="flex items-center gap-2 text-sm font-medium min-w-0">
-          {IconComponent && (
+          {budget.icon && (
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary/10">
-              <IconComponent className="h-3.5 w-3.5 text-primary" />
+              <CategoryIcon name={budget.icon} className="h-3.5 w-3.5 text-primary" />
             </span>
           )}
           <span className="truncate">{budget.category}</span>

@@ -19,6 +19,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useMemo } from "react";
 import { AccountsFilters } from "./AccountsFilters";
 import { DeleteAccountDialog } from "./DeleteAccountDialog";
 import { accountColumns } from "./accounts-columns";
@@ -71,14 +72,20 @@ export function AccountsDataTable({
     PAGE_SIZE,
   } = useAccountsTable({ dashboardMonth });
 
+  const columns = useMemo(
+    () =>
+      accountColumns(handleDeleteSingle, {
+        key: sortKey,
+        dir: sortDir,
+        onSort: handleSort,
+      }),
+    [handleDeleteSingle, sortKey, sortDir, handleSort],
+  );
+
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: accounts,
-    columns: accountColumns(handleDeleteSingle, {
-      key: sortKey,
-      dir: sortDir,
-      onSort: handleSort,
-    }),
+    columns,
     manualPagination: true,
     pageCount: totalPages,
     getCoreRowModel: getCoreRowModel(),
