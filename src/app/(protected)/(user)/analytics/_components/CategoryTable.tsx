@@ -121,14 +121,14 @@ export function CategoryTable({ data = [], isLoading }: CategoryTableProps) {
                   >
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <div className="p-1.5 rounded-md bg-primary/10 shrink-0">
+                        <div className="p-1.5 rounded-md bg-muted shrink-0">
                           {item.categoryIcon ? (
                             <CategoryIcon
                               name={item.categoryIcon}
-                              className="h-3.5 w-3.5 text-primary"
+                              className="h-3.5 w-3.5 text-muted-foreground"
                             />
                           ) : (
-                            <RefreshCw className="h-3.5 w-3.5 text-primary" />
+                            <RefreshCw className="h-3.5 w-3.5 text-muted-foreground" />
                           )}
                         </div>
                         <span className="font-medium">

@@ -83,14 +83,14 @@ export function RecurringRulesSection() {
                     key={rule.id}
                     className="flex items-center gap-3 px-6 py-3.5 hover:bg-muted/30 transition-colors"
                   >
-                    <div className="p-2 rounded-lg bg-primary/10 shrink-0">
+                    <div className="p-2 rounded-lg bg-muted shrink-0">
                       {rule.categoryIcon ? (
                         <CategoryIcon
                           name={rule.categoryIcon}
-                          className="h-4 w-4 text-primary"
+                          className="h-4 w-4 text-muted-foreground"
                         />
                       ) : (
-                        <RefreshCw className="h-4 w-4 text-primary" />
+                        <RefreshCw className="h-4 w-4 text-muted-foreground" />
                       )}
                     </div>
 
