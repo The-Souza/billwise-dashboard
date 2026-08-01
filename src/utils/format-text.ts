@@ -4,10 +4,13 @@ export const formatPercentage = (value: number, decimals = 0): string =>
 export const formatPercentageOverflow = (value: number): string =>
   `+${(value - 100).toFixed(0)}%`;
 
-export const formatCurrencyCompact = (value: number): string =>
-  Math.abs(value) < 1000
-    ? `R$${value.toFixed(0)}`
-    : `R$${(value / 1000).toFixed(0)}k`;
+export const formatCurrencyCompact = (value: number): string => {
+  const sign = value < 0 ? "-" : "";
+  const abs = Math.abs(value);
+  return abs < 1000
+    ? `${sign}R$${abs.toFixed(0)}`
+    : `${sign}R$${(abs / 1000).toFixed(0)}k`;
+};
 
 export function capitalizeFirst(str: string): string {
   if (!str) return str;

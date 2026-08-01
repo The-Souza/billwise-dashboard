@@ -74,7 +74,15 @@ describe("formatCurrencyCompact", () => {
     expect(formatCurrencyCompact(1500)).toBe("R$2k");
   });
 
-  it("preserva o sinal negativo para valores pequenos", () => {
-    expect(formatCurrencyCompact(-200)).toBe("R$-200");
+  it("coloca o sinal negativo antes de R$ para valores pequenos", () => {
+    expect(formatCurrencyCompact(-200)).toBe("-R$200");
+  });
+
+  it("coloca o sinal negativo antes de R$ para valores grandes com sufixo 'k'", () => {
+    expect(formatCurrencyCompact(-1500)).toBe("-R$2k");
+  });
+
+  it("formata -0 sem sinal negativo", () => {
+    expect(formatCurrencyCompact(-0)).toBe("R$0");
   });
 });
