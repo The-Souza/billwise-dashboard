@@ -6,6 +6,7 @@ import { getRecentAccountsAction } from "@/actions/(user)/dashboard/get-recent-a
 import { getSummaryAction } from "@/actions/(user)/dashboard/get-summary";
 import { Button } from "@/components/ui/button";
 import { MonthPicker } from "@/components/ui/month-picker";
+import { Spinner } from "@/components/ui/spinner";
 import { useDashboardMonth } from "@/hooks/use-dashboard-month";
 import { useQuery } from "@tanstack/react-query";
 import { AlertTriangleIcon } from "lucide-react";
@@ -81,6 +82,8 @@ export default function DashboardPage() {
   const failedCount = [errorSummary, errorChart, errorBudgets, errorAccounts].filter(
     Boolean,
   ).length;
+  const retryingAll =
+    fetchingSummary || fetchingChart || fetchingBudgets || fetchingAccounts;
 
   function handleMonthSelect(m: number, y: number) {
     dashboardMonth.setMonth(m);
@@ -119,9 +122,11 @@ export default function DashboardPage() {
             variant="outline"
             size="sm"
             onClick={handleRetryAll}
-            className="shrink-0"
+            disabled={retryingAll}
+            className="shrink-0 gap-1.5"
           >
-            Tentar tudo novamente
+            {retryingAll && <Spinner className="h-3.5 w-3.5" />}
+            {retryingAll ? "Tentando..." : "Tentar tudo novamente"}
           </Button>
         </div>
       )}
