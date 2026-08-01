@@ -31,6 +31,13 @@ const MONTHS = [
   "Dez",
 ];
 
+const QUARTERS = [
+  MONTHS.slice(0, 3),
+  MONTHS.slice(3, 6),
+  MONTHS.slice(6, 9),
+  MONTHS.slice(9, 12),
+];
+
 interface MonthPickerProps extends DashboardMonth {
   onSelect: (month: number, year: number) => void;
 }
@@ -121,28 +128,32 @@ export function MonthPicker({
               </Button>
             </div>
 
-            <div className="grid grid-cols-3 gap-1">
-              {MONTHS.map((name, i) => {
-                const m = i + 1;
-                const future = isFuture(m);
-                const selected = isSelected(m);
+            <div className="flex flex-col gap-2">
+              {QUARTERS.map((quarter, qi) => (
+                <div key={qi} className="grid grid-cols-3 gap-1">
+                  {quarter.map((name, i) => {
+                    const m = qi * 3 + i + 1;
+                    const future = isFuture(m);
+                    const selected = isSelected(m);
 
-                return (
-                  <Button
-                    key={m}
-                    variant={selected ? "default" : "ghost"}
-                    size="sm"
-                    className={cn(
-                      "h-8 text-xs",
-                      future && "opacity-30 cursor-not-allowed",
-                    )}
-                    disabled={future}
-                    onClick={() => handleSelect(m)}
-                  >
-                    {name}
-                  </Button>
-                );
-              })}
+                    return (
+                      <Button
+                        key={m}
+                        variant={selected ? "default" : "ghost"}
+                        size="sm"
+                        className={cn(
+                          "h-8 text-xs",
+                          future && "opacity-30 cursor-not-allowed",
+                        )}
+                        disabled={future}
+                        onClick={() => handleSelect(m)}
+                      >
+                        {name}
+                      </Button>
+                    );
+                  })}
+                </div>
+              ))}
             </div>
           </PopoverContent>
         </Popover>
