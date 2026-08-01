@@ -128,9 +128,15 @@ export function MonthPicker({
               </Button>
             </div>
 
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1.5">
               {QUARTERS.map((quarter, qi) => (
-                <div key={qi} className="grid grid-cols-3 gap-1">
+                <div
+                  key={qi}
+                  className={cn(
+                    "grid grid-cols-3 gap-1",
+                    qi > 0 && "pt-1.5 border-t border-border",
+                  )}
+                >
                   {quarter.map((name, i) => {
                     const m = qi * 3 + i + 1;
                     const future = isFuture(m);
