@@ -10,6 +10,7 @@ interface SummaryCardProps {
   data?: MonthlySummary;
   isLoading?: boolean;
   isError?: boolean;
+  isRetrying?: boolean;
   onRetry?: () => void;
 }
 
@@ -44,6 +45,7 @@ export function SummaryCard({
   data,
   isLoading,
   isError,
+  isRetrying,
   onRetry,
 }: SummaryCardProps) {
   if (isError) {
@@ -53,6 +55,7 @@ export function SummaryCard({
           <QueryErrorState
             message="Não foi possível carregar o resumo do mês."
             onRetry={() => onRetry?.()}
+            isRetrying={isRetrying}
           />
         </CardContent>
       </Card>
@@ -67,8 +70,8 @@ export function SummaryCard({
             <CardTitle className="text-md font-heading text-muted-foreground">
               {item.title}
             </CardTitle>
-            <div className="p-2 rounded-md bg-primary/10">
-              <item.icon className="h-4 w-4 text-primary" />
+            <div className="p-2 rounded-md bg-muted">
+              <item.icon className="h-4 w-4 text-muted-foreground" />
             </div>
           </CardHeader>
           <CardContent className="flex flex-col gap-1">

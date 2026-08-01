@@ -21,7 +21,7 @@ const appBadgeConfig: Record<
   pending: {
     label: "Pendente",
     className:
-      "border-none bg-primary/10 text-primary focus-visible:ring-primary/20 focus-visible:outline-none [a&]:hover:bg-primary/5",
+      "border-none bg-muted text-muted-foreground focus-visible:ring-muted-foreground/20 focus-visible:outline-none [a&]:hover:bg-muted/80",
     icon: AlertCircleIcon,
   },
   overdue: {
