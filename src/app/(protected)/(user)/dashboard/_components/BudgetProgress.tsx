@@ -142,6 +142,8 @@ export function BudgetProgress({
   const allIncome = (data ?? []).filter((b) => b.type === "income");
   const expense = allExpense.slice(0, 4);
   const income = allIncome.slice(0, 4);
+  const totalExpense = allExpense[0]?.totalCount ?? allExpense.length;
+  const totalIncome = allIncome[0]?.totalCount ?? allIncome.length;
 
   return (
     <Card className="lg:col-span-2">
@@ -185,8 +187,8 @@ export function BudgetProgress({
                 {expense.map((b) => (
                   <BudgetItem key={b.id} budget={b} />
                 ))}
-                {allExpense.length > expense.length && (
-                  <MoreLink count={allExpense.length - expense.length} />
+                {totalExpense > expense.length && (
+                  <MoreLink count={totalExpense - expense.length} />
                 )}
               </>
             )}
@@ -202,8 +204,8 @@ export function BudgetProgress({
                 {income.map((b) => (
                   <BudgetItem key={b.id} budget={b} />
                 ))}
-                {allIncome.length > income.length && (
-                  <MoreLink count={allIncome.length - income.length} />
+                {totalIncome > income.length && (
+                  <MoreLink count={totalIncome - income.length} />
                 )}
               </>
             )}
