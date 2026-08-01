@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { CategoryIcon } from "@/components/ui/category-icon";
+import { QueryErrorState } from "@/components/ui/query-error-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
@@ -24,6 +25,8 @@ interface BudgetProgressProps {
   data?: BudgetProgressItem[];
   label: string;
   isLoading?: boolean;
+  isError?: boolean;
+  onRetry?: () => void;
 }
 
 function BudgetItem({ budget }: { budget: BudgetProgressItem }) {
@@ -54,9 +57,9 @@ function BudgetItem({ budget }: { budget: BudgetProgressItem }) {
           )}
           <span className="truncate">{budget.category}</span>
         </span>
-        <span className="text-xs text-muted-foreground tabular-nums shrink-0">
+        <span className="text-xs font-medium tabular-nums shrink-0">
           {formatCurrency(budget.spent)}{" "}
-          <span className="text-muted-foreground/60">de</span>{" "}
+          <span className="text-muted-foreground/60 font-normal">de</span>{" "}
           {formatCurrency(budget.limit)}
         </span>
       </div>
@@ -132,6 +135,8 @@ export function BudgetProgress({
   data,
   label,
   isLoading,
+  isError,
+  onRetry,
 }: BudgetProgressProps) {
   const allExpense = (data ?? []).filter((b) => b.type === "expense");
   const allIncome = (data ?? []).filter((b) => b.type === "income");
@@ -154,6 +159,12 @@ export function BudgetProgress({
       </CardHeader>
 
       <CardContent>
+        {isError ? (
+          <QueryErrorState
+            message="Não foi possível carregar os orçamentos."
+            onRetry={() => onRetry?.()}
+          />
+        ) : (
         <Tabs defaultValue="expense" className="w-full">
           <TabsList className="w-full">
             <TabsTrigger value="expense" className="flex-1">
@@ -198,6 +209,7 @@ export function BudgetProgress({
             )}
           </TabsContent>
         </Tabs>
+        )}
       </CardContent>
     </Card>
   );

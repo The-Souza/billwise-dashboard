@@ -16,34 +16,60 @@ export default function DashboardPage() {
   const dashboardMonth = useDashboardMonth();
   const { month, year, label } = dashboardMonth;
 
-  const { data: summary, isLoading: loadingSummary } = useQuery({
+  const {
+    data: summary,
+    isLoading: loadingSummary,
+    isError: errorSummary,
+    refetch: refetchSummary,
+  } = useQuery({
     queryKey: ["dashboard-summary", month, year],
-    queryFn: () =>
-      getSummaryAction(month, year).then((r) => (r.success ? r.data : null)),
+    queryFn: async () => {
+      const r = await getSummaryAction(month, year);
+      if (!r.success) throw new Error(r.error);
+      return r.data;
+    },
   });
 
-  const { data: chartData, isLoading: loadingChart } = useQuery({
+  const {
+    data: chartData,
+    isLoading: loadingChart,
+    isError: errorChart,
+    refetch: refetchChart,
+  } = useQuery({
     queryKey: ["dashboard-chart", month, year],
-    queryFn: () =>
-      getChartDataAction(month, year, 12).then((r) =>
-        r.success ? r.data : [],
-      ),
+    queryFn: async () => {
+      const r = await getChartDataAction(month, year, 12);
+      if (!r.success) throw new Error(r.error);
+      return r.data;
+    },
   });
 
-  const { data: budgets, isLoading: loadingBudgets } = useQuery({
+  const {
+    data: budgets,
+    isLoading: loadingBudgets,
+    isError: errorBudgets,
+    refetch: refetchBudgets,
+  } = useQuery({
     queryKey: ["dashboard-budgets", month, year],
-    queryFn: () =>
-      getBudgetProgressAction(month, year).then((r) =>
-        r.success ? r.data : [],
-      ),
+    queryFn: async () => {
+      const r = await getBudgetProgressAction(month, year);
+      if (!r.success) throw new Error(r.error);
+      return r.data;
+    },
   });
 
-  const { data: accounts, isLoading: loadingAccounts } = useQuery({
+  const {
+    data: accounts,
+    isLoading: loadingAccounts,
+    isError: errorAccounts,
+    refetch: refetchAccounts,
+  } = useQuery({
     queryKey: ["dashboard-accounts", month, year],
-    queryFn: () =>
-      getRecentAccountsAction(month, year).then((r) =>
-        r.success ? r.data : [],
-      ),
+    queryFn: async () => {
+      const r = await getRecentAccountsAction(month, year);
+      if (!r.success) throw new Error(r.error);
+      return r.data;
+    },
   });
 
   function handleMonthSelect(m: number, y: number) {
@@ -64,15 +90,27 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
-        <SummaryCard data={summary ?? undefined} isLoading={loadingSummary} />
+        <SummaryCard
+          data={summary ?? undefined}
+          isLoading={loadingSummary}
+          isError={errorSummary}
+          onRetry={refetchSummary}
+        />
       </div>
 
       <div className="grid gap-4 grid-cols-1 lg:grid-cols-5">
-        <RevenueExpenseChart data={chartData} isLoading={loadingChart} />
+        <RevenueExpenseChart
+          data={chartData}
+          isLoading={loadingChart}
+          isError={errorChart}
+          onRetry={refetchChart}
+        />
         <BudgetProgress
           data={budgets}
           label={label}
           isLoading={loadingBudgets}
+          isError={errorBudgets}
+          onRetry={refetchBudgets}
         />
       </div>
 
@@ -80,6 +118,8 @@ export default function DashboardPage() {
         data={accounts}
         label={label}
         isLoading={loadingAccounts}
+        isError={errorAccounts}
+        onRetry={refetchAccounts}
       />
     </div>
   );

@@ -14,6 +14,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { QueryErrorState } from "@/components/ui/query-error-state";
 import {
   Select,
   SelectContent,
@@ -31,6 +32,8 @@ import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 interface RevenueExpenseChartProps {
   data?: ChartDataPoint[];
   isLoading?: boolean;
+  isError?: boolean;
+  onRetry?: () => void;
 }
 
 const chartConfig = {
@@ -41,6 +44,8 @@ const chartConfig = {
 export function RevenueExpenseChart({
   data = [],
   isLoading,
+  isError,
+  onRetry,
 }: RevenueExpenseChartProps) {
   const [chartPeriod, setChartPeriod] = useState("6");
 
@@ -74,6 +79,12 @@ export function RevenueExpenseChart({
       <CardContent>
         {isLoading ? (
           <Skeleton className="h-80 md:h-102 w-full rounded-lg" />
+        ) : isError ? (
+          <QueryErrorState
+            message="Não foi possível carregar o gráfico."
+            onRetry={() => onRetry?.()}
+            className="h-102"
+          />
         ) : chartData.length === 0 ? (
           <div className="h-102 w-full flex flex-col items-center justify-center gap-2 text-muted-foreground">
             <TrendingUp className="h-8 w-8 opacity-30" />

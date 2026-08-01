@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { CategoryIcon } from "@/components/ui/category-icon";
+import { QueryErrorState } from "@/components/ui/query-error-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -28,6 +29,8 @@ interface RecentAccountTableProps {
   data?: RecentAccount[];
   label: string;
   isLoading?: boolean;
+  isError?: boolean;
+  onRetry?: () => void;
 }
 
 const tableHeaders = [
@@ -50,6 +53,8 @@ export function RecentAccountTable({
   data,
   label,
   isLoading,
+  isError,
+  onRetry,
 }: RecentAccountTableProps) {
   return (
     <Card className="flex flex-col flex-1">
@@ -84,7 +89,16 @@ export function RecentAccountTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isLoading || !data ? (
+            {isError ? (
+              <TableRow className="hover:bg-transparent">
+                <TableCell colSpan={5}>
+                  <QueryErrorState
+                    message="Não foi possível carregar as contas recentes."
+                    onRetry={() => onRetry?.()}
+                  />
+                </TableCell>
+              </TableRow>
+            ) : isLoading || !data ? (
               Array.from({ length: 4 }).map((_, i) => (
                 <TableRow
                   key={i}
