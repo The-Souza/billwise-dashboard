@@ -54,6 +54,15 @@ export function RevenueExpenseChart({
     [data, chartPeriod],
   );
 
+  const chartSummary = useMemo(() => {
+    if (chartData.length === 0) return "";
+    const totalIncome = chartData.reduce((sum, d) => sum + d.income, 0);
+    const totalExpense = chartData.reduce((sum, d) => sum + d.expense, 0);
+    const first = chartData[0].month;
+    const last = chartData[chartData.length - 1].month;
+    return `Gráfico de área comparando receitas e despesas de ${first} a ${last}. Total de receitas no período: ${formatCurrency(totalIncome)}. Total de despesas no período: ${formatCurrency(totalExpense)}.`;
+  }, [chartData]);
+
   return (
     <Card className="lg:col-span-3">
       <CardHeader className="flex flex-row items-start justify-between">
@@ -66,7 +75,10 @@ export function RevenueExpenseChart({
           </CardDescription>
         </div>
         <Select value={chartPeriod} onValueChange={setChartPeriod}>
-          <SelectTrigger className="w-26 sm:w-32 h-8 text-xs">
+          <SelectTrigger
+            className="w-26 sm:w-32 h-8 text-xs"
+            aria-label="Selecionar período do gráfico"
+          >
             <SelectValue />
           </SelectTrigger>
           <SelectContent align="end">
@@ -91,7 +103,12 @@ export function RevenueExpenseChart({
             <p className="text-sm">Nenhuma movimentação neste período.</p>
           </div>
         ) : (
-          <ChartContainer config={chartConfig} className="h-80 md:h-102 w-full">
+          <ChartContainer
+            config={chartConfig}
+            className="h-80 md:h-102 w-full"
+            role="img"
+            aria-label={chartSummary}
+          >
             <AreaChart data={chartData}>
               <defs>
                 <linearGradient id="incomeGrad" x1="0" y1="0" x2="0" y2="1">

@@ -69,12 +69,13 @@ export function MonthPicker({
 
   return (
     <div className="flex items-center">
-      <ButtonGroup aria-label="Button group" className="w-full sm:w-auto">
+      <ButtonGroup aria-label="Navegação de mês" className="w-full sm:w-auto">
         <Button
           variant="outline"
           className="bg-popover w-32 sm:w-10"
           size="icon-sm"
           onClick={prev}
+          aria-label="Mês anterior"
         >
           <ChevronsLeftIcon />
         </Button>
@@ -104,6 +105,7 @@ export function MonthPicker({
                 variant="ghost"
                 size="icon-sm"
                 onClick={() => setPopoverYear((y) => y - 1)}
+                aria-label="Ano anterior"
               >
                 <ChevronsLeftIcon />
               </Button>
@@ -113,6 +115,7 @@ export function MonthPicker({
                 size="icon-sm"
                 disabled={popoverYear >= currentYear}
                 onClick={() => setPopoverYear((y) => y + 1)}
+                aria-label="Próximo ano"
               >
                 <ChevronsRightIcon />
               </Button>
@@ -151,6 +154,7 @@ export function MonthPicker({
           size="icon-sm"
           onClick={next}
           disabled={isCurrentMonth}
+          aria-label="Próximo mês"
         >
           <ChevronsRightIcon />
         </Button>
