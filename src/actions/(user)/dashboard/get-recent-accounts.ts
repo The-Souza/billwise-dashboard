@@ -52,7 +52,7 @@ export async function getRecentAccountsAction(
           },
         },
       },
-      orderBy: { created_at: "desc" },
+      orderBy: { due_date: { sort: "asc", nulls: "last" } },
       take: safeLimit,
     });
 

@@ -53,6 +53,16 @@ describe("getRecentAccountsAction", () => {
     expect(mockFindMany).not.toHaveBeenCalled();
   });
 
+  it("ordena por vencimento ascendente (mais urgente primeiro), nulls por último", async () => {
+    await getRecentAccountsAction(3, 2024);
+
+    expect(mockFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        orderBy: { due_date: { sort: "asc", nulls: "last" } },
+      }),
+    );
+  });
+
   it("usa limit padrão de 4", async () => {
     await getRecentAccountsAction(3, 2024);
 
