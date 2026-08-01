@@ -30,6 +30,7 @@ interface RecentAccountTableProps {
   label: string;
   isLoading?: boolean;
   isError?: boolean;
+  isRetrying?: boolean;
   onRetry?: () => void;
 }
 
@@ -54,6 +55,7 @@ export function RecentAccountTable({
   label,
   isLoading,
   isError,
+  isRetrying,
   onRetry,
 }: RecentAccountTableProps) {
   return (
@@ -95,6 +97,7 @@ export function RecentAccountTable({
                   <QueryErrorState
                     message="Não foi possível carregar as contas recentes."
                     onRetry={() => onRetry?.()}
+                    isRetrying={isRetrying}
                   />
                 </TableCell>
               </TableRow>

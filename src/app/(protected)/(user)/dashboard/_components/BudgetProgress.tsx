@@ -26,6 +26,7 @@ interface BudgetProgressProps {
   label: string;
   isLoading?: boolean;
   isError?: boolean;
+  isRetrying?: boolean;
   onRetry?: () => void;
 }
 
@@ -136,6 +137,7 @@ export function BudgetProgress({
   label,
   isLoading,
   isError,
+  isRetrying,
   onRetry,
 }: BudgetProgressProps) {
   const allExpense = (data ?? []).filter((b) => b.type === "expense");
@@ -165,6 +167,7 @@ export function BudgetProgress({
           <QueryErrorState
             message="Não foi possível carregar os orçamentos."
             onRetry={() => onRetry?.()}
+            isRetrying={isRetrying}
           />
         ) : (
         <Tabs defaultValue="expense" className="w-full">

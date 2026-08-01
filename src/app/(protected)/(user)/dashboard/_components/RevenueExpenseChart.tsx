@@ -33,6 +33,7 @@ interface RevenueExpenseChartProps {
   data?: ChartDataPoint[];
   isLoading?: boolean;
   isError?: boolean;
+  isRetrying?: boolean;
   onRetry?: () => void;
 }
 
@@ -45,6 +46,7 @@ export function RevenueExpenseChart({
   data = [],
   isLoading,
   isError,
+  isRetrying,
   onRetry,
 }: RevenueExpenseChartProps) {
   const [chartPeriod, setChartPeriod] = useState("6");
@@ -95,6 +97,7 @@ export function RevenueExpenseChart({
           <QueryErrorState
             message="Não foi possível carregar o gráfico."
             onRetry={() => onRetry?.()}
+            isRetrying={isRetrying}
             className="h-102"
           />
         ) : chartData.length === 0 ? (
