@@ -42,5 +42,12 @@ describe("getStatusClasses", () => {
       const critical = getStatusClasses(95, false);
       expect(warning.bar).not.toBe(critical.bar);
     });
+
+    it("aumenta a opacidade do tom de warning no dark mode para não ficar lavado", () => {
+      const result = getStatusClasses(80, false);
+      expect(result.bar).toContain("dark:bg-destructive/85");
+      expect(result.badge).toContain("dark:bg-destructive/25");
+      expect(result.badge).toContain("dark:text-destructive");
+    });
   });
 });

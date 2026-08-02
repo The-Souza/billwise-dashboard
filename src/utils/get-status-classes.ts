@@ -19,8 +19,8 @@ export function getStatusClasses(percentage: number, isIncome: boolean) {
     };
   if (percentage >= EXPENSE_WARNING_THRESHOLD)
     return {
-      bar: "bg-destructive/50",
-      badge: "bg-destructive/5 text-destructive/70",
+      bar: "bg-destructive/50 dark:bg-destructive/85",
+      badge: "bg-destructive/5 dark:bg-destructive/25 text-destructive/70 dark:text-destructive",
     };
   return {
     bar: "bg-foreground/70",
