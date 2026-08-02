@@ -57,7 +57,9 @@ export function BudgetForm({
 }: BudgetFormProps) {
   const isEditing = !!budget;
   const [raw, setRaw] = useState(budget?.limitAmount?.toString() ?? "");
-  const [formEl, setFormEl] = useState<HTMLFormElement | null>(null);
+  const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(
+    null,
+  );
 
   const form = useForm<z.infer<typeof budgetFormSchema>>({
     resolver: zodResolver(budgetFormSchema),
@@ -88,10 +90,11 @@ export function BudgetForm({
   const noCategories = visibleExpense.length === 0 && visibleIncome.length === 0;
 
   return (
-    <form
-      ref={setFormEl}
-      onSubmit={form.handleSubmit(handleSubmit)}
-      className="flex flex-col gap-5"
+    <>
+      <div ref={setPortalContainer} className="absolute" />
+      <form
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="flex flex-col gap-5"
     >
       <Controller
         name="categoryId"
@@ -159,7 +162,7 @@ export function BudgetForm({
                     disabled={isLoadingCategories}
                     showTrigger
                   />
-                  <ComboboxContent container={formEl}>
+                  <ComboboxContent container={portalContainer}>
                     <ComboboxEmpty>Sem resultados.</ComboboxEmpty>
                     <ComboboxList>
                       {(group, index) => (
@@ -248,6 +251,7 @@ export function BudgetForm({
             : form.formState.isSubmitting ? "Criando..." : "Criar orçamento"}
         </Button>
       </div>
-    </form>
+      </form>
+    </>
   );
 }
