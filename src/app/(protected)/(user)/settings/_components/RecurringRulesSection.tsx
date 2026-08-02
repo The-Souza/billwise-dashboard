@@ -44,8 +44,8 @@ export function RecurringRulesSection() {
       <Card>
         <CardHeader>
           <CardTitle className="text-sm font-heading flex items-center gap-2">
-            <div className="p-1.5 rounded-md bg-primary/10">
-              <RefreshCw className="h-3.5 w-3.5 text-primary" />
+            <div className="p-1.5 rounded-md bg-muted">
+              <RefreshCw className="h-3.5 w-3.5 text-muted-foreground" />
             </div>
             Regras recorrentes
           </CardTitle>
