@@ -275,7 +275,7 @@ export function AccountsFilters({
         </AccordionItem>
       </Accordion>
 
-      <div className="flex items-center gap-2 w-full xl:w-auto">
+      <div className="grid grid-cols-2 gap-2 w-full sm:flex xl:items-center xl:w-auto">
         <Button
           variant="outline"
           size="sm"
@@ -290,7 +290,7 @@ export function AccountsFilters({
         <Button
           variant="outline"
           size="sm"
-          className="h-8 gap-1.5 hover:text-destructive hover:border-destructive/50 w-full lg:w-auto xl:min-w-28 transition-transform ease-in hover:scale-103 active:scale-97"
+          className="h-8 gap-1.5 hover:text-destructive hover:border-destructive/50 w-full xl:w-auto xl:min-w-28 transition-transform ease-in hover:scale-103 active:scale-97"
           disabled={selectedCount === 0}
           onClick={onDelete}
         >
