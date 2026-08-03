@@ -139,7 +139,11 @@ export function useAccountsTable({ dashboardMonth }: UseAccountsTableProps) {
           : `Status de ${res.updated} contas atualizado com sucesso.`,
       );
       setRowSelection({});
-      refetch();
+      if (filters.status && filters.status !== status) {
+        setFilters((prev) => ({ ...prev, page: 1 }));
+      } else {
+        refetch();
+      }
     } else {
       appToast.error(res.error);
     }
