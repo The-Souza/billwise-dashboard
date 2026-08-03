@@ -20,8 +20,8 @@ const CARDS = [
     title: "Total receitas",
     key: "totalIncome" as const,
     icon: TrendingUp,
-    colorClass: "text-emerald-500",
-    bgClass: "bg-emerald-500/10",
+    colorClass: "text-foreground",
+    bgClass: "bg-secondary",
   },
   {
     id: "expense",
@@ -44,8 +44,8 @@ const CARDS = [
     title: "Média mensal de despesas",
     key: "avgMonthlyExpense" as const,
     icon: CalendarIcon,
-    colorClass: "text-amber-500",
-    bgClass: "bg-amber-500/10",
+    colorClass: "text-muted-foreground",
+    bgClass: "bg-muted",
   },
 ];
 

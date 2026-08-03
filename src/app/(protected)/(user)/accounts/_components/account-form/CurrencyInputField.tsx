@@ -25,7 +25,7 @@ export function CurrencyInputField<T extends FieldValues, N extends Path<T>>({
 
   return (
     <>
-      <FieldLabel htmlFor={field.name} className="text-md">
+      <FieldLabel htmlFor={field.name} className="text-md" required>
         Valor (R$)
       </FieldLabel>
       <InputGroup>

@@ -10,7 +10,7 @@ export function StatusLabel({
 }) {
   if (isIncome) {
     return budget.usedPercentage >= 100 ? (
-      <span className="text-green-600 dark:text-green-400 font-medium">
+      <span className="text-foreground font-medium">
         Meta atingida!
       </span>
     ) : (

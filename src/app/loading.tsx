@@ -11,7 +11,7 @@ export default function Loading() {
           aria-live="polite"
           className="text-lg text-primary"
         >
-          Loading…
+          Carregando…
         </span>
       </div>
     </div>

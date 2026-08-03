@@ -14,6 +14,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { QueryErrorState } from "@/components/ui/query-error-state";
 import {
   Select,
   SelectContent,
@@ -31,6 +32,9 @@ import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 interface RevenueExpenseChartProps {
   data?: ChartDataPoint[];
   isLoading?: boolean;
+  isError?: boolean;
+  isRetrying?: boolean;
+  onRetry?: () => void;
 }
 
 const chartConfig = {
@@ -41,6 +45,9 @@ const chartConfig = {
 export function RevenueExpenseChart({
   data = [],
   isLoading,
+  isError,
+  isRetrying,
+  onRetry,
 }: RevenueExpenseChartProps) {
   const [chartPeriod, setChartPeriod] = useState("6");
 
@@ -48,6 +55,15 @@ export function RevenueExpenseChart({
     () => data.slice(-Number(chartPeriod)),
     [data, chartPeriod],
   );
+
+  const chartSummary = useMemo(() => {
+    if (chartData.length === 0) return "";
+    const totalIncome = chartData.reduce((sum, d) => sum + d.income, 0);
+    const totalExpense = chartData.reduce((sum, d) => sum + d.expense, 0);
+    const first = chartData[0].month;
+    const last = chartData[chartData.length - 1].month;
+    return `Gráfico de área comparando receitas e despesas de ${first} a ${last}. Total de receitas no período: ${formatCurrency(totalIncome)}. Total de despesas no período: ${formatCurrency(totalExpense)}.`;
+  }, [chartData]);
 
   return (
     <Card className="lg:col-span-3">
@@ -61,7 +77,10 @@ export function RevenueExpenseChart({
           </CardDescription>
         </div>
         <Select value={chartPeriod} onValueChange={setChartPeriod}>
-          <SelectTrigger className="w-26 sm:w-32 h-8 text-xs">
+          <SelectTrigger
+            className="w-26 sm:w-32 h-8 text-xs"
+            aria-label="Selecionar período do gráfico"
+          >
             <SelectValue />
           </SelectTrigger>
           <SelectContent align="end">
@@ -73,14 +92,26 @@ export function RevenueExpenseChart({
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <Skeleton className="h-80 md:h-136 w-full rounded-lg" />
+          <Skeleton className="h-80 md:h-102 w-full rounded-lg" />
+        ) : isError ? (
+          <QueryErrorState
+            message="Não foi possível carregar o gráfico."
+            onRetry={() => onRetry?.()}
+            isRetrying={isRetrying}
+            className="h-102"
+          />
         ) : chartData.length === 0 ? (
-          <div className="h-136 w-full flex flex-col items-center justify-center gap-2 text-muted-foreground">
+          <div className="h-102 w-full flex flex-col items-center justify-center gap-2 text-muted-foreground">
             <TrendingUp className="h-8 w-8 opacity-30" />
             <p className="text-sm">Nenhuma movimentação neste período.</p>
           </div>
         ) : (
-          <ChartContainer config={chartConfig} className="h-80 md:h-136 w-full">
+          <ChartContainer
+            config={chartConfig}
+            className="h-80 md:h-102 w-full"
+            role="img"
+            aria-label={chartSummary}
+          >
             <AreaChart data={chartData}>
               <defs>
                 <linearGradient id="incomeGrad" x1="0" y1="0" x2="0" y2="1">

@@ -1,5 +1,6 @@
 "use client";
 
+import { capitalizeFirst } from "@/utils/format-text";
 import { useState } from "react";
 
 export type DashboardMonth = {
@@ -40,10 +41,12 @@ export function useDashboardMonth(): DashboardMonth {
     }
   }
 
-  const label = new Intl.DateTimeFormat("pt-BR", {
-    month: "long",
-    year: "numeric",
-  }).format(new Date(year, month - 1));
+  const label = capitalizeFirst(
+    new Intl.DateTimeFormat("pt-BR", {
+      month: "long",
+      year: "numeric",
+    }).format(new Date(year, month - 1)),
+  );
 
   return { month, year, label, isCurrentMonth, prev, next, setMonth, setYear };
 }

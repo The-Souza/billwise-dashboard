@@ -31,6 +31,13 @@ const MONTHS = [
   "Dez",
 ];
 
+const QUARTERS = [
+  MONTHS.slice(0, 3),
+  MONTHS.slice(3, 6),
+  MONTHS.slice(6, 9),
+  MONTHS.slice(9, 12),
+];
+
 interface MonthPickerProps extends DashboardMonth {
   onSelect: (month: number, year: number) => void;
 }
@@ -69,12 +76,13 @@ export function MonthPicker({
 
   return (
     <div className="flex items-center">
-      <ButtonGroup aria-label="Button group" className="w-full sm:w-auto">
+      <ButtonGroup aria-label="Navegação de mês" className="w-full sm:w-auto">
         <Button
           variant="outline"
           className="bg-popover w-32 sm:w-10"
           size="icon-sm"
           onClick={prev}
+          aria-label="Mês anterior"
         >
           <ChevronsLeftIcon />
         </Button>
@@ -89,7 +97,7 @@ export function MonthPicker({
           <PopoverTrigger asChild>
             <Button
               variant="outline"
-              className="w-full sm:max-w-40 h-8 px-3 gap-1.5 text-xs font-medium bg-popover capitalize min-w-40 justify-between"
+              className="w-full sm:max-w-40 h-8 px-3 gap-1.5 text-xs font-medium bg-popover min-w-40 justify-between"
             >
               <CalendarIcon className="text-muted-foreground shrink-0" />
               <span className="flex-1 text-center">{label}</span>
@@ -104,6 +112,7 @@ export function MonthPicker({
                 variant="ghost"
                 size="icon-sm"
                 onClick={() => setPopoverYear((y) => y - 1)}
+                aria-label="Ano anterior"
               >
                 <ChevronsLeftIcon />
               </Button>
@@ -113,33 +122,44 @@ export function MonthPicker({
                 size="icon-sm"
                 disabled={popoverYear >= currentYear}
                 onClick={() => setPopoverYear((y) => y + 1)}
+                aria-label="Próximo ano"
               >
                 <ChevronsRightIcon />
               </Button>
             </div>
 
-            <div className="grid grid-cols-3 gap-1">
-              {MONTHS.map((name, i) => {
-                const m = i + 1;
-                const future = isFuture(m);
-                const selected = isSelected(m);
+            <div className="flex flex-col gap-1.5">
+              {QUARTERS.map((quarter, qi) => (
+                <div
+                  key={qi}
+                  className={cn(
+                    "grid grid-cols-3 gap-1",
+                    qi > 0 && "pt-1.5 border-t border-border",
+                  )}
+                >
+                  {quarter.map((name, i) => {
+                    const m = qi * 3 + i + 1;
+                    const future = isFuture(m);
+                    const selected = isSelected(m);
 
-                return (
-                  <Button
-                    key={m}
-                    variant={selected ? "default" : "ghost"}
-                    size="sm"
-                    className={cn(
-                      "h-8 text-xs",
-                      future && "opacity-30 cursor-not-allowed",
-                    )}
-                    disabled={future}
-                    onClick={() => handleSelect(m)}
-                  >
-                    {name}
-                  </Button>
-                );
-              })}
+                    return (
+                      <Button
+                        key={m}
+                        variant={selected ? "default" : "ghost"}
+                        size="sm"
+                        className={cn(
+                          "h-8 text-xs",
+                          future && "opacity-30 cursor-not-allowed",
+                        )}
+                        disabled={future}
+                        onClick={() => handleSelect(m)}
+                      >
+                        {name}
+                      </Button>
+                    );
+                  })}
+                </div>
+              ))}
             </div>
           </PopoverContent>
         </Popover>
@@ -151,6 +171,7 @@ export function MonthPicker({
           size="icon-sm"
           onClick={next}
           disabled={isCurrentMonth}
+          aria-label="Próximo mês"
         >
           <ChevronsRightIcon />
         </Button>

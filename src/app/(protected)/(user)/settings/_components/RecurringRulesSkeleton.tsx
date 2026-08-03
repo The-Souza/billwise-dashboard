@@ -15,8 +15,8 @@ export function RecurringRulesSkeleton() {
             <Skeleton className="h-4 w-34.5 hidden sm:block" />
           </div>
           <div className="flex items-center gap-1">
-            <Skeleton className="h-7 w-7 rounded-md" />
-            <Skeleton className="h-7 w-7 rounded-md" />
+            <Skeleton className="h-8 w-8 rounded-md" />
+            <Skeleton className="h-8 w-8 rounded-md" />
           </div>
         </div>
       ))}

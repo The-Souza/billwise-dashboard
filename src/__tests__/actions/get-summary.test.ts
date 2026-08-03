@@ -49,10 +49,25 @@ describe("getSummaryAction", () => {
     }
   });
 
-  it("retorna trend 0 quando mês anterior não tem dados (prev=0)", async () => {
+  it("retorna trend null quando mês anterior não tem dados (prev=0)", async () => {
     mockQueryRaw
       .mockResolvedValueOnce([{ total_income: 1000, total_expense: 500, balance: 500 }])
       .mockResolvedValueOnce([]);
+
+    const result = await getSummaryAction(3, 2024);
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.balanceTrend).toBeNull();
+      expect(result.data.incomeTrend).toBeNull();
+      expect(result.data.expenseTrend).toBeNull();
+    }
+  });
+
+  it("retorna trend 0 quando atual e anterior são iguais e ambos maiores que zero", async () => {
+    mockQueryRaw
+      .mockResolvedValueOnce([{ total_income: 1000, total_expense: 500, balance: 500 }])
+      .mockResolvedValueOnce([{ total_income: 1000, total_expense: 500, balance: 500 }]);
 
     const result = await getSummaryAction(3, 2024);
 

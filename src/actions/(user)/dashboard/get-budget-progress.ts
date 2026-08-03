@@ -13,6 +13,7 @@ export type BudgetProgressItem = {
   limit: number;
   usedPercentage: number;
   type: category_type;
+  totalCount: number;
 };
 
 type GetBudgetProgressResult =
@@ -40,6 +41,7 @@ export async function getBudgetProgressAction(
         spent_amount: number;
         used_percentage: number;
         category_type: category_type;
+        total_count: number;
       }[]
     >`
       SELECT
@@ -49,7 +51,8 @@ export async function getBudgetProgressAction(
         budget_amount,
         spent_amount,
         used_percentage,
-        category_type
+        category_type,
+        total_count
       FROM (
         SELECT
           bva.category_id,
@@ -62,7 +65,8 @@ export async function getBudgetProgressAction(
           ROW_NUMBER() OVER (
             PARTITION BY c.type
             ORDER BY bva.used_percentage DESC
-          ) AS rn
+          ) AS rn,
+          COUNT(*) OVER (PARTITION BY c.type) AS total_count
         FROM public.budget_vs_actual bva
         JOIN public.categories c ON c.id = bva.category_id
         WHERE bva.workspace_id = ${ctx.workspaceId}::uuid
@@ -81,6 +85,7 @@ export async function getBudgetProgressAction(
       limit: row.budget_amount,
       usedPercentage: row.used_percentage,
       type: row.category_type,
+      totalCount: Number(row.total_count),
     }));
 
     return { success: true, data };

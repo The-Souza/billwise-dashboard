@@ -8,6 +8,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { CategoryIcon } from "@/components/ui/category-icon";
+import { QueryErrorState } from "@/components/ui/query-error-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -20,13 +22,16 @@ import {
 import { formatCurrency } from "@/utils/format-currency";
 import { formatDate } from "@/utils/format-date";
 import { capitalizeFirst } from "@/utils/format-text";
-import { ArrowRight, icons } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 interface RecentAccountTableProps {
   data?: RecentAccount[];
   label: string;
   isLoading?: boolean;
+  isError?: boolean;
+  isRetrying?: boolean;
+  onRetry?: () => void;
 }
 
 const tableHeaders = [
@@ -49,6 +54,9 @@ export function RecentAccountTable({
   data,
   label,
   isLoading,
+  isError,
+  isRetrying,
+  onRetry,
 }: RecentAccountTableProps) {
   return (
     <Card className="flex flex-col flex-1">
@@ -73,7 +81,9 @@ export function RecentAccountTable({
               {tableHeaders.map((header) => (
                 <TableHead
                   key={header.label}
-                  className={`text-${header.align || "left"}`}
+                  className={
+                    header.align === "right" ? "text-right" : "text-left"
+                  }
                 >
                   {header.label}
                 </TableHead>
@@ -81,8 +91,18 @@ export function RecentAccountTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isLoading || !data ? (
-              Array.from({ length: 8 }).map((_, i) => (
+            {isError ? (
+              <TableRow className="hover:bg-transparent">
+                <TableCell colSpan={5}>
+                  <QueryErrorState
+                    message="Não foi possível carregar as contas recentes."
+                    onRetry={() => onRetry?.()}
+                    isRetrying={isRetrying}
+                  />
+                </TableCell>
+              </TableRow>
+            ) : isLoading || !data ? (
+              Array.from({ length: 4 }).map((_, i) => (
                 <TableRow
                   key={i}
                   className="*:border-border [&>:not(:last-child)]:border-r odd:bg-muted/50 odd:hover:bg-muted/50 hover:bg-transparent h-11"
@@ -111,11 +131,6 @@ export function RecentAccountTable({
             ) : (
               data.map((account) => {
                 const isIncome = account.categoryType === "income";
-                const IconComponent = account.categoryIcon
-                  ? (icons[
-                      account.categoryIcon as keyof typeof icons
-                    ] as React.ElementType)
-                  : null;
                 return (
                   <TableRow
                     key={account.id}
@@ -126,9 +141,10 @@ export function RecentAccountTable({
                     </TableCell>
                     <TableCell>
                       <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                        {IconComponent && (
-                          <IconComponent className="h-3.5 w-3.5" />
-                        )}
+                        <CategoryIcon
+                          name={account.categoryIcon}
+                          className="h-3.5 w-3.5"
+                        />
                         {account.category}
                       </span>
                     </TableCell>
@@ -141,7 +157,7 @@ export function RecentAccountTable({
                     <TableCell className="text-right font-medium">
                       <span
                         className={
-                          isIncome ? "text-emerald-500" : "text-destructive"
+                          isIncome ? "text-foreground" : "text-destructive"
                         }
                       >
                         {isIncome ? "+" : "-"} {formatCurrency(account.amount)}

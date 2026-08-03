@@ -36,7 +36,9 @@ export function SidebarNavigation() {
               >
                 <Link href={item.url}>
                   <item.icon />
-                  {item.title}
+                  <span className="min-w-0 flex-1 truncate">
+                    {item.title}
+                  </span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

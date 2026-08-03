@@ -12,8 +12,8 @@ export function BudgetsSkeleton() {
               <Skeleton className="h-5 w-28" />
             </div>
             <div className="flex gap-0.5 items-center">
-              <Skeleton className="h-7 w-7 rounded-md" />
-              <Skeleton className="h-7 w-7 rounded-md" />
+              <Skeleton className="h-8 w-8 rounded-md" />
+              <Skeleton className="h-8 w-8 rounded-md" />
             </div>
           </div>
           <div className="flex flex-col gap-2.5">

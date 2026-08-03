@@ -50,3 +50,9 @@ claude*
 
 # playwright
 .playwright*
+
+# agents
+.agents
+
+# impeccable
+.impeccable

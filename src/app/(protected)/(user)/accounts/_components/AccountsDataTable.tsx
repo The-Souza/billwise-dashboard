@@ -19,8 +19,10 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useMemo } from "react";
 import { AccountsFilters } from "./AccountsFilters";
 import { DeleteAccountDialog } from "./DeleteAccountDialog";
+import { UpdateStatusDialog } from "./UpdateStatusDialog";
 import { accountColumns } from "./accounts-columns";
 
 interface AccountsDataTableProps {
@@ -63,22 +65,33 @@ export function AccountsDataTable({
     deleteDialog,
     setDeleteDialog,
     isDeleting,
+    statusDialog,
+    setStatusDialog,
+    isUpdatingStatus,
     handleFiltersChange,
     handleSort,
     handleDeleteSelected,
     handleDeleteSingle,
     handleConfirmDelete,
+    handleChangeStatusSelected,
+    handleConfirmStatusChange,
     PAGE_SIZE,
   } = useAccountsTable({ dashboardMonth });
+
+  const columns = useMemo(
+    () =>
+      accountColumns(handleDeleteSingle, {
+        key: sortKey,
+        dir: sortDir,
+        onSort: handleSort,
+      }),
+    [handleDeleteSingle, sortKey, sortDir, handleSort],
+  );
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: accounts,
-    columns: accountColumns(handleDeleteSingle, {
-      key: sortKey,
-      dir: sortDir,
-      onSort: handleSort,
-    }),
+    columns,
     manualPagination: true,
     pageCount: totalPages,
     getCoreRowModel: getCoreRowModel(),
@@ -91,7 +104,7 @@ export function AccountsDataTable({
 
   return (
     <div className="flex flex-col gap-3 flex-1">
-      <div className="flex flex-col-reverse lg:flex-row justify-between items-start lg:items-end gap-2">
+      <div className="flex flex-col-reverse xl:flex-row justify-between items-start xl:items-end gap-4">
         <p className="text-xs text-muted-foreground">
           {isLoading
             ? "0 contas encontradas"
@@ -105,6 +118,7 @@ export function AccountsDataTable({
           categories={categories}
           onFiltersChange={handleFiltersChange}
           onDelete={handleDeleteSelected}
+          onChangeStatus={handleChangeStatusSelected}
           onImportSuccess={refetch}
         />
       </div>
@@ -197,8 +211,8 @@ export function AccountsDataTable({
         <div className="flex items-center gap-1">
           <Button
             variant="outline"
-            size="icon"
-            className="h-7 w-7 transition-transform ease-in hover:scale-103 active:scale-97"
+            size="icon-sm"
+            className="transition-transform ease-in hover:scale-103 active:scale-97"
             onClick={() => handleFiltersChange({ page: page - 1 })}
             disabled={page <= 1 || isLoading}
           >
@@ -209,8 +223,8 @@ export function AccountsDataTable({
           </span>
           <Button
             variant="outline"
-            size="icon"
-            className="h-7 w-7 transition-transform ease-in hover:scale-103 active:scale-97"
+            size="icon-sm"
+            className="transition-transform ease-in hover:scale-103 active:scale-97"
             onClick={() => handleFiltersChange({ page: page + 1 })}
             disabled={page >= totalPages || isLoading}
           >
@@ -225,6 +239,14 @@ export function AccountsDataTable({
         onConfirm={handleConfirmDelete}
         onCancel={() => setDeleteDialog({ open: false, accounts: [] })}
         isDeleting={isDeleting}
+      />
+
+      <UpdateStatusDialog
+        open={statusDialog.open}
+        accounts={statusDialog.accounts}
+        onConfirm={handleConfirmStatusChange}
+        onCancel={() => setStatusDialog({ open: false, accounts: [] })}
+        isUpdating={isUpdatingStatus}
       />
     </div>
   );
