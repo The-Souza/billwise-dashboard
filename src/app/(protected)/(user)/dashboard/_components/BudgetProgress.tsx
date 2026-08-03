@@ -53,7 +53,10 @@ function BudgetItem({ budget }: { budget: BudgetProgressItem }) {
         <span className="flex items-center gap-2 text-sm font-medium min-w-0">
           {budget.icon && (
             <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-muted">
-              <CategoryIcon name={budget.icon} className="h-3.5 w-3.5 text-muted-foreground" />
+              <CategoryIcon
+                name={budget.icon}
+                className="h-3.5 w-3.5 text-muted-foreground"
+              />
             </span>
           )}
           <span className="truncate">{budget.category}</span>
@@ -92,28 +95,36 @@ function BudgetItem({ budget }: { budget: BudgetProgressItem }) {
 function BudgetSkeleton() {
   return (
     <>
-      {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="flex flex-col gap-2 h-17">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <Skeleton className="h-5 w-5 rounded" />
-              <Skeleton className="h-4 w-24" />
+      <div className="flex flex-col gap-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="flex flex-col gap-2 h-17">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-5 w-5 rounded" />
+                <Skeleton className="h-4 w-24" />
+              </div>
+              <Skeleton className="h-4 w-28" />
             </div>
-            <Skeleton className="h-4 w-28" />
+            <Skeleton className="h-2.5 w-full rounded-full" />
+            <div className="flex justify-end">
+              <Skeleton className="h-5 w-20 rounded-full" />
+            </div>
           </div>
-          <Skeleton className="h-2.5 w-full rounded-full" />
-          <div className="flex justify-end">
-            <Skeleton className="h-5 w-20 rounded-full" />
-          </div>
-        </div>
-      ))}
+        ))}
+        <Skeleton className="h-4 w-22" />
+      </div>
     </>
   );
 }
 
 function MoreLink({ count }: { count: number }) {
   return (
-    <Button variant="link" size="sm" className="text-xs h-auto p-0 self-start" asChild>
+    <Button
+      variant="link"
+      size="sm"
+      className="text-xs h-auto p-0 self-start"
+      asChild
+    >
       <Link href="/budgets">
         +{count} {count === 1 ? "orçamento" : "orçamentos"}
       </Link>
@@ -170,50 +181,50 @@ export function BudgetProgress({
             isRetrying={isRetrying}
           />
         ) : (
-        <Tabs defaultValue="expense" className="w-full">
-          <TabsList className="w-full">
-            <TabsTrigger value="expense" className="flex-1">
-              Despesas
-            </TabsTrigger>
-            <TabsTrigger value="income" className="flex-1">
-              Metas
-            </TabsTrigger>
-          </TabsList>
+          <Tabs defaultValue="expense" className="w-full">
+            <TabsList className="w-full">
+              <TabsTrigger value="expense" className="flex-1">
+                Despesas
+              </TabsTrigger>
+              <TabsTrigger value="income" className="flex-1">
+                Metas
+              </TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="expense" className="flex flex-col gap-4 mt-4">
-            {isLoading ? (
-              <BudgetSkeleton />
-            ) : expense.length === 0 ? (
-              <EmptyState message="Nenhum orçamento de despesa definido." />
-            ) : (
-              <>
-                {expense.map((b) => (
-                  <BudgetItem key={b.id} budget={b} />
-                ))}
-                {totalExpense > expense.length && (
-                  <MoreLink count={totalExpense - expense.length} />
-                )}
-              </>
-            )}
-          </TabsContent>
+            <TabsContent value="expense" className="flex flex-col gap-4 mt-4">
+              {isLoading ? (
+                <BudgetSkeleton />
+              ) : expense.length === 0 ? (
+                <EmptyState message="Nenhum orçamento de despesa definido." />
+              ) : (
+                <>
+                  {expense.map((b) => (
+                    <BudgetItem key={b.id} budget={b} />
+                  ))}
+                  {totalExpense > expense.length && (
+                    <MoreLink count={totalExpense - expense.length} />
+                  )}
+                </>
+              )}
+            </TabsContent>
 
-          <TabsContent value="income" className="flex flex-col gap-4 mt-4">
-            {isLoading ? (
-              <BudgetSkeleton />
-            ) : income.length === 0 ? (
-              <EmptyState message="Nenhuma meta de receita definida." />
-            ) : (
-              <>
-                {income.map((b) => (
-                  <BudgetItem key={b.id} budget={b} />
-                ))}
-                {totalIncome > income.length && (
-                  <MoreLink count={totalIncome - income.length} />
-                )}
-              </>
-            )}
-          </TabsContent>
-        </Tabs>
+            <TabsContent value="income" className="flex flex-col gap-4 mt-4">
+              {isLoading ? (
+                <BudgetSkeleton />
+              ) : income.length === 0 ? (
+                <EmptyState message="Nenhuma meta de receita definida." />
+              ) : (
+                <>
+                  {income.map((b) => (
+                    <BudgetItem key={b.id} budget={b} />
+                  ))}
+                  {totalIncome > income.length && (
+                    <MoreLink count={totalIncome - income.length} />
+                  )}
+                </>
+              )}
+            </TabsContent>
+          </Tabs>
         )}
       </CardContent>
     </Card>
