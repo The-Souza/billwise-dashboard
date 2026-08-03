@@ -2,6 +2,12 @@
 
 import { AccountFilters } from "@/actions/(user)/accounts/get-accounts";
 import { CategoryOption } from "@/actions/(user)/accounts/get-categories";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import {
   Combobox,
@@ -38,12 +44,17 @@ import {
 import { account_status } from "@/generated/prisma/enums";
 import { useAccountsFileActions } from "@/hooks/use-accounts-file-actions";
 import { useMobile } from "@/hooks/use-mobile";
-import { buildCategoryGroups, findCategoryItem } from "@/utils/category-combobox";
+import {
+  buildCategoryGroups,
+  findCategoryItem,
+} from "@/utils/category-combobox";
 import { STATUS_OPTIONS } from "@/utils/status-options";
 import {
   ChevronDownIcon,
+  CircleCheckIcon,
   DownloadIcon,
   FileTextIcon,
+  FilterXIcon,
   PlusIcon,
   Trash2Icon,
   UploadIcon,
@@ -59,6 +70,7 @@ interface AccountsFiltersProps {
   categories: CategoryOption[];
   onFiltersChange: (filters: Partial<AccountFilters>) => void;
   onDelete: () => void;
+  onChangeStatus: () => void;
   onImportSuccess?: () => void;
 }
 
@@ -68,6 +80,7 @@ export function AccountsFilters({
   categories,
   onFiltersChange,
   onDelete,
+  onChangeStatus,
   onImportSuccess,
 }: AccountsFiltersProps) {
   const [titleInput, setTitleInput] = useState(filters.title ?? "");
@@ -89,12 +102,34 @@ export function AccountsFilters({
     debouncedTitleChange(titleInput);
   }, [titleInput, debouncedTitleChange]);
 
-  return (
-    <div className="flex flex-col lg:flex-row items-center justify-between gap-2 w-full lg:w-auto">
-      <div className="grid grid-cols-2 lg:flex lg:flex-wrap items-center gap-2 w-full lg:w-auto">
+  const activeFilterCount = [
+    filters.title,
+    filters.categoryId,
+    filters.status,
+  ].filter(Boolean).length;
+
+  function handleClearFilters() {
+    setTitleInput("");
+    onFiltersChange({
+      title: undefined,
+      categoryId: undefined,
+      status: undefined,
+      page: 1,
+    });
+  }
+
+  function renderFilterInputs(idSuffix: string) {
+    const categoryGroups = buildCategoryGroups(
+      categories.filter((cat) => cat.type === "expense"),
+      categories.filter((cat) => cat.type === "income"),
+    );
+    const selectedItem = findCategoryItem(categoryGroups, filters.categoryId);
+
+    return (
+      <>
         <InputGroup className="h-8 col-span-2 lg:w-40 xl:w-60">
           <InputGroupInput
-            id="filter-title"
+            id={`filter-title${idSuffix}`}
             aria-label="Buscar por título"
             autoComplete="off"
             placeholder="Buscar por título..."
@@ -116,53 +151,41 @@ export function AccountsFilters({
           )}
         </InputGroup>
 
-        {(() => {
-          const categoryGroups = buildCategoryGroups(
-            categories.filter((cat) => cat.type === "expense"),
-            categories.filter((cat) => cat.type === "income"),
-          );
-          const selectedItem = findCategoryItem(categoryGroups, filters.categoryId);
-
-          return (
-            <Combobox
-              items={categoryGroups}
-              value={selectedItem}
-              onValueChange={(item) =>
-                onFiltersChange({ categoryId: item?.id, page: 1 })
-              }
-              itemToStringLabel={(item) => item.name}
-            >
-              <ComboboxInput
-                id="filter-category"
-                aria-label="Filtrar por categoria"
-                className="h-8 w-full lg:w-35 xl:w-60 text-xs"
-                placeholder="Categoria"
-                showTrigger
-                showClear={!!filters.categoryId}
-              />
-              <ComboboxContent className="w-auto">
-                <ComboboxEmpty>Sem resultados.</ComboboxEmpty>
-                <ComboboxList>
-                  {(group, index) => (
-                    <ComboboxGroup key={group.label} items={group.items}>
-                      <ComboboxLabel>{group.label}</ComboboxLabel>
-                      <ComboboxCollection>
-                        {(item) => (
-                          <ComboboxItem key={item.id} value={item}>
-                            {item.name}
-                          </ComboboxItem>
-                        )}
-                      </ComboboxCollection>
-                      {index < categoryGroups.length - 1 && (
-                        <ComboboxSeparator />
-                      )}
-                    </ComboboxGroup>
-                  )}
-                </ComboboxList>
-              </ComboboxContent>
-            </Combobox>
-          );
-        })()}
+        <Combobox
+          items={categoryGroups}
+          value={selectedItem}
+          onValueChange={(item) =>
+            onFiltersChange({ categoryId: item?.id, page: 1 })
+          }
+          itemToStringLabel={(item) => item.name}
+        >
+          <ComboboxInput
+            id={`filter-category${idSuffix}`}
+            aria-label="Filtrar por categoria"
+            className="h-8 w-full lg:w-35 xl:w-60 text-xs"
+            placeholder="Categoria"
+            showTrigger
+            showClear={!!filters.categoryId}
+          />
+          <ComboboxContent className="w-auto">
+            <ComboboxEmpty>Sem resultados.</ComboboxEmpty>
+            <ComboboxList>
+              {(group, index) => (
+                <ComboboxGroup key={group.label} items={group.items}>
+                  <ComboboxLabel>{group.label}</ComboboxLabel>
+                  <ComboboxCollection>
+                    {(item) => (
+                      <ComboboxItem key={item.id} value={item}>
+                        {item.name}
+                      </ComboboxItem>
+                    )}
+                  </ComboboxCollection>
+                  {index < categoryGroups.length - 1 && <ComboboxSeparator />}
+                </ComboboxGroup>
+              )}
+            </ComboboxList>
+          </ComboboxContent>
+        </Combobox>
 
         <Select
           value={filters.status ?? "all"}
@@ -173,7 +196,11 @@ export function AccountsFilters({
             })
           }
         >
-          <SelectTrigger className="h-8 w-full lg:w-35" aria-label="Filtrar por status">
+          <SelectTrigger
+            id={`filter-status${idSuffix}`}
+            className="h-8 w-full lg:w-35"
+            aria-label="Filtrar por status"
+          >
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
@@ -185,9 +212,81 @@ export function AccountsFilters({
             ))}
           </SelectContent>
         </Select>
+      </>
+    );
+  }
+
+  return (
+    <div className="flex flex-col lg:flex-row items-center justify-between gap-2 w-full xl:w-auto">
+      {/* Desktop (lg+): filtros sempre visíveis, inline */}
+      <div className="hidden lg:flex items-center gap-2 w-full lg:w-auto">
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          className="shrink-0 text-primary hover:text-primary/80"
+          onClick={handleClearFilters}
+          aria-label="Limpar filtros"
+          disabled={isBusy || activeFilterCount === 0}
+        >
+          <FilterXIcon className="h-3.5 w-3.5" />
+        </Button>
+        {renderFilterInputs("")}
       </div>
 
-      <div className="flex items-center gap-2 w-full lg:w-auto">
+      {/* Mobile/tablet (<lg): filtros recolhidos num accordion */}
+      <Accordion
+        type="single"
+        collapsible
+        className="w-full lg:hidden bg-card border border-border rounded-md"
+      >
+        <AccordionItem value="filters" className="border-none">
+          <AccordionTrigger
+            className="h-8 py-0 gap-1.5 text-sm hover:no-underline"
+            leading={
+              <Button
+                variant="ghost"
+                size="icon-xs"
+                className="shrink-0 h-6 w-6 text-primary hover:text-primary/80"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleClearFilters();
+                }}
+                aria-label="Limpar filtros"
+                disabled={isBusy || activeFilterCount === 0}
+              >
+                <FilterXIcon className="h-3.5 w-3.5" />
+              </Button>
+            }
+          >
+            <span className="flex items-center gap-1.5">
+              Filtros
+              {activeFilterCount > 0 && (
+                <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-xs font-medium text-primary-foreground">
+                  {activeFilterCount}
+                </span>
+              )}
+            </span>
+          </AccordionTrigger>
+          <AccordionContent className="p-4 pt-1">
+            <div className="grid grid-cols-2 items-center gap-2 w-full">
+              {renderFilterInputs("-mobile")}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+
+      <div className="flex items-center gap-2 w-full xl:w-auto">
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-8 gap-1.5 w-full xl:w-auto xl:min-w-28 transition-transform ease-in hover:scale-103 active:scale-97"
+          disabled={selectedCount === 0}
+          onClick={onChangeStatus}
+        >
+          <CircleCheckIcon />
+          Status
+        </Button>
+
         <Button
           variant="outline"
           size="sm"
@@ -204,7 +303,7 @@ export function AccountsFilters({
             <Button
               variant="outline"
               size="sm"
-              className="h-8 gap-1.5 text-xs w-full lg:w-auto xl:min-w-28 transition-transform ease-in hover:scale-103 active:scale-97"
+              className="h-8 gap-1.5 text-xs w-full xl:w-auto xl:min-w-28 transition-transform ease-in hover:scale-103 active:scale-97"
               disabled={isBusy}
             >
               Arquivo
@@ -244,7 +343,7 @@ export function AccountsFilters({
 
         <Button
           size="sm"
-          className="h-8 gap-1.5 text-xs w-full lg:w-auto xl:min-w-28 transition-transform ease-in hover:scale-103 active:scale-97"
+          className="h-8 gap-1.5 text-xs w-full xl:w-auto xl:min-w-28 transition-transform ease-in hover:scale-103 active:scale-97"
           asChild
         >
           <Link href="/accounts/add-account">

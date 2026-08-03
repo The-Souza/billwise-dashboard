@@ -16,13 +16,13 @@ const TYPE_ICON: Record<string, React.ReactNode> = {
     </div>
   ),
   due_soon: (
-    <div className="p-1.5 rounded-md bg-amber-600/10 shrink-0">
-      <AlertCircleIcon className="size-3.5 text-amber-500" />
+    <div className="p-1.5 rounded-md bg-primary/10 shrink-0">
+      <AlertCircleIcon className="size-3.5 text-primary" />
     </div>
   ),
   budget_exceeded: (
-    <div className="p-1.5 rounded-md bg-orange-500/10 shrink-0">
-      <TrendingUpIcon className="size-3.5 text-orange-500" />
+    <div className="p-1.5 rounded-md bg-destructive/10 shrink-0">
+      <TrendingUpIcon className="size-3.5 text-destructive" />
     </div>
   ),
   recurring_generated: (
@@ -31,8 +31,8 @@ const TYPE_ICON: Record<string, React.ReactNode> = {
     </div>
   ),
   workspace_invite: (
-    <div className="p-1.5 rounded-md bg-violet-500/10 shrink-0">
-      <BellIcon className="size-3.5 text-violet-500" />
+    <div className="p-1.5 rounded-md bg-secondary shrink-0">
+      <BellIcon className="size-3.5 text-foreground" />
     </div>
   ),
 };

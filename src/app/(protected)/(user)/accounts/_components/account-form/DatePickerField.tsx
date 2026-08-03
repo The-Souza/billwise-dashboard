@@ -13,16 +13,18 @@ interface DatePickerFieldProps<T extends FieldValues, N extends Path<T>> {
   field: ControllerRenderProps<T, N>;
   fieldState: ControllerFieldState;
   label: string;
+  required?: boolean;
 }
 
 export function DatePickerField<T extends FieldValues, N extends Path<T>>({
   field,
   fieldState,
   label,
+  required,
 }: DatePickerFieldProps<T, N>) {
   return (
     <>
-      <FieldLabel htmlFor={field.name} className="text-md">
+      <FieldLabel htmlFor={field.name} className="text-md" required={required}>
         {label}
       </FieldLabel>
       <DatePickerInput

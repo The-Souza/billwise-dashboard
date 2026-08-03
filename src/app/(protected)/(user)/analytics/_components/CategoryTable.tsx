@@ -9,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { CategoryIcon } from "@/components/ui/category-icon";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -26,7 +27,7 @@ import {
 } from "@/hooks/use-category-table";
 import { formatCurrency } from "@/utils/format-currency";
 import { capitalizeFirst, formatPercentage } from "@/utils/format-text";
-import { ChevronLeft, ChevronRight, icons, RefreshCw } from "lucide-react";
+import { ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
 
 interface CategoryTableProps {
   data?: CategoryBreakdownItem[];
@@ -113,12 +114,6 @@ export function CategoryTable({ data = [], isLoading }: CategoryTableProps) {
               </TableRow>
             ) : (
               paged.map((item) => {
-                const IconComponent = item.categoryIcon
-                  ? (icons[
-                      item.categoryIcon as keyof typeof icons
-                    ] as React.ElementType)
-                  : null;
-
                 return (
                   <TableRow
                     key={item.categoryId}
@@ -126,11 +121,14 @@ export function CategoryTable({ data = [], isLoading }: CategoryTableProps) {
                   >
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <div className="p-1.5 rounded-md bg-primary/10 shrink-0">
-                          {IconComponent ? (
-                            <IconComponent className="h-3.5 w-3.5 text-primary" />
+                        <div className="p-1.5 rounded-md bg-muted shrink-0">
+                          {item.categoryIcon ? (
+                            <CategoryIcon
+                              name={item.categoryIcon}
+                              className="h-3.5 w-3.5 text-muted-foreground"
+                            />
                           ) : (
-                            <RefreshCw className="h-3.5 w-3.5 text-primary" />
+                            <RefreshCw className="h-3.5 w-3.5 text-muted-foreground" />
                           )}
                         </div>
                         <span className="font-medium">
@@ -167,8 +165,7 @@ export function CategoryTable({ data = [], isLoading }: CategoryTableProps) {
             <div className="flex items-center gap-1">
               <Button
                 variant="ghost"
-                size="icon"
-                className="h-7 w-7"
+                size="icon-sm"
                 disabled={page === 0}
                 onClick={() => setPage((p) => p - 1)}
               >
@@ -176,8 +173,7 @@ export function CategoryTable({ data = [], isLoading }: CategoryTableProps) {
               </Button>
               <Button
                 variant="ghost"
-                size="icon"
-                className="h-7 w-7"
+                size="icon-sm"
                 disabled={page >= totalPages - 1}
                 onClick={() => setPage((p) => p + 1)}
               >

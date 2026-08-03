@@ -26,6 +26,7 @@ const MOCK_ROW = {
   spent_amount: 200,
   used_percentage: 40,
   category_type: "expense",
+  total_count: 1,
 };
 
 beforeEach(() => {
@@ -49,7 +50,24 @@ describe("getBudgetProgressAction", () => {
         limit: 500,
         usedPercentage: 40,
         type: "expense",
+        totalCount: 1,
       });
+    }
+  });
+
+  it("mapeia totalCount separado da lista truncada de linhas retornadas", async () => {
+    mockQueryRaw.mockResolvedValue([
+      { ...MOCK_ROW, category_id: "cat-1", total_count: 10 },
+      { ...MOCK_ROW, category_id: "cat-2", total_count: 10 },
+    ]);
+
+    const result = await getBudgetProgressAction(3, 2024);
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data).toHaveLength(2);
+      expect(result.data[0].totalCount).toBe(10);
+      expect(result.data[1].totalCount).toBe(10);
     }
   });
 

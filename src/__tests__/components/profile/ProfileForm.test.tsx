@@ -46,8 +46,8 @@ describe("ProfileForm", () => {
 
   it("campos estão desabilitados no modo visualização", () => {
     render(<ProfileForm user={user} />);
-    expect(screen.getByLabelText("Nome Completo")).toBeDisabled();
-    expect(screen.getByLabelText("Email")).toBeDisabled();
+    expect(screen.getByLabelText("Nome Completo", { exact: false })).toBeDisabled();
+    expect(screen.getByLabelText("Email", { exact: false })).toBeDisabled();
   });
 
   it("exibe botão Editar e habilita campos ao clicar", async () => {
@@ -56,8 +56,8 @@ describe("ProfileForm", () => {
 
     await userEvent_.click(screen.getByRole("button", { name: /editar/i }));
 
-    expect(screen.getByLabelText("Nome Completo")).toBeEnabled();
-    expect(screen.getByLabelText("Email")).toBeEnabled();
+    expect(screen.getByLabelText("Nome Completo", { exact: false })).toBeEnabled();
+    expect(screen.getByLabelText("Email", { exact: false })).toBeEnabled();
     expect(screen.getByRole("button", { name: /salvar/i })).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /cancelar/i }),
@@ -71,7 +71,7 @@ describe("ProfileForm", () => {
     await userEvent_.click(screen.getByRole("button", { name: /editar/i }));
     await userEvent_.click(screen.getByRole("button", { name: /cancelar/i }));
 
-    expect(screen.getByLabelText("Nome Completo")).toBeDisabled();
+    expect(screen.getByLabelText("Nome Completo", { exact: false })).toBeDisabled();
     expect(screen.getByRole("button", { name: /editar/i })).toBeInTheDocument();
   });
 

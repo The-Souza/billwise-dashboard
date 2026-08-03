@@ -27,10 +27,10 @@ async function fillForm(
   user: ReturnType<typeof userEvent.setup>,
   data = VALID_DATA,
 ) {
-  await user.type(screen.getByLabelText("Senha Atual"), data.currentPassword);
-  await user.type(screen.getByLabelText("Nova Senha"), data.newPassword);
+  await user.type(screen.getByLabelText("Senha Atual", { exact: false }), data.currentPassword);
+  await user.type(screen.getByLabelText(/^Nova Senha/), data.newPassword);
   await user.type(
-    screen.getByLabelText("Confirmar Nova Senha"),
+    screen.getByLabelText("Confirmar Nova Senha", { exact: false }),
     data.confirmNewPassword,
   );
 }
@@ -42,9 +42,9 @@ describe("ChangePasswordForm", () => {
 
   it("renderiza os três campos de senha e o botão de submit", () => {
     render(<ChangePasswordForm />);
-    expect(screen.getByLabelText("Senha Atual")).toBeInTheDocument();
-    expect(screen.getByLabelText("Nova Senha")).toBeInTheDocument();
-    expect(screen.getByLabelText("Confirmar Nova Senha")).toBeInTheDocument();
+    expect(screen.getByLabelText("Senha Atual", { exact: false })).toBeInTheDocument();
+    expect(screen.getByLabelText(/^Nova Senha/)).toBeInTheDocument();
+    expect(screen.getByLabelText("Confirmar Nova Senha", { exact: false })).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /mudar senha/i }),
     ).toBeInTheDocument();
@@ -74,9 +74,9 @@ describe("ChangePasswordForm", () => {
       },
     );
 
-    const currentInput = screen.getByLabelText("Senha Atual");
-    const newInput = screen.getByLabelText("Nova Senha");
-    const confirmInput = screen.getByLabelText("Confirmar Nova Senha");
+    const currentInput = screen.getByLabelText("Senha Atual", { exact: false });
+    const newInput = screen.getByLabelText(/^Nova Senha/);
+    const confirmInput = screen.getByLabelText("Confirmar Nova Senha", { exact: false });
 
     expect(currentInput).toHaveAttribute("type", "password");
     await user.click(toggleCurrent);
@@ -142,7 +142,7 @@ describe("ChangePasswordForm", () => {
     await user.click(screen.getByRole("button", { name: /mudar senha/i }));
 
     await waitFor(() => {
-      expect(screen.getByLabelText("Senha Atual")).toHaveValue("");
+      expect(screen.getByLabelText("Senha Atual", { exact: false })).toHaveValue("");
     });
   });
 });

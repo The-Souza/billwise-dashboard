@@ -9,12 +9,9 @@ export const appToast = {
     toast.success(message, {
       ...baseOptions,
       style: {
-        "--normal-bg":
-          "color-mix(in oklab, light-dark(var(--color-green-600), var(--color-green-400)) 10%, var(--background))",
-        "--normal-text":
-          "light-dark(var(--color-green-600), var(--color-green-400))",
-        "--normal-border":
-          "light-dark(var(--color-green-600), var(--color-green-400))",
+        "--normal-bg": "color-mix(in oklab, var(--primary) 10%, var(--background))",
+        "--normal-text": "var(--primary)",
+        "--normal-border": "var(--primary)",
       } as React.CSSProperties,
     }),
 
@@ -33,12 +30,9 @@ export const appToast = {
     toast.info(message, {
       ...baseOptions,
       style: {
-        "--normal-bg":
-          "color-mix(in oklab, light-dark(var(--color-sky-600), var(--color-sky-400)) 10%, var(--background))",
-        "--normal-text":
-          "light-dark(var(--color-sky-600), var(--color-sky-400))",
-        "--normal-border":
-          "light-dark(var(--color-sky-600), var(--color-sky-400))",
+        "--normal-bg": "var(--secondary)",
+        "--normal-text": "var(--foreground)",
+        "--normal-border": "var(--border)",
       } as React.CSSProperties,
     }),
 
@@ -46,12 +40,9 @@ export const appToast = {
     toast.warning(message, {
       ...baseOptions,
       style: {
-        "--normal-bg":
-          "color-mix(in oklab, light-dark(var(--color-amber-600), var(--color-amber-400)) 10%, var(--background))",
-        "--normal-text":
-          "light-dark(var(--color-amber-600), var(--color-amber-400))",
-        "--normal-border":
-          "light-dark(var(--color-amber-600), var(--color-amber-400))",
+        "--normal-bg": "color-mix(in oklab, var(--primary) 10%, var(--background))",
+        "--normal-text": "var(--primary)",
+        "--normal-border": "var(--primary)",
       } as React.CSSProperties,
     }),
 };

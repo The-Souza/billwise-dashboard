@@ -73,8 +73,8 @@ export function NotificationPrefsSection() {
     <Card>
       <CardHeader>
         <CardTitle className="text-sm font-heading flex items-center gap-2">
-          <div className="p-1.5 rounded-md bg-primary/10">
-            <BellIcon className="h-3.5 w-3.5 text-primary" />
+          <div className="p-1.5 rounded-md bg-muted">
+            <BellIcon className="h-3.5 w-3.5 text-muted-foreground" />
           </div>
           Preferências de notificação
         </CardTitle>
@@ -90,8 +90,8 @@ export function NotificationPrefsSection() {
           <div className="flex flex-col">
             <div>
               <div className="flex items-center gap-4 py-4">
-                <div className="p-2 rounded-lg bg-amber-500/10 shrink-0 self-start sm:self-center">
-                  <ClockIcon className="h-4 w-4 text-amber-500" />
+                <div className="p-2 rounded-lg bg-primary/10 shrink-0 self-start sm:self-center">
+                  <ClockIcon className="h-4 w-4 text-primary" />
                 </div>
                 <div className="flex flex-col sm:flex-row justify-between gap-2 w-full">
                   <div className="flex flex-col min-w-0 flex-1">
@@ -158,8 +158,8 @@ export function NotificationPrefsSection() {
               </div>
 
               <div className="flex items-center gap-4 py-4">
-                <div className="p-2 rounded-lg bg-orange-500/10 shrink-0">
-                  <TrendingUpIcon className="h-4 w-4 text-orange-500" />
+                <div className="p-2 rounded-lg bg-destructive/10 shrink-0">
+                  <TrendingUpIcon className="h-4 w-4 text-destructive" />
                 </div>
                 <div className="flex flex-col min-w-0 flex-1">
                   <span className="text-sm font-medium">

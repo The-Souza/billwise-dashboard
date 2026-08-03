@@ -12,10 +12,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { CategoryIcon } from "@/components/ui/category-icon";
 import { formatCurrency } from "@/utils/format-currency";
 import { formatRuleEndDate } from "@/utils/format-date";
 import { capitalizeFirst, formatRecurrenceDuration } from "@/utils/format-text";
-import { icons, PencilIcon, RefreshCw, Trash2Icon } from "lucide-react";
+import { PencilIcon, RefreshCw, Trash2Icon } from "lucide-react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -43,8 +44,8 @@ export function RecurringRulesSection() {
       <Card>
         <CardHeader>
           <CardTitle className="text-sm font-heading flex items-center gap-2">
-            <div className="p-1.5 rounded-md bg-primary/10">
-              <RefreshCw className="h-3.5 w-3.5 text-primary" />
+            <div className="p-1.5 rounded-md bg-muted">
+              <RefreshCw className="h-3.5 w-3.5 text-muted-foreground" />
             </div>
             Regras recorrentes
           </CardTitle>
@@ -77,22 +78,19 @@ export function RecurringRulesSection() {
           ) : (
             <div className="divide-y divide-border">
               {rules.map((rule) => {
-                const IconComponent = rule.categoryIcon
-                  ? (icons[
-                      rule.categoryIcon as keyof typeof icons
-                    ] as React.ElementType)
-                  : null;
-
                 return (
                   <div
                     key={rule.id}
                     className="flex items-center gap-3 px-6 py-3.5 hover:bg-muted/30 transition-colors"
                   >
-                    <div className="p-2 rounded-lg bg-primary/10 shrink-0">
-                      {IconComponent ? (
-                        <IconComponent className="h-4 w-4 text-primary" />
+                    <div className="p-2 rounded-lg bg-muted shrink-0">
+                      {rule.categoryIcon ? (
+                        <CategoryIcon
+                          name={rule.categoryIcon}
+                          className="h-4 w-4 text-muted-foreground"
+                        />
                       ) : (
-                        <RefreshCw className="h-4 w-4 text-primary" />
+                        <RefreshCw className="h-4 w-4 text-muted-foreground" />
                       )}
                     </div>
 
@@ -110,7 +108,7 @@ export function RecurringRulesSection() {
                       <span
                         className={`text-sm font-semibold tabular-nums ${
                           rule.categoryType === "income"
-                            ? "text-emerald-500"
+                            ? "text-foreground"
                             : "text-destructive"
                         }`}
                       >
@@ -126,8 +124,8 @@ export function RecurringRulesSection() {
                     <div className="flex items-center gap-0.5 shrink-0">
                       <Button
                         variant="ghost"
-                        size="icon"
-                        className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                        size="icon-sm"
+                        className="text-muted-foreground hover:text-foreground"
                         onClick={() => setEditRule(rule)}
                       >
                         <PencilIcon className="h-3.5 w-3.5" />
@@ -135,8 +133,8 @@ export function RecurringRulesSection() {
                       </Button>
                       <Button
                         variant="ghost"
-                        size="icon"
-                        className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                        size="icon-sm"
+                        className="text-muted-foreground hover:text-destructive"
                         onClick={() => setDeleteRule(rule)}
                       >
                         <Trash2Icon className="h-3.5 w-3.5" />

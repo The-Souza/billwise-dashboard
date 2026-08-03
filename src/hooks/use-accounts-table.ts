@@ -6,6 +6,8 @@ import {
   AccountRow,
   getAccountsAction,
 } from "@/actions/(user)/accounts/get-accounts";
+import { updateAccountsStatusAction } from "@/actions/(user)/accounts/update-accounts-status";
+import { account_status } from "@/generated/prisma/enums";
 import { DashboardMonth } from "@/hooks/use-dashboard-month";
 import { AccountSortKey } from "@/schemas/accounts/get-accounts";
 import { appToast } from "@/utils/app-toast";
@@ -40,6 +42,13 @@ export function useAccountsTable({ dashboardMonth }: UseAccountsTableProps) {
   }>({ open: false, accounts: [] });
 
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const [statusDialog, setStatusDialog] = useState<{
+    open: boolean;
+    accounts: AccountRow[];
+  }>({ open: false, accounts: [] });
+
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -113,6 +122,36 @@ export function useAccountsTable({ dashboardMonth }: UseAccountsTableProps) {
     setDeleteDialog({ open: false, accounts: [] });
   }
 
+  function handleChangeStatusSelected() {
+    const selected = accounts.filter((_, i) => rowSelection[i] !== undefined);
+    setStatusDialog({ open: true, accounts: selected });
+  }
+
+  async function handleConfirmStatusChange(status: account_status) {
+    setIsUpdatingStatus(true);
+    const ids = statusDialog.accounts.map((a) => a.id);
+    const res = await updateAccountsStatusAction(ids, status);
+
+    if (res.success) {
+      appToast.success(
+        res.updated === 1
+          ? "Status atualizado com sucesso."
+          : `Status de ${res.updated} contas atualizado com sucesso.`,
+      );
+      setRowSelection({});
+      if (filters.status && filters.status !== status) {
+        setFilters((prev) => ({ ...prev, page: 1 }));
+      } else {
+        refetch();
+      }
+    } else {
+      appToast.error(res.error);
+    }
+
+    setIsUpdatingStatus(false);
+    setStatusDialog({ open: false, accounts: [] });
+  }
+
   return {
     filters,
     isLoading,
@@ -129,11 +168,16 @@ export function useAccountsTable({ dashboardMonth }: UseAccountsTableProps) {
     deleteDialog,
     setDeleteDialog,
     isDeleting,
+    statusDialog,
+    setStatusDialog,
+    isUpdatingStatus,
     handleFiltersChange,
     handleSort,
     handleDeleteSelected,
     handleDeleteSingle,
     handleConfirmDelete,
+    handleChangeStatusSelected,
+    handleConfirmStatusChange,
     PAGE_SIZE,
   };
 }

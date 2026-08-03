@@ -20,56 +20,49 @@ import Link from "next/link";
 import { useState } from "react";
 import { useNotifications } from "./NotificationsContext";
 
-const TYPE_CONFIG: Record<
-  string,
-  { label: string; icon: React.ReactNode; accentClass: string }
-> = {
-  overdue: {
-    label: "Vencida",
-    icon: (
-      <div className="p-2 rounded-md bg-destructive/10 shrink-0">
-        <AlertTriangleIcon className="size-4 text-destructive" />
-      </div>
-    ),
-    accentClass: "border-l-destructive/60",
-  },
-  due_soon: {
-    label: "Prestes a vencer",
-    icon: (
-      <div className="p-2 rounded-md bg-amber-600/10 shrink-0">
-        <AlertCircleIcon className="size-4 text-amber-500" />
-      </div>
-    ),
-    accentClass: "border-l-amber-500/60",
-  },
-  budget_exceeded: {
-    label: "Orçamento",
-    icon: (
-      <div className="p-2 rounded-md bg-orange-500/10 shrink-0">
-        <TrendingUpIcon className="size-4 text-orange-500" />
-      </div>
-    ),
-    accentClass: "border-l-orange-500/60",
-  },
-  recurring_generated: {
-    label: "Recorrente",
-    icon: (
-      <div className="p-2 rounded-md bg-primary/10 shrink-0">
-        <RefreshCwIcon className="size-4 text-primary" />
-      </div>
-    ),
-    accentClass: "border-l-primary/60",
-  },
-  workspace_invite: {
-    label: "Convite",
-    icon: (
-      <div className="p-2 rounded-md bg-violet-500/10 shrink-0">
-        <UsersIcon className="size-4 text-violet-500" />
-      </div>
-    ),
-    accentClass: "border-l-violet-500/60",
-  },
-};
+const TYPE_CONFIG: Record<string, { label: string; icon: React.ReactNode }> =
+  {
+    overdue: {
+      label: "Vencida",
+      icon: (
+        <div className="p-2 rounded-md bg-destructive/10 shrink-0">
+          <AlertTriangleIcon className="size-4 text-destructive" />
+        </div>
+      ),
+    },
+    due_soon: {
+      label: "Prestes a vencer",
+      icon: (
+        <div className="p-2 rounded-md bg-primary/10 shrink-0">
+          <AlertCircleIcon className="size-4 text-primary" />
+        </div>
+      ),
+    },
+    budget_exceeded: {
+      label: "Orçamento",
+      icon: (
+        <div className="p-2 rounded-md bg-destructive/10 shrink-0">
+          <TrendingUpIcon className="size-4 text-destructive" />
+        </div>
+      ),
+    },
+    recurring_generated: {
+      label: "Recorrente",
+      icon: (
+        <div className="p-2 rounded-md bg-primary/10 shrink-0">
+          <RefreshCwIcon className="size-4 text-primary" />
+        </div>
+      ),
+    },
+    workspace_invite: {
+      label: "Convite",
+      icon: (
+        <div className="p-2 rounded-md bg-secondary shrink-0">
+          <UsersIcon className="size-4 text-foreground" />
+        </div>
+      ),
+    },
+  };
 
 function WorkspaceInviteActions({
   inviteId,
@@ -89,7 +82,7 @@ function WorkspaceInviteActions({
         className={cn(
           "text-xs font-medium shrink-0",
           inviteStatus === "accepted"
-            ? "text-emerald-600 dark:text-emerald-400"
+            ? "text-foreground"
             : "text-muted-foreground",
         )}
       >
@@ -107,9 +100,9 @@ function WorkspaceInviteActions({
   return (
     <div className="flex items-center gap-1.5 shrink-0">
       <Button
-        size="icon"
+        size="icon-sm"
         variant="ghost"
-        className="size-7 text-emerald-600 hover:text-emerald-600 hover:bg-emerald-500/10 dark:text-emerald-400"
+        className="text-foreground hover:text-foreground hover:bg-secondary"
         disabled={loading !== null}
         aria-label="Aceitar convite"
         onClick={(e) => {
@@ -120,9 +113,9 @@ function WorkspaceInviteActions({
         {loading === "accepted" ? <Spinner /> : <CheckIcon />}
       </Button>
       <Button
-        size="icon"
+        size="icon-sm"
         variant="ghost"
-        className="size-7 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+        className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
         disabled={loading !== null}
         aria-label="Recusar convite"
         onClick={(e) => {
@@ -182,11 +175,9 @@ export function NotificationsClient() {
         return (
           <CardWrapper key={n.id}>
             <Card
-              className={`relative flex items-start gap-3 rounded-md border-l-2 px-4 py-3 text-sm transition-colors ${
-                config?.accentClass ?? "border-l-border"
-              } ${n.accountId ? "hover:bg-muted/50 cursor-pointer" : ""} ${
-                isUnread ? "bg-muted/40" : ""
-              }`}
+              className={`relative flex items-start gap-3 rounded-md px-4 py-3 text-sm transition-colors ${
+                n.accountId ? "hover:bg-muted/50 cursor-pointer" : ""
+              } ${isUnread ? "bg-muted/40" : ""}`}
             >
               {isUnread && (
                 <span

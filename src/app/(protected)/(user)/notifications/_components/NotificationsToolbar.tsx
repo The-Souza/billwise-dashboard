@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CheckCheckIcon } from "lucide-react";
 import { useNotifications } from "./NotificationsContext";
 
@@ -22,24 +23,43 @@ const FILTER_OPTIONS: { value: FilterType; label: string }[] = [
 ];
 
 export function NotificationsToolbar() {
-  const { filter, setFilter, unreadCount, markingAll, handleMarkAll } =
-    useNotifications();
+  const {
+    notifications,
+    filter,
+    setFilter,
+    unreadCount,
+    markingAll,
+    handleMarkAll,
+  } = useNotifications();
+
+  function countFor(value: FilterType) {
+    return value === "all"
+      ? notifications.length
+      : notifications.filter((n) => n.type === value).length;
+  }
 
   return (
     <div className="flex flex-col lg:flex-row items-center justify-between gap-2">
-      <div className="grid grid-cols-3 sm:grid-cols-6 items-center gap-1 w-full lg:w-auto">
-        {FILTER_OPTIONS.map((opt) => (
-          <Button
-            key={opt.value}
-            variant={filter === opt.value ? "default" : "outline"}
-            size="sm"
-            onClick={() => setFilter(opt.value)}
-            className="lg:w-32"
-          >
-            {opt.label}
-          </Button>
-        ))}
-      </div>
+      <Tabs
+        value={filter}
+        onValueChange={(v) => setFilter(v as FilterType)}
+        className="w-full lg:w-auto"
+      >
+        <TabsList className="w-full lg:w-auto overflow-x-auto justify-start">
+          {FILTER_OPTIONS.map((opt) => (
+            <TabsTrigger
+              key={opt.value}
+              value={opt.value}
+              className="shrink-0 flex-1 gap-1.5"
+            >
+              {opt.label}
+              <span className="text-xs tabular-nums opacity-70">
+                ({countFor(opt.value)})
+              </span>
+            </TabsTrigger>
+          ))}
+        </TabsList>
+      </Tabs>
 
       {unreadCount > 0 && (
         <Button

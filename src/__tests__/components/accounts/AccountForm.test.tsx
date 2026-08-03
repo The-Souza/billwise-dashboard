@@ -47,11 +47,11 @@ describe("AccountForm — modo criação", () => {
 
   it("renderiza os campos principais", () => {
     render(<AccountForm categories={categories} onSubmit={vi.fn()} />);
-    expect(screen.getByLabelText("Título")).toBeInTheDocument();
-    expect(screen.getByLabelText("Valor (R$)")).toBeInTheDocument();
-    expect(screen.getByLabelText("Categoria")).toBeInTheDocument();
-    expect(screen.getByLabelText("Status")).toBeInTheDocument();
-    expect(screen.getByLabelText("Data da Conta")).toBeInTheDocument();
+    expect(screen.getByLabelText("Título", { exact: false })).toBeInTheDocument();
+    expect(screen.getByLabelText("Valor (R$)", { exact: false })).toBeInTheDocument();
+    expect(screen.getByLabelText("Categoria", { exact: false })).toBeInTheDocument();
+    expect(screen.getByLabelText("Status", { exact: false })).toBeInTheDocument();
+    expect(screen.getByLabelText("Data da Conta", { exact: false })).toBeInTheDocument();
     expect(screen.getByLabelText("Vencimento")).toBeInTheDocument();
     expect(screen.getByLabelText("Descrição")).toBeInTheDocument();
   });
@@ -110,7 +110,7 @@ describe("AccountForm — modo edição (conta normal)", () => {
 
   it("preenche o campo Título com o valor da conta", () => {
     render(<AccountForm account={baseAccount} categories={categories} onSubmit={vi.fn()} />);
-    expect(screen.getByLabelText("Título")).toHaveValue("Aluguel");
+    expect(screen.getByLabelText("Título", { exact: false })).toHaveValue("Aluguel");
   });
 });
 

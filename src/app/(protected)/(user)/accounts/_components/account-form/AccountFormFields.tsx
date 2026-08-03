@@ -49,7 +49,7 @@ export function AccountFormFields() {
         control={form.control}
         render={({ field, fieldState }) => (
           <Field>
-            <FieldLabel htmlFor={field.name} className="text-md">
+            <FieldLabel htmlFor={field.name} className="text-md" required>
               Título
             </FieldLabel>
             <InputGroup>
@@ -88,7 +88,7 @@ export function AccountFormFields() {
 
           return (
             <Field>
-              <FieldLabel htmlFor={field.name} className="text-md">
+              <FieldLabel htmlFor={field.name} className="text-md" required>
                 Categoria
               </FieldLabel>
               <Combobox
@@ -136,7 +136,7 @@ export function AccountFormFields() {
         control={form.control}
         render={({ field, fieldState }) => (
           <Field>
-            <FieldLabel htmlFor={field.name} className="text-md">
+            <FieldLabel htmlFor={field.name} className="text-md" required>
               Status
             </FieldLabel>
             <Select
@@ -169,6 +169,7 @@ export function AccountFormFields() {
               field={field}
               fieldState={fieldState}
               label="Data da Conta"
+              required
             />
           </Field>
         )}

@@ -52,7 +52,7 @@ export default function ChangePasswordForm() {
 
   const RequirementItem = ({ met, text }: { met: boolean; text: string }) => (
     <li
-      className={`flex items-center gap-2 transition-colors duration-300 ${met ? "text-green-500" : "text-muted-foreground"}`}
+      className={`flex items-center gap-2 transition-colors duration-300 ${met ? "text-foreground" : "text-muted-foreground"}`}
     >
       {met ? (
         <CheckCircle2 className="size-4" />
@@ -113,7 +113,11 @@ export default function ChangePasswordForm() {
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name} className="text-md">
+                    <FieldLabel
+                      htmlFor={field.name}
+                      className="text-md"
+                      required
+                    >
                       Senha Atual
                     </FieldLabel>
                     <InputGroup>
@@ -160,7 +164,11 @@ export default function ChangePasswordForm() {
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name} className="text-md">
+                    <FieldLabel
+                      htmlFor={field.name}
+                      className="text-md"
+                      required
+                    >
                       Nova Senha
                     </FieldLabel>
                     <InputGroup>
@@ -205,7 +213,11 @@ export default function ChangePasswordForm() {
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name} className="text-md">
+                    <FieldLabel
+                      htmlFor={field.name}
+                      className="text-md"
+                      required
+                    >
                       Confirmar Nova Senha
                     </FieldLabel>
                     <InputGroup>

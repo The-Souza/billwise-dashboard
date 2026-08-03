@@ -1,4 +1,8 @@
-import { capitalizeFirst, formatRecurrenceDuration } from "@/utils/format-text";
+import {
+  capitalizeFirst,
+  formatCurrencyCompact,
+  formatRecurrenceDuration,
+} from "@/utils/format-text";
 import { describe, expect, it } from "vitest";
 
 describe("capitalizeFirst", () => {
@@ -42,5 +46,43 @@ describe("formatRecurrenceDuration", () => {
 
   it("não converte 11 meses em anos", () => {
     expect(formatRecurrenceDuration(11)).toBe(" · 11 meses");
+  });
+});
+
+describe("formatCurrencyCompact", () => {
+  it("formata valores abaixo de 1000 sem sufixo 'k'", () => {
+    expect(formatCurrencyCompact(350)).toBe("R$350");
+  });
+
+  it("não arredonda valores pequenos para R$0k", () => {
+    expect(formatCurrencyCompact(499)).toBe("R$499");
+  });
+
+  it("formata 0 como R$0", () => {
+    expect(formatCurrencyCompact(0)).toBe("R$0");
+  });
+
+  it("formata exatamente 999 sem sufixo 'k'", () => {
+    expect(formatCurrencyCompact(999)).toBe("R$999");
+  });
+
+  it("formata exatamente 1000 com sufixo 'k'", () => {
+    expect(formatCurrencyCompact(1000)).toBe("R$1k");
+  });
+
+  it("formata valores grandes com sufixo 'k' arredondado", () => {
+    expect(formatCurrencyCompact(1500)).toBe("R$2k");
+  });
+
+  it("coloca o sinal negativo antes de R$ para valores pequenos", () => {
+    expect(formatCurrencyCompact(-200)).toBe("-R$200");
+  });
+
+  it("coloca o sinal negativo antes de R$ para valores grandes com sufixo 'k'", () => {
+    expect(formatCurrencyCompact(-1500)).toBe("-R$2k");
+  });
+
+  it("formata -0 sem sinal negativo", () => {
+    expect(formatCurrencyCompact(-0)).toBe("R$0");
   });
 });

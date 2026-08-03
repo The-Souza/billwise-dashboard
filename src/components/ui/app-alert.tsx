@@ -14,21 +14,18 @@ const appAlertConfig: Record<
   { className: string; description: string; icon: React.ElementType }
 > = {
   success: {
-    className:
-      "border-green-600 bg-green-600/10 text-green-600 dark:bg-green-400/10 dark:text-green-400",
-    description: "text-green-600/80 dark:text-green-400/80",
+    className: "border-border bg-secondary text-foreground",
+    description: "text-foreground/80",
     icon: CheckCheckIcon,
   },
   alert: {
-    className:
-      "border-amber-600 bg-amber-600/10 text-amber-600 dark:bg-amber-400/10 dark:text-amber-400",
-    description: "text-amber-600/80 dark:text-amber-400/80",
+    className: "border-primary bg-primary/10 text-primary",
+    description: "text-primary/80",
     icon: AlertCircleIcon,
   },
   info: {
-    className:
-      "border-sky-600 bg-sky-600/10 text-sky-600 dark:bg-sky-400/10 dark:text-sky-400",
-    description: "text-sky-600/80 dark:text-sky-400/80",
+    className: "border-border bg-secondary text-foreground",
+    description: "text-foreground/80",
     icon: CircleAlertIcon,
   },
   warning: {
