@@ -51,10 +51,10 @@ import {
 import { STATUS_OPTIONS } from "@/utils/status-options";
 import {
   ChevronDownIcon,
+  CircleCheckIcon,
   DownloadIcon,
   FileTextIcon,
   FilterXIcon,
-  ListFilterIcon,
   PlusIcon,
   Trash2Icon,
   UploadIcon,
@@ -70,6 +70,7 @@ interface AccountsFiltersProps {
   categories: CategoryOption[];
   onFiltersChange: (filters: Partial<AccountFilters>) => void;
   onDelete: () => void;
+  onChangeStatus: () => void;
   onImportSuccess?: () => void;
 }
 
@@ -79,6 +80,7 @@ export function AccountsFilters({
   categories,
   onFiltersChange,
   onDelete,
+  onChangeStatus,
   onImportSuccess,
 }: AccountsFiltersProps) {
   const [titleInput, setTitleInput] = useState(filters.title ?? "");
@@ -215,20 +217,19 @@ export function AccountsFilters({
   }
 
   return (
-    <div className="flex flex-col lg:flex-row items-center justify-between gap-2 w-full lg:w-auto">
+    <div className="flex flex-col lg:flex-row items-center justify-between gap-2 w-full xl:w-auto">
       {/* Desktop (lg+): filtros sempre visíveis, inline */}
-      <div className="hidden lg:flex lg:flex-wrap items-center gap-2 w-full lg:w-auto">
-        {activeFilterCount > 0 && (
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            className="shrink-0 text-primary hover:text-primary/80"
-            onClick={handleClearFilters}
-            aria-label="Limpar filtros"
-          >
-            <FilterXIcon className="h-3.5 w-3.5" />
-          </Button>
-        )}
+      <div className="hidden lg:flex items-center gap-2 w-full lg:w-auto">
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          className="shrink-0 text-primary hover:text-primary/80"
+          onClick={handleClearFilters}
+          aria-label="Limpar filtros"
+          disabled={isBusy || activeFilterCount === 0}
+        >
+          <FilterXIcon className="h-3.5 w-3.5" />
+        </Button>
         {renderFilterInputs("")}
       </div>
 
@@ -242,24 +243,19 @@ export function AccountsFilters({
           <AccordionTrigger
             className="h-8 py-0 gap-1.5 text-sm hover:no-underline"
             leading={
-              activeFilterCount > 0 ? (
-                <Button
-                  variant="ghost"
-                  size="icon-xs"
-                  className="shrink-0 h-6 w-6 text-primary hover:text-primary/80"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleClearFilters();
-                  }}
-                  aria-label="Limpar filtros"
-                >
-                  <FilterXIcon className="h-3.5 w-3.5" />
-                </Button>
-              ) : (
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center">
-                  <ListFilterIcon className="h-3.5 w-3.5 text-muted-foreground" />
-                </span>
-              )
+              <Button
+                variant="ghost"
+                size="icon-xs"
+                className="shrink-0 h-6 w-6 text-primary hover:text-primary/80"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleClearFilters();
+                }}
+                aria-label="Limpar filtros"
+                disabled={isBusy || activeFilterCount === 0}
+              >
+                <FilterXIcon className="h-3.5 w-3.5" />
+              </Button>
             }
           >
             <span className="flex items-center gap-1.5">
@@ -279,7 +275,18 @@ export function AccountsFilters({
         </AccordionItem>
       </Accordion>
 
-      <div className="flex items-center gap-2 w-full lg:w-auto">
+      <div className="flex items-center gap-2 w-full xl:w-auto">
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-8 gap-1.5 w-full xl:w-auto xl:min-w-28 transition-transform ease-in hover:scale-103 active:scale-97"
+          disabled={selectedCount === 0}
+          onClick={onChangeStatus}
+        >
+          <CircleCheckIcon />
+          Status
+        </Button>
+
         <Button
           variant="outline"
           size="sm"
@@ -296,7 +303,7 @@ export function AccountsFilters({
             <Button
               variant="outline"
               size="sm"
-              className="h-8 gap-1.5 text-xs w-full lg:w-auto xl:min-w-28 transition-transform ease-in hover:scale-103 active:scale-97"
+              className="h-8 gap-1.5 text-xs w-full xl:w-auto xl:min-w-28 transition-transform ease-in hover:scale-103 active:scale-97"
               disabled={isBusy}
             >
               Arquivo
@@ -336,7 +343,7 @@ export function AccountsFilters({
 
         <Button
           size="sm"
-          className="h-8 gap-1.5 text-xs w-full lg:w-auto xl:min-w-28 transition-transform ease-in hover:scale-103 active:scale-97"
+          className="h-8 gap-1.5 text-xs w-full xl:w-auto xl:min-w-28 transition-transform ease-in hover:scale-103 active:scale-97"
           asChild
         >
           <Link href="/accounts/add-account">
