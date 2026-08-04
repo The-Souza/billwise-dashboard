@@ -79,6 +79,20 @@ describe("ForgotPasswordForm", () => {
     });
   });
 
+  it("preserva o email digitado quando forgotPasswordAction retorna falha", async () => {
+    mockForgotPassword.mockResolvedValueOnce({ success: false, error: "Email não encontrado" });
+    const user = userEvent.setup();
+    render(<ForgotPasswordForm />);
+    await user.type(screen.getByLabelText("Email"), "guilherme@test.com");
+    await user.click(screen.getByRole("button", { name: /enviar email/i }));
+
+    await waitFor(() => {
+      expect(mockToast.error).toHaveBeenCalledWith("Email não encontrado");
+    });
+
+    expect(screen.getByLabelText("Email")).toHaveValue("guilherme@test.com");
+  });
+
   it("exibe toast de erro genérico quando action lança exceção", async () => {
     mockForgotPassword.mockRejectedValueOnce(new Error("network error"));
     const user = userEvent.setup();

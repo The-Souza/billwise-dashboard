@@ -58,7 +58,6 @@ export function ForgotPasswordForm() {
             type: "manual",
             message: result.error,
           });
-        form.reset();
         return;
       }
 
