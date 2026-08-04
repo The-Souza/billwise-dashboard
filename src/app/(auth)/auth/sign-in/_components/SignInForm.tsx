@@ -83,9 +83,10 @@ export function SignInForm() {
         return;
       }
 
-      appToast.success(`Bem vindo!, ${result.user || "Usuário"}`);
+      appToast.success(`Bem-vindo, ${result.user || "Usuário"}!`);
 
       form.reset({ email: data.email, password: "" });
+      router.replace("/dashboard");
     } catch {
       appToast.error("Algo deu errado. Tente novamente em instantes.");
       form.setValue("password", "");
