@@ -1,5 +1,6 @@
 "use client";
 
+import { PasswordRequirementsChecklist } from "@/components/auth/PasswordRequirementsChecklist";
 import { Button } from "@/components/ui/button";
 import {
   CardContent,
@@ -99,7 +100,7 @@ export function SignUpForm() {
           Comece a organizar suas finanças hoje mesmo
         </CardDescription>
       </CardHeader>
-      <CardContent className="pb-4">
+      <CardContent>
         <form id="form-sign-up" onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
             <Controller
@@ -248,6 +249,11 @@ export function SignUpForm() {
             />
           </FieldGroup>
         </form>
+        <div className="mt-6">
+          <PasswordRequirementsChecklist
+            password={form.watch("password") || ""}
+          />
+        </div>
       </CardContent>
       <CardFooter className="flex flex-col gap-4">
         <Turnstile

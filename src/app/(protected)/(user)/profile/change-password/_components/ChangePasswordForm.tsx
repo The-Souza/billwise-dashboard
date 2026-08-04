@@ -1,6 +1,7 @@
 "use client";
 
 import { changePasswordAction } from "@/actions/(user)/profile/change-password";
+import { PasswordRequirementsChecklist } from "@/components/auth/PasswordRequirementsChecklist";
 import { Button } from "@/components/ui/button";
 import {
   CardContent,
@@ -24,9 +25,8 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { formSchema } from "@/schemas/profile/change-password";
 import { appToast } from "@/utils/app-toast";
-import { checkRequirements } from "@/utils/check-requirements";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CheckCircle2, Circle, EyeIcon, EyeOffIcon } from "lucide-react";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
@@ -48,20 +48,6 @@ export default function ChangePasswordForm() {
   });
 
   const newPasswordValue = form.watch("newPassword") || "";
-  const requirements = checkRequirements(newPasswordValue);
-
-  const RequirementItem = ({ met, text }: { met: boolean; text: string }) => (
-    <li
-      className={`flex items-center gap-2 transition-colors duration-300 ${met ? "text-foreground" : "text-muted-foreground"}`}
-    >
-      {met ? (
-        <CheckCircle2 className="size-4" />
-      ) : (
-        <Circle className="size-4" />
-      )}
-      <span className="text-sm">{text}</span>
-    </li>
-  );
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     if (isSubmitting) return;
@@ -261,27 +247,7 @@ export default function ChangePasswordForm() {
               />
             </FieldGroup>
           </form>
-          <div className="rounded-lg border border-border bg-muted/30 p-4 flex flex-col gap-2">
-            <p className="text-sm font-medium">Requisitos da nova senha:</p>
-            <ul className="grid grid-cols-1 gap-1.5">
-              <RequirementItem
-                met={requirements.minChar}
-                text="No mínimo 6 caracteres"
-              />
-              <RequirementItem
-                met={requirements.upperCase}
-                text="Uma letra maiúscula"
-              />
-              <RequirementItem
-                met={requirements.number}
-                text="Pelo menos um número"
-              />
-              <RequirementItem
-                met={requirements.specialChar}
-                text="Um caractere especial"
-              />
-            </ul>
-          </div>
+          <PasswordRequirementsChecklist password={newPasswordValue} />
         </CardContent>
         <CardFooter className="px-0">
           <Field>

@@ -6,6 +6,7 @@ describe("checkRequirements", () => {
     expect(checkRequirements("")).toEqual({
       minChar: false,
       upperCase: false,
+      lowerCase: false,
       number: false,
       specialChar: false,
     });
@@ -28,6 +29,15 @@ describe("checkRequirements", () => {
 
   it("upperCase é false quando não há letra maiúscula", () => {
     expect(checkRequirements("abcdef1@").upperCase).toBe(false);
+  });
+
+  it("lowerCase é true quando há letra minúscula", () => {
+    expect(checkRequirements("ABCde1@").lowerCase).toBe(true);
+    expect(checkRequirements("ABCdEF").lowerCase).toBe(true);
+  });
+
+  it("lowerCase é false quando não há letra minúscula", () => {
+    expect(checkRequirements("ABCDEF1@").lowerCase).toBe(false);
   });
 
   it("number é true quando há dígito", () => {
@@ -53,6 +63,7 @@ describe("checkRequirements", () => {
     expect(checkRequirements("Senha1@forte")).toEqual({
       minChar: true,
       upperCase: true,
+      lowerCase: true,
       number: true,
       specialChar: true,
     });

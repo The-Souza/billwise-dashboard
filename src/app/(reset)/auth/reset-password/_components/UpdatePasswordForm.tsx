@@ -1,5 +1,6 @@
 "use client";
 
+import { PasswordRequirementsChecklist } from "@/components/auth/PasswordRequirementsChecklist";
 import { Button } from "@/components/ui/button";
 import {
   CardContent,
@@ -181,6 +182,11 @@ export function UpdatePasswordForm() {
             />
           </FieldGroup>
         </form>
+        <div className="mt-4">
+          <PasswordRequirementsChecklist
+            password={form.watch("password") || ""}
+          />
+        </div>
       </CardContent>
       <CardFooter className="flex flex-col gap-4">
         <Field>
