@@ -159,7 +159,8 @@ export function SignInForm() {
                     />
                     <InputGroupAddon align="inline-end">
                       <InputGroupButton
-                        aria-label="view-password"
+                        aria-label={isVisible ? "Ocultar senha" : "Mostrar senha"}
+                        aria-pressed={isVisible}
                         size="icon-xs"
                         onClick={() => setIsVisible((prevState) => !prevState)}
                       >

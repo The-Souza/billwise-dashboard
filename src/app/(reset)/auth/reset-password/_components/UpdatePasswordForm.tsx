@@ -103,7 +103,12 @@ export function UpdatePasswordForm() {
                     />
                     <InputGroupAddon align="inline-end">
                       <InputGroupButton
-                        aria-label="view-password"
+                        aria-label={
+                          visibleField === "password"
+                            ? "Ocultar senha"
+                            : "Mostrar senha"
+                        }
+                        aria-pressed={visibleField === "password"}
                         size="icon-xs"
                         onClick={() =>
                           setVisibleField((prevState) =>
@@ -145,7 +150,12 @@ export function UpdatePasswordForm() {
                     />
                     <InputGroupAddon align="inline-end">
                       <InputGroupButton
-                        aria-label="view-password"
+                        aria-label={
+                          visibleField === "confirmPassword"
+                            ? "Ocultar confirmação de senha"
+                            : "Mostrar confirmação de senha"
+                        }
+                        aria-pressed={visibleField === "confirmPassword"}
                         size="icon-xs"
                         onClick={() =>
                           setVisibleField((prevState) =>
