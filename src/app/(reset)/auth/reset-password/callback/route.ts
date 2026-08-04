@@ -7,16 +7,26 @@ export async function GET(request: Request) {
   const code = requestUrl.searchParams.get("code");
   const cookieStore = await cookies();
 
-  if (code) {
-    const supabase = await createServerSupabase();
-    await supabase.auth.exchangeCodeForSession(code);
-
-    cookieStore.set("recovery_session", "true", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      path: "/",
-    });
+  if (!code) {
+    return NextResponse.redirect(
+      new URL("/auth/sign-in?error=invalid_reset_link", request.url),
+    );
   }
+
+  const supabase = await createServerSupabase();
+  const { error } = await supabase.auth.exchangeCodeForSession(code);
+
+  if (error) {
+    return NextResponse.redirect(
+      new URL("/auth/sign-in?error=invalid_reset_link", request.url),
+    );
+  }
+
+  cookieStore.set("recovery_session", "true", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+  });
 
   return NextResponse.redirect(new URL("/auth/reset-password", request.url));
 }

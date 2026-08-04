@@ -11,7 +11,7 @@ export default async function UpdatePasswordPage() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/auth/sign-in");
+    redirect("/auth/sign-in?error=invalid_reset_link");
   }
 
   return (
