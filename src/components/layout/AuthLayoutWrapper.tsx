@@ -57,7 +57,7 @@ export function AuthLayoutWrapper({ children }: { children: React.ReactNode }) {
             <h2 className="text-3xl font-bold font-heading text-white leading-snug">
               Organize, acompanhe e planeje suas finanças
             </h2>
-            <p className="text-white/70 text-base leading-relaxed">
+            <p className="text-white text-base font-normal leading-relaxed">
               Gerencie suas finanças pessoais ou em conjunto com família e
               amigos, tudo em um só lugar.
             </p>
@@ -73,7 +73,7 @@ export function AuthLayoutWrapper({ children }: { children: React.ReactNode }) {
                   <span className="text-white text-sm font-semibold">
                     {title}
                   </span>
-                  <span className="text-white/60 text-xs leading-relaxed">
+                  <span className="text-white text-xs font-normal leading-relaxed">
                     {desc}
                   </span>
                 </div>
@@ -83,7 +83,7 @@ export function AuthLayoutWrapper({ children }: { children: React.ReactNode }) {
         </div>
 
         {/* Footer */}
-        <p className="relative z-10 text-white/40 text-xs">
+        <p className="relative z-10 text-white text-xs border-t border-white/20 pt-4">
           © 2026 Billwise. Todos os direitos reservados.
         </p>
       </div>
