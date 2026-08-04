@@ -90,14 +90,13 @@ export function AuthLayoutWrapper({ children }: { children: React.ReactNode }) {
 
       {/* Right panel — scrolls independently */}
       <div className="flex-1 flex flex-col min-h-dvh">
+        {/* Toggle — in normal flow so it never overlaps form content on short viewports */}
+        <div className="flex justify-end p-6">
+          <ToggleTheme />
+        </div>
         <main className="flex-1 flex items-center justify-center">
           {children}
         </main>
-      </div>
-
-      {/* Toggle — fixed, never scrolls, takes no layout space */}
-      <div className="fixed top-4 right-4 z-50">
-        <ToggleTheme />
       </div>
     </div>
   );
