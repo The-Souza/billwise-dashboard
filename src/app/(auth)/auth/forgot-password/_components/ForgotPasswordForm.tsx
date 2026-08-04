@@ -76,7 +76,7 @@ export function ForgotPasswordForm() {
   return (
     <div className="w-full">
       <CardHeader className="flex flex-col items-center gap-2 text-center">
-        <CardTitle className="text-2xl font-heading">
+        <CardTitle as="h1" className="text-2xl font-heading">
           Esqueceu sua senha?
         </CardTitle>
         <CardDescription className="text-md text-muted-foreground">

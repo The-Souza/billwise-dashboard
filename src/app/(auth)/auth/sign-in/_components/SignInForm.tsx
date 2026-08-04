@@ -98,7 +98,7 @@ export function SignInForm() {
   return (
     <div className="w-full">
       <CardHeader className="flex flex-col items-center gap-2 text-center">
-        <CardTitle className="text-2xl font-heading">
+        <CardTitle as="h1" className="text-2xl font-heading">
           Bem-vindo ao Billwise
         </CardTitle>
         <CardDescription className="text-muted-foreground text-md">

@@ -75,7 +75,9 @@ export function UpdatePasswordForm() {
   return (
     <div className="w-full">
       <CardHeader className="flex flex-col items-center gap-2 text-center">
-        <CardTitle className="text-2xl font-heading">Redefinir senha</CardTitle>
+        <CardTitle as="h1" className="text-2xl font-heading">
+          Redefinir senha
+        </CardTitle>
         <CardDescription className="text-md text-muted-foreground">
           Insira sua nova senha para atualizar a segurança da sua conta
         </CardDescription>

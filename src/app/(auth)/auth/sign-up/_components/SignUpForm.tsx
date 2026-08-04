@@ -92,7 +92,9 @@ export function SignUpForm() {
   return (
     <div className="w-full">
       <CardHeader className="flex flex-col items-center gap-2 text-center">
-        <CardTitle className="text-2xl font-heading">Crie sua conta</CardTitle>
+        <CardTitle as="h1" className="text-2xl font-heading">
+          Crie sua conta
+        </CardTitle>
         <CardDescription className="text-md text-muted-foreground">
           Comece a organizar suas finanças hoje mesmo
         </CardDescription>
