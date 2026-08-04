@@ -261,7 +261,7 @@ export function SignUpForm() {
           options={{
             theme: (resolvedTheme as "dark" | "light") ?? "light",
             language: "pt-br",
-            appearance: "interaction-only",
+            appearance: "always",
             size: "flexible",
             action: "sign-up",
           }}

@@ -47,19 +47,17 @@ describe("UpdatePasswordForm", () => {
     const user = userEvent.setup();
     render(<UpdatePasswordForm />);
 
-    const [togglePassword, toggleConfirm] = screen.getAllByRole("button", {
-      name: /view-password/i,
-    });
-
     const passwordInput = screen.getByLabelText("Senha");
     const confirmInput = screen.getByLabelText("Confirmar Senha");
 
-    await user.click(togglePassword);
+    await user.click(screen.getByRole("button", { name: "Mostrar senha" }));
     expect(passwordInput).toHaveAttribute("type", "text");
     expect(confirmInput).toHaveAttribute("type", "password");
 
     // clicar no segundo toggle muda visibleField para "confirmPassword" — password volta para oculto
-    await user.click(toggleConfirm);
+    await user.click(
+      screen.getByRole("button", { name: "Mostrar confirmação de senha" }),
+    );
     expect(confirmInput).toHaveAttribute("type", "text");
     expect(passwordInput).toHaveAttribute("type", "password");
   });

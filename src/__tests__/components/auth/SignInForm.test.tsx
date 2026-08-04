@@ -4,7 +4,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@marsidev/react-turnstile", () => ({ Turnstile: () => null }));
 vi.mock("next-themes", () => ({ useTheme: () => ({ resolvedTheme: "light" }) }));
-vi.mock("next/navigation", () => ({ useRouter: () => ({ replace: vi.fn() }) }));
+
+const mockReplace = vi.fn();
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ replace: mockReplace }),
+  useSearchParams: () => new URLSearchParams(),
+}));
 
 vi.mock("@/actions/auth/sign-in", () => ({
   signInAction: vi.fn(),
@@ -51,10 +56,10 @@ describe("SignInForm", () => {
     const passwordInput = screen.getByLabelText("Senha");
     expect(passwordInput).toHaveAttribute("type", "password");
 
-    await user.click(screen.getByRole("button", { name: /view-password/i }));
+    await user.click(screen.getByRole("button", { name: "Mostrar senha" }));
     expect(passwordInput).toHaveAttribute("type", "text");
 
-    await user.click(screen.getByRole("button", { name: /view-password/i }));
+    await user.click(screen.getByRole("button", { name: "Ocultar senha" }));
     expect(passwordInput).toHaveAttribute("type", "password");
   });
 
@@ -72,7 +77,8 @@ describe("SignInForm", () => {
         { email: "guilherme@test.com", password: "minhasenha" },
         undefined,
       );
-      expect(mockToast.success).toHaveBeenCalledWith("Bem vindo!, Guilherme");
+      expect(mockToast.success).toHaveBeenCalledWith("Bem-vindo, Guilherme!");
+      expect(mockReplace).toHaveBeenCalledWith("/dashboard");
     });
   });
 

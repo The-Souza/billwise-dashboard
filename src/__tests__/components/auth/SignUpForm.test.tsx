@@ -63,10 +63,10 @@ describe("SignUpForm", () => {
     render(<SignUpForm />);
 
     const [passwordInput] = screen.getAllByLabelText(/^Senha$/i);
-    const toggleButtons = screen.getAllByRole("button", { name: /view-password/i });
+    const toggleButton = screen.getByRole("button", { name: "Mostrar senha" });
 
     expect(passwordInput).toHaveAttribute("type", "password");
-    await user.click(toggleButtons[0]);
+    await user.click(toggleButton);
     expect(passwordInput).toHaveAttribute("type", "text");
   });
 

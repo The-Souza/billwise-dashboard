@@ -83,7 +83,7 @@ export function ForgotPasswordForm() {
           Insira seu email para redefinir sua senha
         </CardDescription>
       </CardHeader>
-      <CardContent className="pb-4">
+      <CardContent>
         <form id="form-forgot-password" onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
             <Controller
@@ -125,7 +125,7 @@ export function ForgotPasswordForm() {
           options={{
             theme: (resolvedTheme as "dark" | "light") ?? "light",
             language: "pt-br",
-            appearance: "interaction-only",
+            appearance: "always",
             size: "flexible",
             action: "forgot-password",
           }}

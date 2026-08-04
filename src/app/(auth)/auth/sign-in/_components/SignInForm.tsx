@@ -105,7 +105,7 @@ export function SignInForm() {
           Gerencie suas finanças de forma simples e inteligente
         </CardDescription>
       </CardHeader>
-      <CardContent className="pb-4">
+      <CardContent>
         <form id="form-sign-in" onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
             <Controller
@@ -159,7 +159,9 @@ export function SignInForm() {
                     />
                     <InputGroupAddon align="inline-end">
                       <InputGroupButton
-                        aria-label={isVisible ? "Ocultar senha" : "Mostrar senha"}
+                        aria-label={
+                          isVisible ? "Ocultar senha" : "Mostrar senha"
+                        }
                         aria-pressed={isVisible}
                         size="icon-xs"
                         onClick={() => setIsVisible((prevState) => !prevState)}
@@ -189,7 +191,7 @@ export function SignInForm() {
           options={{
             theme: (resolvedTheme as "dark" | "light") ?? "light",
             language: "pt-br",
-            appearance: "interaction-only",
+            appearance: "always",
             size: "flexible",
             action: "sign-in",
           }}
