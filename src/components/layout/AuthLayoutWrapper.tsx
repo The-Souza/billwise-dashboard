@@ -1,5 +1,13 @@
 import { ToggleTheme } from "@/components/ui/toggle-theme";
-import { BarChart3, PiggyBank, RefreshCw, Users } from "lucide-react";
+import {
+  BarChart3,
+  LockIcon,
+  LogOutIcon,
+  PiggyBank,
+  RefreshCw,
+  ShieldCheckIcon,
+  Users,
+} from "lucide-react";
 import Image from "next/image";
 
 const FEATURES = [
@@ -25,7 +33,36 @@ const FEATURES = [
   },
 ];
 
-export function AuthLayoutWrapper({ children }: { children: React.ReactNode }) {
+const SECURITY_POINTS = [
+  {
+    icon: ShieldCheckIcon,
+    title: "Link de uso único",
+    desc: "Cada link de redefinição funciona uma vez só e expira automaticamente.",
+  },
+  {
+    icon: LockIcon,
+    title: "Conexão sempre criptografada",
+    desc: "Sua nova senha trafega por uma conexão segura, do início ao fim.",
+  },
+  {
+    icon: LogOutIcon,
+    title: "Sessões encerradas por segurança",
+    desc: "Ao trocar sua senha, todos os outros acessos são desconectados.",
+  },
+];
+
+interface AuthLayoutWrapperProps {
+  children: React.ReactNode;
+  variant?: "marketing" | "reassurance";
+}
+
+export function AuthLayoutWrapper({
+  children,
+  variant = "marketing",
+}: AuthLayoutWrapperProps) {
+  const isReassurance = variant === "reassurance";
+  const items = isReassurance ? SECURITY_POINTS : FEATURES;
+
   return (
     <div className="min-h-dvh flex">
       {/* Left panel — sticky, doesn't scroll with the form */}
@@ -55,16 +92,19 @@ export function AuthLayoutWrapper({ children }: { children: React.ReactNode }) {
         <div className="relative z-10 flex flex-col gap-10">
           <div className="flex flex-col gap-3">
             <h2 className="text-3xl font-bold font-heading text-white leading-snug">
-              Organize, acompanhe e planeje suas finanças
+              {isReassurance
+                ? "Vamos recuperar o acesso à sua conta"
+                : "Organize, acompanhe e planeje suas finanças"}
             </h2>
             <p className="text-white text-base font-normal leading-relaxed">
-              Gerencie suas finanças pessoais ou em conjunto com família e
-              amigos, tudo em um só lugar.
+              {isReassurance
+                ? "Sua segurança vem em primeiro lugar. Redefina sua senha com tranquilidade."
+                : "Gerencie suas finanças pessoais ou em conjunto com família e amigos, tudo em um só lugar."}
             </p>
           </div>
 
           <div className="flex flex-col gap-5">
-            {FEATURES.map(({ icon: Icon, title, desc }) => (
+            {items.map(({ icon: Icon, title, desc }) => (
               <div key={title} className="flex items-start gap-3.5">
                 <div className="p-2 rounded-lg bg-white/15 shrink-0">
                   <Icon className="h-4 w-4 text-white" />
