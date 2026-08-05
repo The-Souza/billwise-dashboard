@@ -1,8 +1,17 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { useEffect } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@marsidev/react-turnstile", () => ({ Turnstile: () => null }));
+let autoResolveCaptcha = true;
+vi.mock("@marsidev/react-turnstile", () => ({
+  Turnstile: ({ onSuccess }: { onSuccess?: (token: string) => void }) => {
+    useEffect(() => {
+      if (autoResolveCaptcha) onSuccess?.("test-captcha-token");
+    }, [onSuccess]);
+    return null;
+  },
+}));
 vi.mock("next-themes", () => ({ useTheme: () => ({ resolvedTheme: "light" }) }));
 
 const mockReplace = vi.fn();
@@ -44,6 +53,7 @@ async function fillForm(user: ReturnType<typeof userEvent.setup>, data = VALID_D
 describe("SignUpForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    autoResolveCaptcha = true;
   });
 
   it("renderiza todos os campos do formulário", () => {
@@ -75,6 +85,14 @@ describe("SignUpForm", () => {
     render(<SignUpForm />);
     await fillForm(user);
     expect(screen.getByRole("button", { name: /criar conta/i })).toBeEnabled();
+  });
+
+  it("mantém o botão desabilitado se o captcha ainda não foi resolvido", async () => {
+    autoResolveCaptcha = false;
+    const user = userEvent.setup();
+    render(<SignUpForm />);
+    await fillForm(user);
+    expect(screen.getByRole("button", { name: /criar conta/i })).toBeDisabled();
   });
 
   it("chama signUpAction e redireciona para verify-email em sucesso", async () => {

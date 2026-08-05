@@ -1,8 +1,17 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { useEffect } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@marsidev/react-turnstile", () => ({ Turnstile: () => null }));
+let autoResolveCaptcha = true;
+vi.mock("@marsidev/react-turnstile", () => ({
+  Turnstile: ({ onSuccess }: { onSuccess?: (token: string) => void }) => {
+    useEffect(() => {
+      if (autoResolveCaptcha) onSuccess?.("test-captcha-token");
+    }, [onSuccess]);
+    return null;
+  },
+}));
 vi.mock("next-themes", () => ({ useTheme: () => ({ resolvedTheme: "light" }) }));
 
 const mockReplace = vi.fn();
@@ -29,6 +38,7 @@ const mockToast = vi.mocked(appToast);
 describe("SignInForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    autoResolveCaptcha = true;
   });
 
   it("renderiza campos de email, senha e botão de submit", () => {
@@ -63,6 +73,17 @@ describe("SignInForm", () => {
     expect(passwordInput).toHaveAttribute("type", "password");
   });
 
+  it("mantém o botão desabilitado se o captcha ainda não foi resolvido", async () => {
+    autoResolveCaptcha = false;
+    const user = userEvent.setup();
+    render(<SignInForm />);
+
+    await user.type(screen.getByLabelText("Email"), "guilherme@test.com");
+    await user.type(screen.getByLabelText("Senha"), "minhasenha");
+
+    expect(screen.getByRole("button", { name: /faça login/i })).toBeDisabled();
+  });
+
   it("chama signInAction com credenciais válidas e exibe toast de sucesso", async () => {
     mockSignIn.mockResolvedValueOnce({ success: true, user: "Guilherme" });
     const user = userEvent.setup();
@@ -75,7 +96,7 @@ describe("SignInForm", () => {
     await waitFor(() => {
       expect(mockSignIn).toHaveBeenCalledWith(
         { email: "guilherme@test.com", password: "minhasenha" },
-        undefined,
+        "test-captcha-token",
       );
       expect(mockToast.success).toHaveBeenCalledWith("Bem-vindo, Guilherme!");
       expect(mockReplace).toHaveBeenCalledWith("/dashboard");

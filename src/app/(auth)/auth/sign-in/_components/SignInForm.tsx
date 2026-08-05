@@ -34,14 +34,16 @@ import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 
 export function SignInForm() {
   const [isVisible, setIsVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const captchaToken = useRef<string | undefined>(undefined);
+  const [captchaToken, setCaptchaToken] = useState<string | undefined>(
+    undefined,
+  );
   const { resolvedTheme } = useTheme();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -69,7 +71,7 @@ export function SignInForm() {
     setIsSubmitting(true);
 
     try {
-      const result = await signInAction(data, captchaToken.current);
+      const result = await signInAction(data, captchaToken);
 
       if (!result.success) {
         form.setError("password", {
@@ -182,12 +184,8 @@ export function SignInForm() {
       <CardFooter className="flex flex-col gap-4">
         <Turnstile
           siteKey={TURNSTILE_SITE_KEY}
-          onSuccess={(token) => {
-            captchaToken.current = token;
-          }}
-          onExpire={() => {
-            captchaToken.current = undefined;
-          }}
+          onSuccess={(token) => setCaptchaToken(token)}
+          onExpire={() => setCaptchaToken(undefined)}
           options={{
             theme: (resolvedTheme as "dark" | "light") ?? "light",
             language: "pt-br",
@@ -200,7 +198,7 @@ export function SignInForm() {
           <Button
             type="submit"
             form="form-sign-in"
-            disabled={!form.formState.isValid || isSubmitting}
+            disabled={!form.formState.isValid || isSubmitting || !captchaToken}
             className="flex items-center justify-center gap-2 transition-transform ease-in hover:scale-103 active:scale-97 text-md"
           >
             {isSubmitting ? (

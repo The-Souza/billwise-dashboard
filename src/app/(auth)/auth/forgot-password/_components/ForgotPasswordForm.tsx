@@ -26,13 +26,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Turnstile } from "@marsidev/react-turnstile";
 import { useTheme } from "next-themes";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 
 export function ForgotPasswordForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const captchaToken = useRef<string | undefined>(undefined);
+  const [captchaToken, setCaptchaToken] = useState<string | undefined>(
+    undefined,
+  );
   const { resolvedTheme } = useTheme();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -49,7 +51,7 @@ export function ForgotPasswordForm() {
     setIsSubmitting(true);
 
     try {
-      const result = await forgotPasswordAction(data, captchaToken.current);
+      const result = await forgotPasswordAction(data, captchaToken);
       if (!result.success) {
         appToast.error(result.error);
 
@@ -115,12 +117,8 @@ export function ForgotPasswordForm() {
       <CardFooter className="flex flex-col gap-4">
         <Turnstile
           siteKey={TURNSTILE_SITE_KEY}
-          onSuccess={(token) => {
-            captchaToken.current = token;
-          }}
-          onExpire={() => {
-            captchaToken.current = undefined;
-          }}
+          onSuccess={(token) => setCaptchaToken(token)}
+          onExpire={() => setCaptchaToken(undefined)}
           options={{
             theme: (resolvedTheme as "dark" | "light") ?? "light",
             language: "pt-br",
@@ -133,7 +131,9 @@ export function ForgotPasswordForm() {
           <Button
             type="submit"
             form="form-forgot-password"
-            disabled={!form.formState.isValid || isSubmitting}
+            disabled={
+              !form.formState.isValid || isSubmitting || !captchaToken
+            }
             className="flex items-center justify-center gap-2 transition-transform ease-in hover:scale-103 active:scale-97 text-md"
           >
             {isSubmitting ? (

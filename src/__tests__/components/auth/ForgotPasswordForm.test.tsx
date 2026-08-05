@@ -1,8 +1,17 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { useEffect } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@marsidev/react-turnstile", () => ({ Turnstile: () => null }));
+let autoResolveCaptcha = true;
+vi.mock("@marsidev/react-turnstile", () => ({
+  Turnstile: ({ onSuccess }: { onSuccess?: (token: string) => void }) => {
+    useEffect(() => {
+      if (autoResolveCaptcha) onSuccess?.("test-captcha-token");
+    }, [onSuccess]);
+    return null;
+  },
+}));
 vi.mock("next-themes", () => ({ useTheme: () => ({ resolvedTheme: "light" }) }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ replace: vi.fn() }) }));
 
@@ -24,6 +33,7 @@ const mockToast = vi.mocked(appToast);
 describe("ForgotPasswordForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    autoResolveCaptcha = true;
   });
 
   it("renderiza campo de email e botão de envio", () => {
@@ -49,6 +59,14 @@ describe("ForgotPasswordForm", () => {
     expect(screen.getByRole("button", { name: /enviar email/i })).toBeEnabled();
   });
 
+  it("mantém o botão desabilitado se o captcha ainda não foi resolvido", async () => {
+    autoResolveCaptcha = false;
+    const user = userEvent.setup();
+    render(<ForgotPasswordForm />);
+    await user.type(screen.getByLabelText("Email"), "guilherme@test.com");
+    expect(screen.getByRole("button", { name: /enviar email/i })).toBeDisabled();
+  });
+
   it("chama forgotPasswordAction e exibe toast de sucesso", async () => {
     mockForgotPassword.mockResolvedValueOnce({ success: true });
     const user = userEvent.setup();
@@ -59,7 +77,7 @@ describe("ForgotPasswordForm", () => {
     await waitFor(() => {
       expect(mockForgotPassword).toHaveBeenCalledWith(
         { email: "guilherme@test.com" },
-        undefined,
+        "test-captcha-token",
       );
       expect(mockToast.success).toHaveBeenCalledWith(
         "Email de redefinição de senha enviado. Verifique sua caixa de entrada.",
