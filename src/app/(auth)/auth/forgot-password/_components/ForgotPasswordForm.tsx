@@ -101,12 +101,18 @@ export function ForgotPasswordForm() {
                       id={field.name}
                       type="email"
                       aria-invalid={fieldState.invalid}
+                      aria-describedby={
+                        fieldState.invalid ? `${field.name}-error` : undefined
+                      }
                       placeholder="seu@email.com"
                       autoComplete="email"
                     />
                   </InputGroup>
                   {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
+                    <FieldError
+                      id={`${field.name}-error`}
+                      errors={[fieldState.error]}
+                    />
                   )}
                 </Field>
               )}
@@ -134,7 +140,7 @@ export function ForgotPasswordForm() {
             disabled={
               !form.formState.isValid || isSubmitting || !captchaToken
             }
-            className="flex items-center justify-center gap-2 transition-transform ease-in hover:scale-103 active:scale-97 text-md"
+            className="flex items-center justify-center gap-2 transition-transform ease-in motion-safe:hover:scale-103 motion-safe:active:scale-97 text-md"
           >
             {isSubmitting ? (
               <>

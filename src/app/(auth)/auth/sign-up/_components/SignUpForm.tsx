@@ -120,11 +120,17 @@ export function SignUpForm() {
                       type="text"
                       autoComplete="name"
                       aria-invalid={fieldState.invalid}
+                      aria-describedby={
+                        fieldState.invalid ? `${field.name}-error` : undefined
+                      }
                       placeholder="Digite seu nome e sobrenome"
                     />
                   </InputGroup>
                   {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
+                    <FieldError
+                      id={`${field.name}-error`}
+                      errors={[fieldState.error]}
+                    />
                   )}
                 </Field>
               )}
@@ -143,12 +149,18 @@ export function SignUpForm() {
                       id={field.name}
                       type="email"
                       aria-invalid={fieldState.invalid}
+                      aria-describedby={
+                        fieldState.invalid ? `${field.name}-error` : undefined
+                      }
                       placeholder="seu@email.com"
                       autoComplete="email"
                     />
                   </InputGroup>
                   {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
+                    <FieldError
+                      id={`${field.name}-error`}
+                      errors={[fieldState.error]}
+                    />
                   )}
                 </Field>
               )}
@@ -169,6 +181,9 @@ export function SignUpForm() {
                       autoComplete="new-password"
                       placeholder="Digite sua senha"
                       aria-invalid={fieldState.invalid}
+                      aria-describedby={
+                        fieldState.invalid ? `${field.name}-error` : undefined
+                      }
                     />
                     <InputGroupAddon align="inline-end">
                       <InputGroupButton
@@ -194,7 +209,10 @@ export function SignUpForm() {
                     </InputGroupAddon>
                   </InputGroup>
                   {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
+                    <FieldError
+                      id={`${field.name}-error`}
+                      errors={[fieldState.error]}
+                    />
                   )}
                 </Field>
               )}
@@ -217,6 +235,9 @@ export function SignUpForm() {
                       autoComplete="new-password"
                       placeholder="Confirme sua senha"
                       aria-invalid={fieldState.invalid}
+                      aria-describedby={
+                        fieldState.invalid ? `${field.name}-error` : undefined
+                      }
                     />
                     <InputGroupAddon align="inline-end">
                       <InputGroupButton
@@ -244,7 +265,10 @@ export function SignUpForm() {
                     </InputGroupAddon>
                   </InputGroup>
                   {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
+                    <FieldError
+                      id={`${field.name}-error`}
+                      errors={[fieldState.error]}
+                    />
                   )}
                 </Field>
               )}
@@ -275,7 +299,7 @@ export function SignUpForm() {
             type="submit"
             form="form-sign-up"
             disabled={!form.formState.isValid || isSubmitting || !captchaToken}
-            className="flex items-center justify-center gap-2 transition-transform ease-in hover:scale-103 active:scale-97 text-md"
+            className="flex items-center justify-center gap-2 transition-transform ease-in motion-safe:hover:scale-103 motion-safe:active:scale-97 text-md"
           >
             {isSubmitting ? (
               <>

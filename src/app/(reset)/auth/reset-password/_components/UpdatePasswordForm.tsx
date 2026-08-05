@@ -101,6 +101,9 @@ export function UpdatePasswordForm() {
                       type={visibleField === "password" ? "text" : "password"}
                       placeholder="Digite sua senha"
                       aria-invalid={fieldState.invalid}
+                      aria-describedby={
+                        fieldState.invalid ? `${field.name}-error` : undefined
+                      }
                     />
                     <InputGroupAddon align="inline-end">
                       <InputGroupButton
@@ -126,7 +129,10 @@ export function UpdatePasswordForm() {
                     </InputGroupAddon>
                   </InputGroup>
                   {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
+                    <FieldError
+                      id={`${field.name}-error`}
+                      errors={[fieldState.error]}
+                    />
                   )}
                 </Field>
               )}
@@ -148,6 +154,9 @@ export function UpdatePasswordForm() {
                       }
                       placeholder="Confirme sua senha"
                       aria-invalid={fieldState.invalid}
+                      aria-describedby={
+                        fieldState.invalid ? `${field.name}-error` : undefined
+                      }
                     />
                     <InputGroupAddon align="inline-end">
                       <InputGroupButton
@@ -175,7 +184,10 @@ export function UpdatePasswordForm() {
                     </InputGroupAddon>
                   </InputGroup>
                   {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
+                    <FieldError
+                      id={`${field.name}-error`}
+                      errors={[fieldState.error]}
+                    />
                   )}
                 </Field>
               )}
@@ -194,7 +206,7 @@ export function UpdatePasswordForm() {
             type="submit"
             form="form-update-password"
             disabled={!form.formState.isValid || isSubmitting}
-            className="flex items-center justify-center gap-2 transition-transform ease-in hover:scale-103 active:scale-97 text-md"
+            className="flex items-center justify-center gap-2 transition-transform ease-in motion-safe:hover:scale-103 motion-safe:active:scale-97 text-md"
           >
             {isSubmitting ? (
               <>
