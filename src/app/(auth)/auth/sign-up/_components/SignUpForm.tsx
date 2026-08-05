@@ -109,7 +109,7 @@ export function SignUpForm() {
               name="name"
               control={form.control}
               render={({ field, fieldState }) => (
-                <Field>
+                <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor={field.name} className="text-md">
                     Nome Completo
                   </FieldLabel>
