@@ -52,7 +52,12 @@ export function UpdateStatusDialog({
   const isSingle = count === 1;
 
   return (
-    <AlertDialog open={open}>
+    <AlertDialog
+      open={open}
+      onOpenChange={(o) => {
+        if (!o && !isUpdating) onCancel();
+      }}
+    >
       <AlertDialogContent className="w-[calc(100vw-2rem)] rounded-md max-w-md">
         <AlertDialogHeader>
           <AlertDialogTitle className="font-heading">
@@ -84,7 +89,6 @@ export function UpdateStatusDialog({
         <AlertDialogFooter>
           <AlertDialogCancel
             className="transition-transform ease-in hover:scale-103 active:scale-97"
-            onClick={onCancel}
             disabled={isUpdating}
           >
             Cancelar
