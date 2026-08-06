@@ -22,6 +22,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { buildCategoryGroups, findCategoryItem } from "@/utils/category-combobox";
 import { budgetFormSchema } from "@/schemas/budgets/budget-form";
 import { appToast } from "@/utils/app-toast";
+import { parseCurrencyInput } from "@/utils/parse-currency";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SaveIcon } from "lucide-react";
 import { useState } from "react";
@@ -216,8 +217,7 @@ export function BudgetForm({
                   onChange={(e) => {
                     const text = e.target.value;
                     setRaw(text);
-                    const val = parseFloat(text.replace(",", "."));
-                    field.onChange(isNaN(val) ? undefined : val);
+                    field.onChange(parseCurrencyInput(text));
                   }}
                 />
               </InputGroup>

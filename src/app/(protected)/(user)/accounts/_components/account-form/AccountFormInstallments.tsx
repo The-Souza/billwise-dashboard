@@ -1,6 +1,7 @@
 "use client";
 
 import { Separator } from "@/components/ui/separator";
+import { formatCurrency } from "@/utils/format-currency";
 import { useAccountForm } from "./AccountFormContext";
 
 export function AccountFormInstallments() {
@@ -58,7 +59,7 @@ export function AccountFormInstallments() {
                   {String(sib.month).padStart(2, "0")}/{sib.year}
                 </span>
                 <span className="font-medium text-foreground">
-                  R$ {sib.amount.toFixed(2).replace(".", ",")}
+                  {formatCurrency(sib.amount)}
                 </span>
                 <span className={statusClass}>{statusLabel}</span>
               </div>
