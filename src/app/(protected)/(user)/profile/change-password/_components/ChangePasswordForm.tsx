@@ -83,7 +83,9 @@ export default function ChangePasswordForm() {
     <div className="flex flex-col items-center justify-center min-h-full">
       <div className="w-full max-w-sm">
         <CardHeader className="text-center px-0">
-          <CardTitle className="text-2xl">Alterar Senha</CardTitle>
+          <CardTitle as="h1" className="text-2xl">
+            Alterar Senha
+          </CardTitle>
           <CardDescription className="text-md text-muted-foreground">
             Insira sua senha atual e digite sua nova senha.
           </CardDescription>

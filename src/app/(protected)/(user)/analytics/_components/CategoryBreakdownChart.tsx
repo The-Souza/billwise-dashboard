@@ -48,7 +48,7 @@ export function CategoryBreakdownChart({
   return (
     <Card className="lg:col-span-2">
       <CardHeader>
-        <CardTitle className="font-heading text-md">
+        <CardTitle as="h2" className="font-heading text-md">
           Distribuição por categoria
         </CardTitle>
         <CardDescription>

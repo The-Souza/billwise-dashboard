@@ -62,7 +62,7 @@ export function CategoryTable({ data = [], isLoading }: CategoryTableProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-heading text-md">
+        <CardTitle as="h2" className="font-heading text-md">
           Detalhamento por categoria
         </CardTitle>
         <CardDescription>Clique nos cabeçalhos para ordenar</CardDescription>

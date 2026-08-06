@@ -183,7 +183,9 @@ export function ProfileForm({ user }: User) {
           <Card className="border-none bg-transparent shadow-none">
             <CardHeader className="flex flex-col sm:flex-row gap-2 items-start sm:items-center justify-between px-0">
               <div>
-                <CardTitle className="text-md">Dados Pessoais</CardTitle>
+                <CardTitle as="h1" className="text-md">
+                  Dados Pessoais
+                </CardTitle>
                 <CardDescription className="text-sm">
                   Informações básicas da sua conta.
                 </CardDescription>
@@ -292,7 +294,7 @@ export function ProfileForm({ user }: User) {
 
           <Card className="border-none bg-transparent shadow-none">
             <CardHeader className="px-0">
-              <CardTitle className="flex items-center gap-2 text-md">
+              <CardTitle as="h2" className="flex items-center gap-2 text-md">
                 <Lock className="h-4 w-4" /> Segurança
               </CardTitle>
               <CardDescription className="text-sm">

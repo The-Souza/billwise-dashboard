@@ -34,7 +34,9 @@ export function EvolutionChart({ data = [], isLoading }: EvolutionChartProps) {
   return (
     <Card className="lg:col-span-3">
       <CardHeader>
-        <CardTitle className="font-heading text-md">Evolução mensal</CardTitle>
+        <CardTitle as="h2" className="font-heading text-md">
+          Evolução mensal
+        </CardTitle>
         <CardDescription>
           Receitas e despesas mês a mês no período
         </CardDescription>

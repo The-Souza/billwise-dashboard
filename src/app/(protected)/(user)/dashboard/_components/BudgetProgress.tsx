@@ -162,7 +162,9 @@ export function BudgetProgress({
     <Card className="lg:col-span-2">
       <CardHeader className="flex flex-row items-start justify-between">
         <div className="flex flex-col gap-1">
-          <CardTitle className="font-heading text-base">Orçamentos</CardTitle>
+          <CardTitle as="h2" className="font-heading text-base">
+            Orçamentos
+          </CardTitle>
           <CardDescription>Uso em {label}</CardDescription>
         </div>
         <Button variant="ghost" size="sm" className="text-xs" asChild>

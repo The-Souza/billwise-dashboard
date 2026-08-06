@@ -69,7 +69,7 @@ export function RevenueExpenseChart({
     <Card className="lg:col-span-3">
       <CardHeader className="flex flex-row items-start justify-between">
         <div>
-          <CardTitle className="font-heading text-md">
+          <CardTitle as="h2" className="font-heading text-md">
             Receitas vs Despesas
           </CardTitle>
           <CardDescription>
