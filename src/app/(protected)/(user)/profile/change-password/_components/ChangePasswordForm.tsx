@@ -123,7 +123,12 @@ export default function ChangePasswordForm() {
                       />
                       <InputGroupAddon align="inline-end">
                         <InputGroupButton
-                          aria-label="view-password"
+                          aria-label={
+                            visibleField === "currentPassword"
+                              ? "Ocultar senha atual"
+                              : "Mostrar senha atual"
+                          }
+                          aria-pressed={visibleField === "currentPassword"}
                           size="icon-xs"
                           onClick={() =>
                             setVisibleField((prevState) =>
@@ -172,7 +177,12 @@ export default function ChangePasswordForm() {
                       />
                       <InputGroupAddon align="inline-end">
                         <InputGroupButton
-                          aria-label="view-password"
+                          aria-label={
+                            visibleField === "newPassword"
+                              ? "Ocultar nova senha"
+                              : "Mostrar nova senha"
+                          }
+                          aria-pressed={visibleField === "newPassword"}
                           size="icon-xs"
                           onClick={() =>
                             setVisibleField((prevState) =>
@@ -223,7 +233,12 @@ export default function ChangePasswordForm() {
                       />
                       <InputGroupAddon align="inline-end">
                         <InputGroupButton
-                          aria-label="view-password"
+                          aria-label={
+                            visibleField === "confirmNewPassword"
+                              ? "Ocultar confirmação de nova senha"
+                              : "Mostrar confirmação de nova senha"
+                          }
+                          aria-pressed={visibleField === "confirmNewPassword"}
                           size="icon-xs"
                           onClick={() =>
                             setVisibleField((prevState) =>

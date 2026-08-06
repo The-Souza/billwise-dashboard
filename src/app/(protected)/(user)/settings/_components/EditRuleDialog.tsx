@@ -103,6 +103,11 @@ export function EditRuleDialog({
                   meses
                 </span>
                 <Switch
+                  aria-label={
+                    editUnit === "anos"
+                      ? "Alternar para meses"
+                      : "Alternar para anos"
+                  }
                   checked={editUnit === "anos"}
                   onCheckedChange={(checked) =>
                     setEditUnit(checked ? "anos" : "meses")
