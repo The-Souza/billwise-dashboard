@@ -2,8 +2,8 @@
 name: BillWise Dashboard
 description: Painel de gerenciamento financeiro pessoal e colaborativo — contas, orçamentos, recorrências e analytics em workspaces compartilhados.
 colors:
-  confident-berry: "oklch(0.586 0.253 17.585)"
-  confident-berry-foreground: "oklch(0.969 0.015 12.422)"
+  confident-berry: "oklch(0.551 0.253 17.585)"
+  confident-berry-foreground: "oklch(1 0 0)"
   confident-berry-ring: "oklch(0.712 0.194 13.428)"
   paper-white: "oklch(1 0 0)"
   ink: "oklch(0.141 0.005 285.823)"
@@ -85,8 +85,8 @@ O sistema rejeita explicitamente dois extremos: o dashboard-planilha (denso, mon
 A paleta é deliberadamente curta: um único acento saturado sobre uma base neutra quase monocromática, com a mesma família de cor reaproveitada nos gráficos.
 
 ### Primary
-- **Confident Berry** (`oklch(0.586 0.253 17.585)`): ação primária (botões `default`, links, foco de marca). Usado com moderação — nunca como cor de fundo de grandes áreas.
-- **Confident Berry Foreground** (`oklch(0.969 0.015 12.422)`): texto sobre fundos Confident Berry.
+- **Confident Berry** (`oklch(0.551 0.253 17.585)` no claro, `oklch(0.557 0.246 16.439)` no escuro): ação primária (botões `default`, links, foco de marca). Usado com moderação — nunca como cor de fundo de grandes áreas. Luminosidade calibrada para manter ≥5:1 de contraste com `confident-berry-foreground` nos dois temas (WCAG AA).
+- **Confident Berry Foreground** (`oklch(1 0 0)`, branco puro): texto sobre fundos Confident Berry.
 - **Confident Berry Ring** (`oklch(0.712 0.194 13.428)`): anel de foco visível em inputs e elementos interativos.
 
 ### Neutral
