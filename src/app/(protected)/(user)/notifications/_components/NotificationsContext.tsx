@@ -3,6 +3,7 @@
 import { NotificationItem } from "@/actions/(user)/notifications/get-notifications";
 import { respondToInviteAction } from "@/actions/(user)/workspaces/respond-to-invite";
 import { markNotificationsReadAction } from "@/actions/(user)/notifications/mark-notifications-read";
+import { appToast } from "@/utils/app-toast";
 import { createContext, useContext, useState } from "react";
 
 type FilterType =
@@ -40,7 +41,11 @@ export function NotificationsProvider({
   const unreadCount = notifications.filter((n) => !n.readAt).length;
 
   async function handleMarkOne(id: string) {
-    await markNotificationsReadAction([id]);
+    const result = await markNotificationsReadAction([id]);
+    if (!result.success) {
+      appToast.error(result.error);
+      return;
+    }
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, readAt: new Date().toISOString() } : n)),
     );
@@ -48,7 +53,12 @@ export function NotificationsProvider({
 
   async function handleMarkAll() {
     setMarkingAll(true);
-    await markNotificationsReadAction();
+    const result = await markNotificationsReadAction();
+    if (!result.success) {
+      appToast.error(result.error);
+      setMarkingAll(false);
+      return;
+    }
     setNotifications((prev) =>
       prev.map((n) => ({ ...n, readAt: n.readAt ?? new Date().toISOString() })),
     );
@@ -60,7 +70,11 @@ export function NotificationsProvider({
     notificationId: string,
     response: "accepted" | "declined",
   ) {
-    await respondToInviteAction({ inviteId, response });
+    const result = await respondToInviteAction({ inviteId, response });
+    if (!result.success) {
+      appToast.error(result.error);
+      return;
+    }
     setNotifications((prev) =>
       prev.map((n) =>
         n.id === notificationId
