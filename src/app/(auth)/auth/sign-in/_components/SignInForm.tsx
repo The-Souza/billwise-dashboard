@@ -33,8 +33,8 @@ import { Turnstile } from "@marsidev/react-turnstile";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 
@@ -47,16 +47,6 @@ export function SignInForm() {
   const [captchaError, setCaptchaError] = useState(false);
   const { resolvedTheme } = useTheme();
   const router = useRouter();
-  const searchParams = useSearchParams();
-
-  useEffect(() => {
-    if (searchParams.get("error") === "invalid_reset_link") {
-      appToast.error(
-        "Este link de redefinição de senha expirou ou já foi usado. Solicite um novo.",
-      );
-      router.replace("/auth/sign-in");
-    }
-  }, [searchParams, router]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

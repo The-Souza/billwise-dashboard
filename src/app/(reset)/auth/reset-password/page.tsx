@@ -1,10 +1,16 @@
 import { Card } from "@/components/ui/card";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { InvalidResetLinkState } from "./_components/InvalidResetLinkState";
 import { UpdatePasswordForm } from "./_components/UpdatePasswordForm";
 
-export default async function UpdatePasswordPage() {
+export default async function UpdatePasswordPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
+  const { error } = await searchParams;
+
   const supabase = await createServerSupabase();
   const cookieStore = await cookies();
 
@@ -13,14 +19,11 @@ export default async function UpdatePasswordPage() {
   } = await supabase.auth.getUser();
 
   const isRecovery = cookieStore.get("recovery_session");
-
-  if (!user || !isRecovery) {
-    redirect("/auth/sign-in?error=invalid_reset_link");
-  }
+  const isInvalid = error === "invalid_reset_link" || !user || !isRecovery;
 
   return (
     <Card className="w-full max-w-md border-none bg-transparent shadow-none">
-      <UpdatePasswordForm />
+      {isInvalid ? <InvalidResetLinkState /> : <UpdatePasswordForm />}
     </Card>
   );
 }

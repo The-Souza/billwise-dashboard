@@ -9,7 +9,7 @@ export async function GET(request: Request) {
 
   if (!code) {
     return NextResponse.redirect(
-      new URL("/auth/sign-in?error=invalid_reset_link", request.url),
+      new URL("/auth/reset-password?error=invalid_reset_link", request.url),
     );
   }
 
@@ -18,7 +18,7 @@ export async function GET(request: Request) {
 
   if (error) {
     return NextResponse.redirect(
-      new URL("/auth/sign-in?error=invalid_reset_link", request.url),
+      new URL("/auth/reset-password?error=invalid_reset_link", request.url),
     );
   }
 
