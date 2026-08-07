@@ -83,20 +83,18 @@ export async function getCategoryBreakdownAction(
       .filter((r) => r.category_type === "expense")
       .reduce((s, r) => s + r.total, 0);
 
-    const data: CategoryBreakdownItem[] = rows.map((r) => {
-      const typeTotal =
-        r.category_type === "income" ? incomeTotal : expenseTotal;
-      return {
-        categoryId: r.category_id,
-        categoryName: r.category_name,
-        categoryIcon: r.category_icon,
-        type: r.category_type as "income" | "expense",
-        total: r.total,
-        count: r.count,
-        average: r.count > 0 ? r.total / r.count : 0,
-        percentage: typeTotal > 0 ? (r.total / typeTotal) * 100 : 0,
-      };
-    });
+    const grandTotal = incomeTotal + expenseTotal;
+
+    const data: CategoryBreakdownItem[] = rows.map((r) => ({
+      categoryId: r.category_id,
+      categoryName: r.category_name,
+      categoryIcon: r.category_icon,
+      type: r.category_type as "income" | "expense",
+      total: r.total,
+      count: r.count,
+      average: r.count > 0 ? r.total / r.count : 0,
+      percentage: grandTotal > 0 ? (r.total / grandTotal) * 100 : 0,
+    }));
 
     return { success: true, data };
   } catch (error) {

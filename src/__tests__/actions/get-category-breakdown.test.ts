@@ -86,7 +86,7 @@ describe("getCategoryBreakdownAction", () => {
     }
   });
 
-  it("calcula percentages separadas para income e expense", async () => {
+  it("calcula percentage relativa ao total combinado (income+expense) quando type é all", async () => {
     mockQueryRaw.mockResolvedValue([
       makeRow({ category_id: "cat-1", category_type: "income", total: 1000, count: 1 }),
       makeRow({ category_id: "cat-2", category_type: "expense", total: 400, count: 2 }),
@@ -98,9 +98,9 @@ describe("getCategoryBreakdownAction", () => {
       const income = result.data.find(d => d.type === "income");
       const exp1 = result.data.find(d => d.categoryId === "cat-2");
       const exp2 = result.data.find(d => d.categoryId === "cat-3");
-      expect(income?.percentage).toBe(100);
-      expect(exp1?.percentage).toBeCloseTo(40);
-      expect(exp2?.percentage).toBeCloseTo(60);
+      expect(income?.percentage).toBeCloseTo(50);
+      expect(exp1?.percentage).toBeCloseTo(20);
+      expect(exp2?.percentage).toBeCloseTo(30);
     }
   });
 
