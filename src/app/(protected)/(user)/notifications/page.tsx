@@ -8,7 +8,7 @@ export default function NotificationsPage() {
       <div className="flex flex-col gap-1">
         <h1 className="font-heading text-2xl font-bold">Notificações</h1>
         <p className="text-sm text-muted-foreground">
-          Suas últimas notificações dos últimos 30 dias.
+          Suas notificações mais recentes.
         </p>
       </div>
 
