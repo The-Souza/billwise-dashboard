@@ -118,17 +118,19 @@ export function WorkspaceCard({
                 >
                   <PencilIcon className="size-4" />
                 </Button>
-                <Button
-                  size="icon-sm"
-                  variant="ghost"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setInviteOpen(true);
-                  }}
-                  aria-label="Convidar membro"
-                >
-                  <UserPlusIcon className="size-4" />
-                </Button>
+                {!workspace.isPersonal && (
+                  <Button
+                    size="icon-sm"
+                    variant="ghost"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setInviteOpen(true);
+                    }}
+                    aria-label="Convidar membro"
+                  >
+                    <UserPlusIcon className="size-4" />
+                  </Button>
+                )}
                 {!workspace.isPersonal && (
                   <Button
                     size="icon-sm"

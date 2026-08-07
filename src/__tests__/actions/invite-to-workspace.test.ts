@@ -28,12 +28,14 @@ const INVITED_USER_ID = "c3000000-0000-4000-8000-000000000003";
 
 const MOCK_USER = { id: OWNER_ID, name: "Owner", email: "owner@test.com", avatarUrl: null };
 
-const OWNER_MEMBERSHIP: workspace_members & { workspace: { name: string } } = {
+const OWNER_MEMBERSHIP: workspace_members & {
+  workspace: { name: string; is_personal: boolean };
+} = {
   workspace_id: WORKSPACE_ID,
   user_id: OWNER_ID,
   role: workspace_member_role.owner,
   joined_at: new Date(),
-  workspace: { name: "Workspace de Teste" },
+  workspace: { name: "Workspace de Teste", is_personal: false },
 };
 
 beforeEach(() => {
@@ -79,6 +81,22 @@ describe("inviteToWorkspaceAction", () => {
 
     expect(result.success).toBe(false);
     if (!result.success) expect(result.error).toMatch(/permissão/i);
+  });
+
+  it("retorna erro quando o workspace é pessoal", async () => {
+    const personalMembership = {
+      ...OWNER_MEMBERSHIP,
+      workspace: { ...OWNER_MEMBERSHIP.workspace, is_personal: true },
+    };
+    mockMemberFindUnique.mockResolvedValue(personalMembership);
+
+    const result = await inviteToWorkspaceAction({
+      workspaceId: WORKSPACE_ID,
+      email: "convidado@test.com",
+    });
+
+    expect(result.success).toBe(false);
+    if (!result.success) expect(result.error).toMatch(/pessoal/i);
   });
 
   it("retorna erro quando invitador não é membro do workspace", async () => {
