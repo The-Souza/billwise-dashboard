@@ -160,79 +160,78 @@ export function NotificationsClient() {
         const isUnread = !n.readAt;
         const isInvite = n.type === "workspace_invite";
 
-        const CardWrapper = n.accountId
-          ? ({ children }: { children: React.ReactNode }) => (
-              <Link
-                href={`/accounts/${n.accountId}`}
-                onClick={() => isUnread && handleMarkOne(n.id)}
-                className="block"
-              >
-                {children}
-              </Link>
-            )
-          : ({ children }: { children: React.ReactNode }) => <>{children}</>;
+        const card = (
+          <Card
+            className={`relative flex items-start gap-3 rounded-md px-4 py-3 text-sm transition-colors ${
+              n.accountId ? "hover:bg-muted/50 cursor-pointer" : ""
+            } ${isUnread ? "bg-muted/40" : ""}`}
+          >
+            {isUnread && (
+              <span
+                aria-label="Não lida"
+                className="absolute top-3 right-3 h-2 w-2 rounded-full bg-primary"
+              />
+            )}
 
-        return (
-          <CardWrapper key={n.id}>
-            <Card
-              className={`relative flex items-start gap-3 rounded-md px-4 py-3 text-sm transition-colors ${
-                n.accountId ? "hover:bg-muted/50 cursor-pointer" : ""
-              } ${isUnread ? "bg-muted/40" : ""}`}
-            >
-              {isUnread && (
-                <span
-                  aria-label="Não lida"
-                  className="absolute top-3 right-3 h-2 w-2 rounded-full bg-primary"
-                />
+            {config?.icon ?? (
+              <div className="p-2 rounded-md bg-muted shrink-0">
+                <BellIcon className="size-4 text-muted-foreground" />
+              </div>
+            )}
+
+            <div className="flex flex-col gap-1 flex-1 min-w-0 pr-4">
+              <span className="font-heading font-semibold text-sm">
+                {n.title}
+              </span>
+
+              {n.body && (
+                <span className="text-muted-foreground text-xs leading-relaxed">
+                  {n.body}
+                </span>
               )}
 
-              {config?.icon ?? (
-                <div className="p-2 rounded-md bg-muted shrink-0">
-                  <BellIcon className="size-4 text-muted-foreground" />
-                </div>
-              )}
-
-              <div className="flex flex-col gap-1 flex-1 min-w-0 pr-4">
-                <span className="font-heading font-semibold text-sm">
-                  {n.title}
+              <div className="flex min-h-7 items-center justify-between gap-2 mt-1">
+                <span className="text-xs text-muted-foreground tabular-nums shrink-0">
+                  {formatNotificationDateTime(n.createdAt)}
                 </span>
 
-                {n.body && (
-                  <span className="text-muted-foreground text-xs leading-relaxed">
-                    {n.body}
-                  </span>
+                {isInvite && n.workspaceInviteId ? (
+                  <WorkspaceInviteActions
+                    inviteId={n.workspaceInviteId}
+                    notificationId={n.id}
+                    inviteStatus={n.inviteStatus}
+                  />
+                ) : (
+                  isUnread &&
+                  !n.accountId && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleMarkOne(n.id);
+                      }}
+                      className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors shrink-0"
+                    >
+                      <CheckCheckIcon className="h-3 w-3" />
+                      Marcar como lida
+                    </button>
+                  )
                 )}
-
-                <div className="flex min-h-7 items-center justify-between gap-2 mt-1">
-                  <span className="text-xs text-muted-foreground tabular-nums shrink-0">
-                    {formatNotificationDateTime(n.createdAt)}
-                  </span>
-
-                  {isInvite && n.workspaceInviteId ? (
-                    <WorkspaceInviteActions
-                      inviteId={n.workspaceInviteId}
-                      notificationId={n.id}
-                      inviteStatus={n.inviteStatus}
-                    />
-                  ) : (
-                    isUnread &&
-                    !n.accountId && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleMarkOne(n.id);
-                        }}
-                        className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors shrink-0"
-                      >
-                        <CheckCheckIcon className="h-3 w-3" />
-                        Marcar como lida
-                      </button>
-                    )
-                  )}
-                </div>
               </div>
-            </Card>
-          </CardWrapper>
+            </div>
+          </Card>
+        );
+
+        return n.accountId ? (
+          <Link
+            key={n.id}
+            href={`/accounts/${n.accountId}`}
+            onClick={() => isUnread && handleMarkOne(n.id)}
+            className="block"
+          >
+            {card}
+          </Link>
+        ) : (
+          <div key={n.id}>{card}</div>
         );
       })}
     </div>
