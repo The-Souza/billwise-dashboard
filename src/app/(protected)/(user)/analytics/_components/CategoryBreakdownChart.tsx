@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { buildChartSlices, type ChartSlice } from "@/utils/build-chart-slices";
 import { formatCurrency } from "@/utils/format-currency";
 import { capitalizeFirst, formatPercentage } from "@/utils/format-text";
 import { PieChart as PieChartIcon } from "lucide-react";
@@ -26,10 +27,17 @@ const COLORS = [
   "var(--chart-4)",
   "var(--chart-5)",
 ];
+const OTHERS_COLOR = "var(--chart-6)";
+
+function sliceColor(item: ChartSlice, index: number) {
+  return item.categoryId === "others"
+    ? OTHERS_COLOR
+    : COLORS[index % COLORS.length];
+}
 
 const TOOLTIP_ROWS: {
   label: string;
-  format: (item: CategoryBreakdownItem) => string;
+  format: (item: ChartSlice) => string;
 }[] = [
   { label: "Total", format: (item) => formatCurrency(item.total) },
   {
@@ -44,6 +52,7 @@ export function CategoryBreakdownChart({
   isLoading,
 }: CategoryBreakdownChartProps) {
   const hasData = data.length > 0;
+  const chartData = buildChartSlices(data);
 
   return (
     <Card className="lg:col-span-2">
@@ -62,7 +71,7 @@ export function CategoryBreakdownChart({
               <Skeleton className="h-40 w-40 rounded-full" />
             </div>
             <div className="w-full flex flex-col gap-1.5">
-              {Array.from({ length: 5 }).map((_, i) => (
+              {Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="flex items-center gap-2 h-4">
                   <Skeleton className="h-2.5 w-2.5 rounded-full shrink-0" />
                   <div className="flex w-full justify-between items-center">
@@ -83,7 +92,7 @@ export function CategoryBreakdownChart({
             <ResponsiveContainer width="100%" height={180}>
               <PieChart>
                 <Pie
-                  data={data}
+                  data={chartData}
                   dataKey="total"
                   nameKey="categoryName"
                   cx="50%"
@@ -92,10 +101,10 @@ export function CategoryBreakdownChart({
                   outerRadius={80}
                   paddingAngle={2}
                 >
-                  {data.map((_, index) => (
+                  {chartData.map((item, index) => (
                     <Cell
-                      key={index}
-                      fill={COLORS[index % COLORS.length]}
+                      key={item.categoryId}
+                      fill={sliceColor(item, index)}
                       stroke="transparent"
                     />
                   ))}
@@ -103,11 +112,11 @@ export function CategoryBreakdownChart({
                 <Tooltip
                   content={({ active, payload }) => {
                     if (!active || !payload?.length) return null;
-                    const item = payload[0].payload as CategoryBreakdownItem;
-                    const index = data.findIndex(
+                    const item = payload[0].payload as ChartSlice;
+                    const index = chartData.findIndex(
                       (d) => d.categoryId === item.categoryId,
                     );
-                    const fill = COLORS[Math.max(0, index) % COLORS.length];
+                    const fill = sliceColor(item, Math.max(0, index));
                     return (
                       <div className="grid min-w-32 items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
                         <div className="font-medium">
@@ -142,7 +151,7 @@ export function CategoryBreakdownChart({
             </ResponsiveContainer>
 
             <div className="flex flex-col gap-1.5">
-              {data.slice(0, 5).map((item, index) => (
+              {chartData.map((item, index) => (
                 <div
                   key={item.categoryId}
                   className="flex items-center justify-between gap-2 text-xs"
@@ -150,7 +159,7 @@ export function CategoryBreakdownChart({
                   <div className="flex items-center gap-2 min-w-0">
                     <div
                       className="h-2 w-2 rounded-full shrink-0"
-                      style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                      style={{ backgroundColor: sliceColor(item, index) }}
                     />
                     <span className="truncate text-muted-foreground">
                       {capitalizeFirst(item.categoryName)}

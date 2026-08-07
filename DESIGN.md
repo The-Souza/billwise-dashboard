@@ -17,6 +17,7 @@ colors:
   chart-3: "oklch(0.586 0.253 17.585)"
   chart-4: "oklch(0.514 0.222 16.935)"
   chart-5: "oklch(0.455 0.188 13.697)"
+  chart-6: "oklch(0.38 0.16 12.5)"
 typography:
   heading:
     fontFamily: "Poppins, var(--font-poppins), sans-serif"
@@ -100,7 +101,7 @@ A paleta é deliberadamente curta: um único acento saturado sobre uma base neut
 - **Destructive** (`oklch(0.577 0.245 40)`): erros, exclusões, despesas quando o contexto exige distinção explícita de "saída de dinheiro". Hue deliberadamente afastado (~40°) do Confident Berry (~17.6°) para permanecer distinguível dele — o hue anterior (27.325°) ficava a apenas ~10° de distância, quase indistinguível em UI compacta.
 
 ### Chart Ramp
-- **Chart 1 → 5** (`oklch(0.81 0.117 11.638)` → `oklch(0.455 0.188 13.697)`): uma única família de cor (mesmo hue ~11–17°) variando em luminosidade. Gráficos não introduzem cores fora dessa família — multisséries usam o degradê, não cores arbitrárias.
+- **Chart 1 → 6** (`oklch(0.81 0.117 11.638)` → `oklch(0.38 0.16 12.5)`): uma única família de cor (mesmo hue ~11–17°) variando em luminosidade. Gráficos não introduzem cores fora dessa família — multisséries usam o degradê, não cores arbitrárias. Chart 6 é o passo mais escuro da rampa, reservado para buckets agregados (ex: fatia "Outros" em gráficos de pizza) — mantém a mesma família em vez de recorrer a `muted-foreground`.
 
 ### Named Rules
 **The One Accent Rule.** Confident Berry é o único acento saturado do sistema. Nenhum segundo acento (verde "sucesso", azul "info") é introduzido; estado é comunicado por posição, ícone ou pelo próprio número (sinal +/-), não por uma segunda cor de marca.
