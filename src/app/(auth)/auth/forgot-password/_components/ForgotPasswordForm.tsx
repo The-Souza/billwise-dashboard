@@ -35,6 +35,7 @@ export function ForgotPasswordForm() {
   const [captchaToken, setCaptchaToken] = useState<string | undefined>(
     undefined,
   );
+  const [captchaError, setCaptchaError] = useState(false);
   const { resolvedTheme } = useTheme();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -123,8 +124,15 @@ export function ForgotPasswordForm() {
       <CardFooter className="flex flex-col gap-4">
         <Turnstile
           siteKey={TURNSTILE_SITE_KEY}
-          onSuccess={(token) => setCaptchaToken(token)}
+          onSuccess={(token) => {
+            setCaptchaError(false);
+            setCaptchaToken(token);
+          }}
           onExpire={() => setCaptchaToken(undefined)}
+          onError={() => {
+            setCaptchaToken(undefined);
+            setCaptchaError(true);
+          }}
           options={{
             theme: (resolvedTheme as "dark" | "light") ?? "light",
             language: "pt-br",
@@ -133,6 +141,12 @@ export function ForgotPasswordForm() {
             action: "forgot-password",
           }}
         />
+        {captchaError && (
+          <p className="text-xs text-destructive text-center">
+            Não foi possível carregar a verificação de segurança. Recarregue a
+            página e tente novamente.
+          </p>
+        )}
         <Field>
           <Button
             type="submit"

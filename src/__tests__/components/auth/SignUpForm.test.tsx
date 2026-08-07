@@ -4,11 +4,19 @@ import { useEffect } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 let autoResolveCaptcha = true;
+let triggerCaptchaError = false;
 vi.mock("@marsidev/react-turnstile", () => ({
-  Turnstile: ({ onSuccess }: { onSuccess?: (token: string) => void }) => {
+  Turnstile: ({
+    onSuccess,
+    onError,
+  }: {
+    onSuccess?: (token: string) => void;
+    onError?: () => void;
+  }) => {
     useEffect(() => {
       if (autoResolveCaptcha) onSuccess?.("test-captcha-token");
-    }, [onSuccess]);
+      if (triggerCaptchaError) onError?.();
+    }, [onSuccess, onError]);
     return null;
   },
 }));
@@ -54,6 +62,7 @@ describe("SignUpForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     autoResolveCaptcha = true;
+    triggerCaptchaError = false;
   });
 
   it("renderiza todos os campos do formulário", () => {
@@ -93,6 +102,16 @@ describe("SignUpForm", () => {
     render(<SignUpForm />);
     await fillForm(user);
     expect(screen.getByRole("button", { name: /criar conta/i })).toBeDisabled();
+  });
+
+  it("mostra mensagem inline quando a verificação de segurança falha ao carregar", () => {
+    autoResolveCaptcha = false;
+    triggerCaptchaError = true;
+    render(<SignUpForm />);
+
+    expect(
+      screen.getByText(/não foi possível carregar a verificação de segurança/i),
+    ).toBeInTheDocument();
   });
 
   it("chama signUpAction e redireciona para verify-email em sucesso", async () => {

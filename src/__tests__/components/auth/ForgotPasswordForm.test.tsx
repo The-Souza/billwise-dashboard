@@ -4,11 +4,19 @@ import { useEffect } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 let autoResolveCaptcha = true;
+let triggerCaptchaError = false;
 vi.mock("@marsidev/react-turnstile", () => ({
-  Turnstile: ({ onSuccess }: { onSuccess?: (token: string) => void }) => {
+  Turnstile: ({
+    onSuccess,
+    onError,
+  }: {
+    onSuccess?: (token: string) => void;
+    onError?: () => void;
+  }) => {
     useEffect(() => {
       if (autoResolveCaptcha) onSuccess?.("test-captcha-token");
-    }, [onSuccess]);
+      if (triggerCaptchaError) onError?.();
+    }, [onSuccess, onError]);
     return null;
   },
 }));
@@ -34,6 +42,7 @@ describe("ForgotPasswordForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     autoResolveCaptcha = true;
+    triggerCaptchaError = false;
   });
 
   it("renderiza campo de email e botão de envio", () => {
@@ -65,6 +74,16 @@ describe("ForgotPasswordForm", () => {
     render(<ForgotPasswordForm />);
     await user.type(screen.getByLabelText("Email"), "guilherme@test.com");
     expect(screen.getByRole("button", { name: /enviar email/i })).toBeDisabled();
+  });
+
+  it("mostra mensagem inline quando a verificação de segurança falha ao carregar", () => {
+    autoResolveCaptcha = false;
+    triggerCaptchaError = true;
+    render(<ForgotPasswordForm />);
+
+    expect(
+      screen.getByText(/não foi possível carregar a verificação de segurança/i),
+    ).toBeInTheDocument();
   });
 
   it("chama forgotPasswordAction e exibe toast de sucesso", async () => {
