@@ -27,7 +27,7 @@ interface EvolutionChartProps {
 
 const chartConfig = {
   income: { label: "Receita", color: "var(--chart-1)" },
-  expense: { label: "Despesa", color: "var(--chart-3)" },
+  expense: { label: "Despesa", color: "var(--destructive)" },
 } satisfies ChartConfig;
 
 export function EvolutionChart({ data = [], isLoading }: EvolutionChartProps) {
@@ -43,14 +43,14 @@ export function EvolutionChart({ data = [], isLoading }: EvolutionChartProps) {
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <Skeleton className="h-75 w-full rounded-lg" />
+          <Skeleton className="h-80 w-full rounded-lg" />
         ) : data.length === 0 ? (
-          <div className="h-75 flex flex-col items-center justify-center gap-2 text-muted-foreground">
+          <div className="h-80 flex flex-col items-center justify-center gap-2 text-muted-foreground">
             <TrendingUp className="h-8 w-8 opacity-30" />
             <p className="text-sm">Nenhuma movimentação neste período.</p>
           </div>
         ) : (
-          <ChartContainer config={chartConfig} className="h-75 w-full">
+          <ChartContainer config={chartConfig} className="h-80 w-full">
             <BarChart data={data} barGap={2}>
               <CartesianGrid vertical={false} stroke="var(--border)" />
               <XAxis

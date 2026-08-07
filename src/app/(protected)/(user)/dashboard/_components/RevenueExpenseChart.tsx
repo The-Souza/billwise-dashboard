@@ -39,7 +39,7 @@ interface RevenueExpenseChartProps {
 
 const chartConfig = {
   income: { label: "Receita", color: "var(--chart-1)" },
-  expense: { label: "Despesa", color: "var(--chart-3)" },
+  expense: { label: "Despesa", color: "var(--destructive)" },
 } satisfies ChartConfig;
 
 export function RevenueExpenseChart({
