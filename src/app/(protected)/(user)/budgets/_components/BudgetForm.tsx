@@ -22,7 +22,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { buildCategoryGroups, findCategoryItem } from "@/utils/category-combobox";
 import { budgetFormSchema } from "@/schemas/budgets/budget-form";
 import { appToast } from "@/utils/app-toast";
-import { parseCurrencyInput } from "@/utils/parse-currency";
+import { formatCurrencyForInput, parseCurrencyInput } from "@/utils/parse-currency";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SaveIcon } from "lucide-react";
 import { useState } from "react";
@@ -57,7 +57,7 @@ export function BudgetForm({
   onSubmit,
 }: BudgetFormProps) {
   const isEditing = !!budget;
-  const [raw, setRaw] = useState(budget?.limitAmount?.toString() ?? "");
+  const [raw, setRaw] = useState(formatCurrencyForInput(budget?.limitAmount));
   const [portalContainer, setPortalContainer] = useState<HTMLDivElement | null>(
     null,
   );

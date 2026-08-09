@@ -2,7 +2,7 @@
 
 import { FieldError, FieldLabel } from "@/components/ui/field";
 import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
-import { parseCurrencyInput } from "@/utils/parse-currency";
+import { formatCurrencyForInput, parseCurrencyInput } from "@/utils/parse-currency";
 import { useState } from "react";
 import type {
   ControllerFieldState,
@@ -21,7 +21,7 @@ export function CurrencyInputField<T extends FieldValues, N extends Path<T>>({
   fieldState,
 }: CurrencyInputFieldProps<T, N>) {
   const [raw, setRaw] = useState(
-    (field.value as number | undefined)?.toString() ?? "",
+    formatCurrencyForInput(field.value as number | undefined),
   );
 
   return (
