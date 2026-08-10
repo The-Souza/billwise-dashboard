@@ -54,7 +54,10 @@ export function DeleteBudgetDialog({
             Cancelar
           </AlertDialogCancel>
           <AlertDialogAction
-            onClick={onConfirm}
+            onClick={(e) => {
+              e.preventDefault();
+              onConfirm();
+            }}
             disabled={isDeleting}
             className="bg-destructive hover:bg-destructive/90 text-destructive-foreground transition-transform ease-in hover:scale-103 active:scale-97"
           >

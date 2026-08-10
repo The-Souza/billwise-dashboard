@@ -71,7 +71,10 @@ export function DeleteRuleAlertDialog({
             Cancelar
           </AlertDialogCancel>
           <AlertDialogAction
-            onClick={handleConfirm}
+            onClick={(e) => {
+              e.preventDefault();
+              handleConfirm();
+            }}
             disabled={isDeleting}
             className="bg-destructive hover:bg-destructive/90 text-destructive-foreground transition-transform ease-in hover:scale-103 active:scale-97"
           >
