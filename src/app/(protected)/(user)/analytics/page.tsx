@@ -15,10 +15,24 @@ export default function AnalyticsPage() {
   const filters = useAnalyticsFilters();
   const { startMonth, startYear, endMonth, endYear, type } = filters;
 
-  const { data: summaryResult, isLoading: summaryLoading } = useQuery({
+  const {
+    data: summaryResult,
+    isLoading: summaryLoading,
+    isError: summaryError,
+    isFetching: summaryFetching,
+    refetch: refetchSummary,
+  } = useQuery({
     queryKey: ["analytics-summary", startMonth, startYear, endMonth, endYear],
-    queryFn: () =>
-      getAnalyticsSummaryAction(startMonth, startYear, endMonth, endYear),
+    queryFn: async () => {
+      const r = await getAnalyticsSummaryAction(
+        startMonth,
+        startYear,
+        endMonth,
+        endYear,
+      );
+      if (!r.success) throw new Error(r.error);
+      return r;
+    },
   });
 
   const { data: breakdownResult, isLoading: breakdownLoading } = useQuery({
@@ -62,7 +76,13 @@ export default function AnalyticsPage() {
       <AnalyticsFilters filters={filters} />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        <AnalyticsSummaryCards data={summary} isLoading={summaryLoading} />
+        <AnalyticsSummaryCards
+          data={summary}
+          isLoading={summaryLoading}
+          isError={summaryError}
+          isRetrying={summaryFetching}
+          onRetry={refetchSummary}
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
