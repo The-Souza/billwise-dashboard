@@ -172,7 +172,7 @@ export function ProfileForm({ user }: User) {
             </DropdownMenu>
           </div>
           <div className="text-center">
-            <h2 className="text-2xl font-heading">Seu Perfil</h2>
+            <h1 className="text-2xl font-heading">Seu Perfil</h1>
             <p className="text-muted-foreground text-md">
               Gerencie suas informações e segurança.
             </p>
@@ -183,7 +183,7 @@ export function ProfileForm({ user }: User) {
           <Card className="border-none bg-transparent shadow-none">
             <CardHeader className="flex flex-col sm:flex-row gap-2 items-start sm:items-center justify-between px-0">
               <div>
-                <CardTitle as="h1" className="text-md">
+                <CardTitle as="h2" className="text-md">
                   Dados Pessoais
                 </CardTitle>
                 <CardDescription className="text-sm">
@@ -205,7 +205,10 @@ export function ProfileForm({ user }: User) {
                     type="button"
                     variant="outline"
                     className="transition-transform ease-in hover:scale-103 active:scale-97 w-full sm:w-auto"
-                    onClick={() => setIsEditing(false)}
+                    onClick={() => {
+                      form.reset();
+                      setIsEditing(false);
+                    }}
                   >
                     Cancelar
                   </Button>
