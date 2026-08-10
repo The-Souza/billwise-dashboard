@@ -1,4 +1,4 @@
-import { ArrowDownRight, ArrowUpRight } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
 
 type TrendProps = {
   trend: number | null;
@@ -15,7 +15,17 @@ export function TrendIndicator({ trend, isGood, label }: TrendProps) {
     );
   }
 
-  const positive = trend >= 0;
+  if (trend === 0) {
+    return (
+      <p className="text-sm text-muted-foreground flex items-center gap-1">
+        <Minus className="h-4 w-4" />
+        <span>0%</span>
+        {label && <span>{label}</span>}
+      </p>
+    );
+  }
+
+  const positive = trend > 0;
   const isGreenCase = isGood ? positive : !positive;
 
   return (

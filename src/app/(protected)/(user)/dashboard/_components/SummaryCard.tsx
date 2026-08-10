@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { QueryErrorState } from "@/components/ui/query-error-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TrendIndicator } from "@/components/ui/trend-indicator";
+import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/utils/format-currency";
 import { TrendingDown, TrendingUp, Wallet } from "lucide-react";
 
@@ -85,7 +86,14 @@ export function SummaryCard({
               </>
             ) : (
               <>
-                <p className="text-2xl font-bold tracking-tight">
+                <p
+                  className={cn(
+                    "text-2xl font-bold tracking-tight",
+                    item.id === "saldo" &&
+                      data[item.valueKey] < 0 &&
+                      "text-destructive",
+                  )}
+                >
                   {formatCurrency(data[item.valueKey])}
                 </p>
                 <TrendIndicator
