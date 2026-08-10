@@ -16,14 +16,13 @@ import {
 } from "@/components/ui/field";
 import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import { Spinner } from "@/components/ui/spinner";
+import { TurnstileField } from "@/components/auth/TurnstileField";
 
 import { appToast } from "@/utils/app-toast";
 
 import { forgotPasswordAction } from "@/actions/auth/forgot-password";
-import { TURNSTILE_SITE_KEY } from "@/config/turnstile";
 import { formSchema } from "@/schemas/auth/forgot-password";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Turnstile } from "@marsidev/react-turnstile";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useState } from "react";
@@ -35,7 +34,6 @@ export function ForgotPasswordForm() {
   const [captchaToken, setCaptchaToken] = useState<string | undefined>(
     undefined,
   );
-  const [captchaError, setCaptchaError] = useState(false);
   const { resolvedTheme } = useTheme();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -122,31 +120,11 @@ export function ForgotPasswordForm() {
         </form>
       </CardContent>
       <CardFooter className="flex flex-col gap-4">
-        <Turnstile
-          siteKey={TURNSTILE_SITE_KEY}
-          onSuccess={(token) => {
-            setCaptchaError(false);
-            setCaptchaToken(token);
-          }}
-          onExpire={() => setCaptchaToken(undefined)}
-          onError={() => {
-            setCaptchaToken(undefined);
-            setCaptchaError(true);
-          }}
-          options={{
-            theme: (resolvedTheme as "dark" | "light") ?? "light",
-            language: "pt-br",
-            appearance: "always",
-            size: "flexible",
-            action: "forgot-password",
-          }}
+        <TurnstileField
+          action="forgot-password"
+          theme={(resolvedTheme as "dark" | "light") ?? "light"}
+          onTokenChange={setCaptchaToken}
         />
-        {captchaError && (
-          <p className="text-xs text-destructive text-center">
-            Não foi possível carregar a verificação de segurança. Recarregue a
-            página e tente novamente.
-          </p>
-        )}
         <Field>
           <Button
             type="submit"
@@ -165,6 +143,11 @@ export function ForgotPasswordForm() {
               "Enviar email"
             )}
           </Button>
+          {!captchaToken && form.formState.isValid && !isSubmitting && (
+            <p className="text-xs text-muted-foreground text-center">
+              Aguardando verificação de segurança para habilitar o envio.
+            </p>
+          )}
         </Field>
 
         <Button className="text-md" variant="link" asChild>

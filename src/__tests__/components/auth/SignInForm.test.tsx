@@ -92,6 +92,19 @@ describe("SignInForm", () => {
     expect(screen.getByRole("button", { name: /faça login/i })).toBeDisabled();
   });
 
+  it("explica por que o botão está desabilitado quando só falta o captcha resolver", async () => {
+    autoResolveCaptcha = false;
+    const user = userEvent.setup();
+    render(<SignInForm />);
+
+    await user.type(screen.getByLabelText("Email"), "guilherme@test.com");
+    await user.type(screen.getByLabelText("Senha"), "minhasenha");
+
+    expect(
+      screen.getByText(/aguardando verificação de segurança/i),
+    ).toBeInTheDocument();
+  });
+
   it("mostra mensagem inline quando a verificação de segurança falha ao carregar", () => {
     autoResolveCaptcha = false;
     triggerCaptchaError = true;

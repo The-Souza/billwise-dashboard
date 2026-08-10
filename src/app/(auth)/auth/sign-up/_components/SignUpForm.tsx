@@ -22,14 +22,13 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { Spinner } from "@/components/ui/spinner";
+import { TurnstileField } from "@/components/auth/TurnstileField";
 
 import { appToast } from "@/utils/app-toast";
 
 import { signUpAction } from "@/actions/auth/sign-up";
-import { TURNSTILE_SITE_KEY } from "@/config/turnstile";
 import { formSchema } from "@/schemas/auth/sign-up";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Turnstile } from "@marsidev/react-turnstile";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
@@ -46,7 +45,6 @@ export function SignUpForm() {
   const [captchaToken, setCaptchaToken] = useState<string | undefined>(
     undefined,
   );
-  const [captchaError, setCaptchaError] = useState(false);
   const router = useRouter();
   const { resolvedTheme } = useTheme();
 
@@ -283,31 +281,11 @@ export function SignUpForm() {
         </div>
       </CardContent>
       <CardFooter className="flex flex-col gap-4">
-        <Turnstile
-          siteKey={TURNSTILE_SITE_KEY}
-          onSuccess={(token) => {
-            setCaptchaError(false);
-            setCaptchaToken(token);
-          }}
-          onExpire={() => setCaptchaToken(undefined)}
-          onError={() => {
-            setCaptchaToken(undefined);
-            setCaptchaError(true);
-          }}
-          options={{
-            theme: (resolvedTheme as "dark" | "light") ?? "light",
-            language: "pt-br",
-            appearance: "always",
-            size: "flexible",
-            action: "sign-up",
-          }}
+        <TurnstileField
+          action="sign-up"
+          theme={(resolvedTheme as "dark" | "light") ?? "light"}
+          onTokenChange={setCaptchaToken}
         />
-        {captchaError && (
-          <p className="text-xs text-destructive text-center">
-            Não foi possível carregar a verificação de segurança. Recarregue a
-            página e tente novamente.
-          </p>
-        )}
         <Field>
           <Button
             type="submit"
@@ -324,6 +302,11 @@ export function SignUpForm() {
               "Criar Conta"
             )}
           </Button>
+          {!captchaToken && form.formState.isValid && !isSubmitting && (
+            <p className="text-xs text-muted-foreground text-center">
+              Aguardando verificação de segurança para habilitar o envio.
+            </p>
+          )}
         </Field>
 
         <nav className="flex w-full gap-2 text-md justify-center items-center">
