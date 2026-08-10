@@ -37,10 +37,26 @@ import * as z from "zod";
 
 export function UpdatePasswordForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [visibleField, setVisibleField] = useState<
     "password" | "confirmPassword" | null
   >(null);
   const router = useRouter();
+
+  async function handleBackToLogin() {
+    if (isLoggingOut) return;
+
+    setIsLoggingOut(true);
+    const result = await logoutAction();
+
+    if (!result.success) {
+      appToast.error(result.error);
+      setIsLoggingOut(false);
+      return;
+    }
+
+    router.replace("/auth/sign-in");
+  }
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -223,11 +239,10 @@ export function UpdatePasswordForm() {
           type="button"
           variant="link"
           className="text-md"
-          onClick={async () => {
-            await logoutAction();
-            router.replace("/auth/sign-in");
-          }}
+          disabled={isLoggingOut}
+          onClick={handleBackToLogin}
         >
+          {isLoggingOut ? <Spinner data-icon="inline-start" /> : null}
           Voltar para login
         </Button>
       </CardFooter>

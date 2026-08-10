@@ -91,11 +91,11 @@ export function AuthLayoutWrapper({
         {/* Main content */}
         <div className="relative z-10 flex flex-col gap-10">
           <div className="flex flex-col gap-3">
-            <h2 className="text-3xl font-bold font-heading text-white leading-snug">
+            <p className="text-3xl font-bold font-heading text-white leading-snug">
               {isReassurance
                 ? "Vamos recuperar o acesso à sua conta"
                 : "Organize, acompanhe e planeje suas finanças"}
-            </h2>
+            </p>
             <p className="text-white text-base font-normal leading-relaxed">
               {isReassurance
                 ? "Sua segurança vem em primeiro lugar. Redefina sua senha com tranquilidade."
