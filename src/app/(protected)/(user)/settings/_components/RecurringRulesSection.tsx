@@ -117,7 +117,7 @@ export function RecurringRulesSection() {
                       >
                         {formatCurrency(rule.amount)}
                       </span>
-                      <span className="hidden sm:block text-xs text-muted-foreground">
+                      <span className="text-xs text-muted-foreground">
                         {rule.endDate
                           ? `Até ${formatRuleEndDate(rule.endDate)}`
                           : "Sem prazo"}

@@ -51,18 +51,29 @@ export function NotificationPrefsSection() {
   });
 
   const [prefs, setPrefs] = useState<NotificationPrefs>(DEFAULT_PREFS);
+  const [savedPrefs, setSavedPrefs] = useState<NotificationPrefs>(DEFAULT_PREFS);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (result?.success) setPrefs(result.data);
+    if (result?.success) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setPrefs(result.data);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSavedPrefs(result.data);
+    }
   }, [result]);
+
+  const hasUnsavedChanges =
+    prefs.dueDaysAhead !== savedPrefs.dueDaysAhead ||
+    prefs.onRecurringGenerated !== savedPrefs.onRecurringGenerated ||
+    prefs.onBudgetExceeded !== savedPrefs.onBudgetExceeded;
 
   async function handleSave() {
     setIsSaving(true);
     const res = await updateNotificationPrefsAction(prefs);
     if (res.success) {
       appToast.success("Preferências salvas com sucesso.");
+      setSavedPrefs(prefs);
       refetch();
     } else {
       appToast.error(res.error);
@@ -194,10 +205,15 @@ export function NotificationPrefsSection() {
               </div>
             </div>
 
-            <div className="flex justify-end mt-2">
+            <div className="flex items-center justify-end gap-3 mt-2">
+              {hasUnsavedChanges && !isSaving && (
+                <span className="text-xs text-muted-foreground">
+                  Alterações não salvas
+                </span>
+              )}
               <Button
                 onClick={handleSave}
-                disabled={isSaving || isLoading}
+                disabled={isSaving || isLoading || !hasUnsavedChanges}
                 className="transition-transform ease-in hover:scale-103 active:scale-97"
               >
                 {isSaving ? (

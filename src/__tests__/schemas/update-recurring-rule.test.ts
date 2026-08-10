@@ -53,4 +53,22 @@ describe("updateRecurringRuleSchema", () => {
       }).success,
     ).toBe(false);
   });
+
+  it("rejeita recurrenceMonths absurdamente alto (defesa contra duração sem teto)", () => {
+    const result = updateRecurringRuleSchema.safeParse({
+      id: VALID_UUID,
+      recurrenceMonths: 999 * 12,
+    });
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0].message).toBe("Duração muito longa");
+  });
+
+  it("aceita recurrenceMonths no limite máximo (100 anos)", () => {
+    expect(
+      updateRecurringRuleSchema.safeParse({
+        id: VALID_UUID,
+        recurrenceMonths: 1200,
+      }).success,
+    ).toBe(true);
+  });
 });

@@ -125,6 +125,7 @@ export function EditRuleDialog({
                 id="edit-duration"
                 type="number"
                 min={1}
+                max={editUnit === "anos" ? 100 : 1200}
                 value={editDuration}
                 onChange={(e) => setEditDuration(e.target.value)}
                 placeholder={`Ex: ${editUnit === "anos" ? "2" : "24"}`}
