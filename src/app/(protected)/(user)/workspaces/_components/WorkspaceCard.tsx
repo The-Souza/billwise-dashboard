@@ -7,6 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { formatJoinDate } from "@/utils/format-date";
 import { getInitials } from "@/utils/get-initials";
@@ -33,6 +38,40 @@ import { WorkspaceTransferDialog } from "./WorkspaceTransferDialog";
 interface WorkspaceCardProps {
   workspace: WorkspaceSummary;
   currentUserId: string;
+}
+
+interface IconActionButtonProps {
+  label: string;
+  onClick: (e: React.MouseEvent) => void;
+  className?: string;
+  disabled?: boolean;
+  children: React.ReactNode;
+}
+
+function IconActionButton({
+  label,
+  onClick,
+  className,
+  disabled,
+  children,
+}: IconActionButtonProps) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          size="icon-sm"
+          variant="ghost"
+          className={className}
+          disabled={disabled}
+          onClick={onClick}
+          aria-label={label}
+        >
+          {children}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>{label}</TooltipContent>
+    </Tooltip>
+  );
 }
 
 export function WorkspaceCard({
@@ -107,77 +146,67 @@ export function WorkspaceCard({
           <div className="flex items-center gap-1.5 shrink-0">
             {isOwner ? (
               <>
-                <Button
-                  size="icon-sm"
-                  variant="ghost"
+                <IconActionButton
                   onClick={(e) => {
                     e.stopPropagation();
                     setRenameOpen(true);
                   }}
-                  aria-label="Renomear workspace"
+                  label="Renomear workspace"
                 >
                   <PencilIcon className="size-4" />
-                </Button>
+                </IconActionButton>
                 {!workspace.isPersonal && (
-                  <Button
-                    size="icon-sm"
-                    variant="ghost"
+                  <IconActionButton
                     onClick={(e) => {
                       e.stopPropagation();
                       setInviteOpen(true);
                     }}
-                    aria-label="Convidar membro"
+                    label="Convidar membro"
                   >
                     <UserPlusIcon className="size-4" />
-                  </Button>
+                  </IconActionButton>
                 )}
                 {!workspace.isPersonal && (
-                  <Button
-                    size="icon-sm"
-                    variant="ghost"
+                  <IconActionButton
                     onClick={(e) => {
                       e.stopPropagation();
                       setDeleteOpen(true);
                     }}
                     className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                    aria-label="Deletar workspace"
+                    label="Deletar workspace"
                   >
                     <Trash2Icon className="size-4" />
-                  </Button>
+                  </IconActionButton>
                 )}
               </>
             ) : (
               !workspace.isPersonal && (
-                <Button
-                  size="icon-sm"
-                  variant="ghost"
+                <IconActionButton
                   onClick={(e) => {
                     e.stopPropagation();
                     setLeaveOpen(true);
                   }}
                   className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                  aria-label="Sair do workspace"
+                  label="Sair do workspace"
                 >
                   <LogOutIcon className="size-4" />
-                </Button>
+                </IconActionButton>
               )
             )}
             <Separator orientation="vertical" className="h-5" />
-            <Button
-              size="icon-sm"
-              variant="ghost"
+            <IconActionButton
               onClick={(e) => {
                 e.stopPropagation();
                 setExpanded((v) => !v);
               }}
-              aria-label={expanded ? "Recolher membros" : "Expandir membros"}
+              label={expanded ? "Recolher membros" : "Expandir membros"}
             >
               {expanded ? (
                 <ChevronUpIcon className="size-4" />
               ) : (
                 <ChevronDownIcon className="size-4" />
               )}
-            </Button>
+            </IconActionButton>
           </div>
         </div>
 
@@ -253,32 +282,28 @@ export function WorkspaceCard({
                         {isOwner &&
                         m.userId === currentUserId &&
                         !workspace.isPersonal ? (
-                          <Button
-                            size="icon-sm"
-                            variant="ghost"
+                          <IconActionButton
                             className="text-muted-foreground hover:text-primary hover:bg-primary/10"
                             onClick={(e) => {
                               e.stopPropagation();
                               setTransferOpen(true);
                             }}
-                            aria-label="Transferir propriedade do workspace"
+                            label="Transferir propriedade do workspace"
                           >
                             <ArrowRightLeftIcon className="size-4" />
-                          </Button>
+                          </IconActionButton>
                         ) : isOwner && m.userId !== currentUserId ? (
-                          <Button
-                            size="icon-sm"
-                            variant="ghost"
+                          <IconActionButton
                             className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                             disabled={removing === m.userId}
                             onClick={(e) => {
                               e.stopPropagation();
                               setRemoveTarget(m);
                             }}
-                            aria-label={`Remover ${m.name} do workspace`}
+                            label={`Remover ${m.name} do workspace`}
                           >
                             <UserMinusIcon className="size-4" />
-                          </Button>
+                          </IconActionButton>
                         ) : null}
                       </div>
                     </div>

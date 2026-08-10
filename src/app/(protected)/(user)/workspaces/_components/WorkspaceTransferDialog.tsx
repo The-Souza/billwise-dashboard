@@ -118,6 +118,7 @@ export function WorkspaceTransferDialog({
               <button
                 key={m.userId}
                 type="button"
+                aria-pressed={selectedId === m.userId}
                 onClick={() => setSelectedId(m.userId)}
                 className={cn(
                   "flex w-full items-center gap-3 rounded-md border p-2 text-left transition-colors",
