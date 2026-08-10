@@ -212,6 +212,7 @@ export function AccountsDataTable({
           <Button
             variant="outline"
             size="icon-sm"
+            aria-label="Página anterior"
             className="transition-transform ease-in hover:scale-103 active:scale-97"
             onClick={() => handleFiltersChange({ page: page - 1 })}
             disabled={page <= 1 || isLoading}
@@ -224,6 +225,7 @@ export function AccountsDataTable({
           <Button
             variant="outline"
             size="icon-sm"
+            aria-label="Próxima página"
             className="transition-transform ease-in hover:scale-103 active:scale-97"
             onClick={() => handleFiltersChange({ page: page + 1 })}
             disabled={page >= totalPages || isLoading}
