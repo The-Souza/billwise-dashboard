@@ -1,5 +1,15 @@
 "use client";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
@@ -75,6 +85,7 @@ function WorkspaceInviteActions({
 }) {
   const { handleRespondToInvite } = useNotifications();
   const [loading, setLoading] = useState<"accepted" | "declined" | null>(null);
+  const [confirmingDecline, setConfirmingDecline] = useState(false);
 
   if (inviteStatus === "accepted" || inviteStatus === "declined") {
     return (
@@ -120,11 +131,40 @@ function WorkspaceInviteActions({
         aria-label="Recusar convite"
         onClick={(e) => {
           e.stopPropagation();
-          respond("declined");
+          setConfirmingDecline(true);
         }}
       >
         {loading === "declined" ? <Spinner /> : <XIcon />}
       </Button>
+
+      <AlertDialog
+        open={confirmingDecline}
+        onOpenChange={setConfirmingDecline}
+      >
+        <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Recusar convite?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Você não poderá desfazer essa ação. Para participar do workspace
+              depois, será preciso um novo convite.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={loading !== null}>
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={loading !== null}
+              onClick={(e) => {
+                e.preventDefault();
+                respond("declined");
+              }}
+            >
+              {loading === "declined" ? <Spinner /> : "Recusar"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
@@ -138,15 +178,22 @@ export function NotificationsClient() {
       : notifications.filter((n) => n.type === filter);
 
   if (filtered.length === 0) {
+    const hasOtherNotifications = notifications.length > 0;
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
         <div className="p-4 rounded-full bg-muted">
           <BellIcon className="h-6 w-6 text-muted-foreground opacity-50" />
         </div>
         <div className="flex flex-col gap-1">
-          <p className="text-sm font-medium">Nenhuma notificação</p>
+          <p className="text-sm font-medium">
+            {hasOtherNotifications
+              ? "Nenhuma notificação neste filtro"
+              : "Nenhuma notificação"}
+          </p>
           <p className="text-xs text-muted-foreground">
-            Você está em dia com tudo por aqui.
+            {hasOtherNotifications
+              ? "Experimente outro filtro para ver suas notificações."
+              : "Você está em dia com tudo por aqui."}
           </p>
         </div>
       </div>
@@ -162,7 +209,7 @@ export function NotificationsClient() {
 
         const card = (
           <Card
-            className={`relative flex items-start gap-3 rounded-md px-4 py-3 text-sm transition-colors ${
+            className={`relative flex min-h-32.5 items-start gap-3 rounded-md px-4 py-3 text-sm transition-colors ${
               n.accountId ? "hover:bg-muted/50 cursor-pointer" : ""
             } ${isUnread ? "bg-muted/40" : ""}`}
           >
@@ -180,6 +227,11 @@ export function NotificationsClient() {
             )}
 
             <div className="flex flex-col gap-1 flex-1 min-w-0 pr-4">
+              {config?.label && (
+                <span className="text-xs font-medium text-muted-foreground">
+                  {config.label}
+                </span>
+              )}
               <span className="font-heading font-semibold text-sm">
                 {n.title}
               </span>
@@ -204,16 +256,18 @@ export function NotificationsClient() {
                 ) : (
                   isUnread &&
                   !n.accountId && (
-                    <button
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-auto gap-1 px-1.5 py-0.5 text-xs text-muted-foreground hover:text-foreground shrink-0"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleMarkOne(n.id);
                       }}
-                      className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors shrink-0"
                     >
                       <CheckCheckIcon className="h-3 w-3" />
                       Marcar como lida
-                    </button>
+                    </Button>
                   )
                 )}
               </div>
