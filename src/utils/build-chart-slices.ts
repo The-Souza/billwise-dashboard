@@ -21,7 +21,7 @@ export function buildChartSlices(
     ...top,
     {
       categoryId: "others",
-      categoryName: "Outros",
+      categoryName: "Outras categorias",
       total: rest.reduce((sum, d) => sum + d.total, 0),
       count: rest.reduce((sum, d) => sum + d.count, 0),
       percentage: rest.reduce((sum, d) => sum + d.percentage, 0),

@@ -57,7 +57,7 @@ describe("buildChartSlices", () => {
 
     const others = result[5];
     expect(others.categoryId).toBe("others");
-    expect(others.categoryName).toBe("Outros");
+    expect(others.categoryName).toBe("Outras categorias");
     expect(others.total).toBe(50);
     expect(others.count).toBe(2);
     expect(others.percentage).toBeCloseTo(5);
@@ -73,10 +73,32 @@ describe("buildChartSlices", () => {
     expect(result).toHaveLength(6);
     expect(result[5]).toMatchObject({
       categoryId: "others",
-      categoryName: "Outros",
+      categoryName: "Outras categorias",
       total: 10,
       count: 1,
       percentage: 10,
+    });
+  });
+
+  it("mantém categoryId 'others' como discriminador mesmo se uma categoria real se chamar 'Outras categorias'", () => {
+    const data = [
+      makeSlice({ categoryId: "cat-0", categoryName: "Outras categorias" }),
+      makeSlice({ categoryId: "cat-1" }),
+      makeSlice({ categoryId: "cat-2" }),
+      makeSlice({ categoryId: "cat-3" }),
+      makeSlice({ categoryId: "cat-4" }),
+      makeSlice({ categoryId: "cat-5" }),
+    ];
+
+    const result = buildChartSlices(data);
+
+    expect(result[0]).toMatchObject({
+      categoryId: "cat-0",
+      categoryName: "Outras categorias",
+    });
+    expect(result[5]).toMatchObject({
+      categoryId: "others",
+      categoryName: "Outras categorias",
     });
   });
 
