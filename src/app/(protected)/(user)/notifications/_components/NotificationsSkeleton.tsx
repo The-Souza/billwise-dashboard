@@ -15,7 +15,7 @@ export function NotificationsSkeleton() {
         {Array.from({ length: 10 }).map((_, i) => (
           <Card
             key={i}
-            className="flex h-26.25 items-start gap-3 rounded-md border border-border px-4 py-3"
+            className="flex h-32.5 items-start gap-3 rounded-md border border-border px-4 py-3"
           >
             <Skeleton className="h-8 w-8 rounded-md shrink-0" />
             <div className="flex flex-col gap-3 flex-1">
