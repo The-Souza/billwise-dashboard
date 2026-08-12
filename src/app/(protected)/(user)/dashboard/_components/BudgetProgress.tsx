@@ -28,6 +28,7 @@ interface BudgetProgressProps {
   isError?: boolean;
   isRetrying?: boolean;
   onRetry?: () => void;
+  isBalanceNegative?: boolean;
 }
 
 function BudgetItem({ budget }: { budget: BudgetProgressItem }) {
@@ -150,6 +151,7 @@ export function BudgetProgress({
   isError,
   isRetrying,
   onRetry,
+  isBalanceNegative,
 }: BudgetProgressProps) {
   const allExpense = (data ?? []).filter((b) => b.type === "expense");
   const allIncome = (data ?? []).filter((b) => b.type === "income");
@@ -197,7 +199,13 @@ export function BudgetProgress({
               {isLoading ? (
                 <BudgetSkeleton />
               ) : expense.length === 0 ? (
-                <EmptyState message="Nenhum orçamento de despesa definido." />
+                <EmptyState
+                  message={
+                    isBalanceNegative
+                      ? "Definir um orçamento pode ajudar a controlar isso."
+                      : "Nenhum orçamento de despesa definido."
+                  }
+                />
               ) : (
                 <>
                   {expense.map((b) => (

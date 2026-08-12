@@ -156,6 +156,7 @@ export default function DashboardPage() {
           isError={errorBudgets}
           isRetrying={fetchingBudgets}
           onRetry={refetchBudgets}
+          isBalanceNegative={summary !== undefined && summary.balance < 0}
         />
       </div>
 
