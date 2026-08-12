@@ -105,7 +105,8 @@ export function CategoryBreakdownChart({
                     <Cell
                       key={item.categoryId}
                       fill={sliceColor(item, index)}
-                      stroke="transparent"
+                      stroke="var(--card)"
+                      strokeWidth={2}
                     />
                   ))}
                 </Pie>
