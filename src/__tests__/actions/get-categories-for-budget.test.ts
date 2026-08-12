@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@/lib/auth/guards", () => ({ requireAuth: vi.fn() }));
+vi.mock("@/lib/auth/workspace", () => ({ requireWorkspace: vi.fn() }));
 vi.mock("@/lib/prisma/client", () => ({
   prisma: {
     budgets: { findMany: vi.fn() },
@@ -9,14 +9,19 @@ vi.mock("@/lib/prisma/client", () => ({
 }));
 
 import { getCategoriesForBudgetAction } from "@/actions/(user)/budgets/get-categories-for-budget";
-import { requireAuth } from "@/lib/auth/guards";
+import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 
-const mockAuth = vi.mocked(requireAuth);
+const mockWorkspace = vi.mocked(requireWorkspace);
 const mockBudgetsFindMany = vi.mocked(prisma.budgets.findMany);
 const mockCategoriesFindMany = vi.mocked(prisma.categories.findMany);
 
-const MOCK_USER = { id: "user-uuid-123", name: "Test", email: "u@test.com", avatarUrl: null };
+const WORKSPACE_ID = "workspace-uuid-456";
+const MOCK_WORKSPACE_CTX = {
+  user: { id: "user-uuid-123", name: "Test", email: "u@test.com", avatarUrl: null },
+  workspaceId: WORKSPACE_ID,
+  workspaceRole: "owner" as const,
+};
 
 const MOCK_CATEGORIES = [
   { id: "cat-1", name: "Alimentação", type: "expense" as const, icon: "🍕" },
@@ -26,7 +31,7 @@ const MOCK_CATEGORIES = [
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mockAuth.mockResolvedValue(MOCK_USER as never);
+  mockWorkspace.mockResolvedValue(MOCK_WORKSPACE_CTX as never);
   mockBudgetsFindMany.mockResolvedValue([]);
   mockCategoriesFindMany.mockResolvedValue(MOCK_CATEGORIES as never);
 });
@@ -58,6 +63,23 @@ describe("getCategoriesForBudgetAction", () => {
       expect(result.expense).toHaveLength(1);
       expect(result.expense[0].id).toBe("cat-2");
     }
+  });
+
+  it("filtra budgets existentes pelo workspace atual, não por todos os workspaces do usuário", async () => {
+    await getCategoriesForBudgetAction(3, 2024);
+
+    expect(mockBudgetsFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ workspace_id: WORKSPACE_ID }),
+      }),
+    );
+    expect(mockBudgetsFindMany).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          user_id: expect.anything(),
+        }),
+      }),
+    );
   });
 
   it("com excludeBudgetId, não exclui o próprio budget da filtragem", async () => {

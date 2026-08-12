@@ -101,38 +101,6 @@ export function BudgetForm({
         name="categoryId"
         control={form.control}
         render={({ field, fieldState }) => {
-          if (isEditing) {
-            const editingItem = {
-              id: budget!.categoryId,
-              name: budget!.categoryName,
-            };
-            return (
-              <Field>
-                <FieldLabel
-                  htmlFor={field.name}
-                  className="text-sm font-medium"
-                  required
-                >
-                  Categoria
-                </FieldLabel>
-                {isLoadingCategories ? (
-                  <Skeleton className="h-9 w-full" />
-                ) : (
-                  <Combobox
-                    items={[editingItem]}
-                    value={editingItem}
-                    itemToStringLabel={(item) => item.name}
-                  >
-                    <ComboboxInput id={field.name} disabled showTrigger />
-                  </Combobox>
-                )}
-                <span className="text-xs text-muted-foreground">
-                  A categoria não pode ser alterada.
-                </span>
-              </Field>
-            );
-          }
-
           const categoryGroups = buildCategoryGroups(visibleExpense, visibleIncome);
           const selectedItem = findCategoryItem(categoryGroups, field.value);
 
@@ -145,7 +113,9 @@ export function BudgetForm({
               >
                 Categoria
               </FieldLabel>
-              {!isLoadingCategories && noCategories ? (
+              {isLoadingCategories ? (
+                <Skeleton className="h-9 w-full" />
+              ) : noCategories ? (
                 <p className="text-sm text-muted-foreground rounded-md border border-dashed px-3 py-2">
                   Todas as categorias já possuem orçamento neste mês.
                 </p>
@@ -160,7 +130,6 @@ export function BudgetForm({
                     id={field.name}
                     placeholder="Selecione uma categoria"
                     aria-invalid={fieldState.invalid}
-                    disabled={isLoadingCategories}
                     showTrigger
                   />
                   <ComboboxContent container={portalContainer}>
