@@ -1,14 +1,18 @@
 "use client";
 
+import { copyBudgetsFromPreviousMonthAction } from "@/actions/(user)/budgets/copy-budgets-from-previous-month";
 import { deleteBudgetAction } from "@/actions/(user)/budgets/delete-budget";
 import {
   BudgetRow,
   getBudgetsAction,
 } from "@/actions/(user)/budgets/get-budgets";
+import { Button } from "@/components/ui/button";
 import { MonthPicker } from "@/components/ui/month-picker";
+import { Spinner } from "@/components/ui/spinner";
 import { useDashboardMonth } from "@/hooks/use-dashboard-month";
 import { appToast } from "@/utils/app-toast";
 import { useQuery } from "@tanstack/react-query";
+import { CopyIcon } from "lucide-react";
 import { useState } from "react";
 import { AddBudgetCard } from "./_components/AddBudgetCard";
 import { BudgetCard } from "./_components/BudgetCard";
@@ -42,6 +46,31 @@ export default function BudgetsPage() {
     budget: BudgetRow | null;
     isDeleting: boolean;
   }>({ open: false, budget: null, isDeleting: false });
+
+  const [isCopying, setIsCopying] = useState(false);
+
+  async function handleCopyFromPreviousMonth() {
+    setIsCopying(true);
+    const result = await copyBudgetsFromPreviousMonthAction(month, year);
+    setIsCopying(false);
+
+    if (!result.success) {
+      appToast.error(result.error);
+      return;
+    }
+
+    if (result.copied === 0) {
+      appToast.info("Nenhum orçamento novo para copiar.");
+      return;
+    }
+
+    refetch();
+    appToast.success(
+      `${result.copied} orçamento${result.copied === 1 ? "" : "s"} copiado${
+        result.copied === 1 ? "" : "s"
+      } do mês anterior.`,
+    );
+  }
 
   function handleMonthSelect(m: number, y: number) {
     dashboardMonth.setMonth(m);
@@ -86,10 +115,30 @@ export default function BudgetsPage() {
             Defina e acompanhe limites de gastos por categoria.
           </p>
         </div>
+
         <MonthPicker {...dashboardMonth} onSelect={handleMonthSelect} />
       </div>
 
       <div className="flex flex-col gap-6">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleCopyFromPreviousMonth}
+          disabled={isCopying}
+          className="self-start transition-transform ease-in hover:scale-103 active:scale-97"
+        >
+          {isCopying ? (
+            <>
+              <Spinner data-icon="inline-start" />
+              Copiando do mês anterior...
+            </>
+          ) : (
+            <>
+              <CopyIcon className="h-3.5 w-3.5" />
+              Copiar do mês anterior
+            </>
+          )}
+        </Button>
         <section className="flex flex-col gap-3">
           <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
             Despesas
