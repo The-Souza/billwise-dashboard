@@ -13,12 +13,14 @@ import { useDashboardMonth } from "@/hooks/use-dashboard-month";
 import { appToast } from "@/utils/app-toast";
 import { useQuery } from "@tanstack/react-query";
 import { CopyIcon } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { AddBudgetCard } from "./_components/AddBudgetCard";
 import { BudgetCard } from "./_components/BudgetCard";
 import { BudgetFormDialog } from "./_components/BudgetFormDialog";
 import { BudgetsSkeleton } from "./_components/BudgetsSkeleton";
 import { DeleteBudgetDialog } from "./_components/DeleteBudgetDialog";
+
+const DELETE_UNDO_WINDOW_MS = 5000;
 
 export default function BudgetsPage() {
   const dashboardMonth = useDashboardMonth();
@@ -44,8 +46,14 @@ export default function BudgetsPage() {
   const [deleteDialog, setDeleteDialog] = useState<{
     open: boolean;
     budget: BudgetRow | null;
-    isDeleting: boolean;
-  }>({ open: false, budget: null, isDeleting: false });
+  }>({ open: false, budget: null });
+
+  const [pendingDeleteIds, setPendingDeleteIds] = useState<Set<string>>(
+    new Set(),
+  );
+  const deleteTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(
+    new Map(),
+  );
 
   const [isCopying, setIsCopying] = useState(false);
 
@@ -86,25 +94,57 @@ export default function BudgetsPage() {
   }
 
   function openDelete(budget: BudgetRow) {
-    setDeleteDialog({ open: true, budget, isDeleting: false });
+    setDeleteDialog({ open: true, budget });
   }
 
-  async function handleDeleteConfirm() {
-    if (!deleteDialog.budget) return;
-    setDeleteDialog((prev) => ({ ...prev, isDeleting: true }));
-    const result = await deleteBudgetAction(deleteDialog.budget.id);
-    if (result.success) {
-      refetch();
-      setDeleteDialog({ open: false, budget: null, isDeleting: false });
-      appToast.success("Orçamento excluído.");
-    } else {
-      setDeleteDialog((prev) => ({ ...prev, isDeleting: false }));
-      appToast.error(result.error);
+  function cancelPendingDelete(id: string) {
+    const timer = deleteTimers.current.get(id);
+    if (timer) {
+      clearTimeout(timer);
+      deleteTimers.current.delete(id);
     }
+    setPendingDeleteIds((prev) => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
   }
 
-  const expense = (budgets ?? []).filter((b) => b.categoryType === "expense");
-  const income = (budgets ?? []).filter((b) => b.categoryType === "income");
+  function handleDeleteConfirm() {
+    const budget = deleteDialog.budget;
+    if (!budget) return;
+    setDeleteDialog({ open: false, budget: null });
+    setPendingDeleteIds((prev) => new Set(prev).add(budget.id));
+
+    const timer = setTimeout(async () => {
+      deleteTimers.current.delete(budget.id);
+      const result = await deleteBudgetAction(budget.id);
+      if (result.success) {
+        refetch();
+      } else {
+        setPendingDeleteIds((prev) => {
+          const next = new Set(prev);
+          next.delete(budget.id);
+          return next;
+        });
+        appToast.error(result.error);
+      }
+    }, DELETE_UNDO_WINDOW_MS);
+    deleteTimers.current.set(budget.id, timer);
+
+    appToast.undo(`"${budget.categoryName}" excluído.`, {
+      label: "Desfazer",
+      duration: DELETE_UNDO_WINDOW_MS,
+      onClick: () => cancelPendingDelete(budget.id),
+    });
+  }
+
+  const expense = (budgets ?? []).filter(
+    (b) => b.categoryType === "expense" && !pendingDeleteIds.has(b.id),
+  );
+  const income = (budgets ?? []).filter(
+    (b) => b.categoryType === "income" && !pendingDeleteIds.has(b.id),
+  );
 
   return (
     <div className="flex flex-col gap-6 pb-8">
@@ -204,11 +244,8 @@ export default function BudgetsPage() {
       <DeleteBudgetDialog
         open={deleteDialog.open}
         budget={deleteDialog.budget}
-        isDeleting={deleteDialog.isDeleting}
         onConfirm={handleDeleteConfirm}
-        onCancel={() =>
-          setDeleteDialog({ open: false, budget: null, isDeleting: false })
-        }
+        onCancel={() => setDeleteDialog({ open: false, budget: null })}
       />
     </div>
   );

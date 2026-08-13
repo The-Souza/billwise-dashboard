@@ -43,7 +43,7 @@ export function DeleteBudgetDialog({
               : "Excluir orçamento?"}
           </AlertDialogTitle>
           <AlertDialogDescription>
-            Esta ação é permanente e não pode ser desfeita.
+            Você poderá desfazer por alguns segundos após confirmar.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
