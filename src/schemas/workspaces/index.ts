@@ -30,3 +30,8 @@ export const transferOwnershipSchema = z.object({
 
 export const workspaceIdSchema = z.string().uuid("Workspace inválido");
 export const userIdSchema = z.string().uuid("Usuário inválido");
+
+export const bulkRemoveMembersSchema = z.object({
+  workspaceId: workspaceIdSchema,
+  userIds: z.array(userIdSchema).min(1, "Nenhum membro selecionado"),
+});

@@ -59,4 +59,42 @@ describe("WorkspaceDeleteAlert", () => {
     expect(screen.getByRole("button", { name: /deletando/i })).toBeDisabled();
     expect(screen.getByRole("button", { name: /cancelar/i })).toBeDisabled();
   });
+
+  it("não exibe aviso de outros membros quando otherMembersCount é 0", () => {
+    render(
+      <WorkspaceDeleteAlert
+        open={true}
+        onOpenChange={vi.fn()}
+        deleting={false}
+        onConfirm={vi.fn()}
+      />,
+    );
+    expect(screen.queryByText(/perderá|perderão/i)).not.toBeInTheDocument();
+  });
+
+  it("exibe aviso no singular quando há 1 outro membro", () => {
+    render(
+      <WorkspaceDeleteAlert
+        open={true}
+        onOpenChange={vi.fn()}
+        deleting={false}
+        onConfirm={vi.fn()}
+        otherMembersCount={1}
+      />,
+    );
+    expect(screen.getByText(/1 outro membro perderá/i)).toBeInTheDocument();
+  });
+
+  it("exibe aviso no plural quando há mais de 1 outro membro", () => {
+    render(
+      <WorkspaceDeleteAlert
+        open={true}
+        onOpenChange={vi.fn()}
+        deleting={false}
+        onConfirm={vi.fn()}
+        otherMembersCount={3}
+      />,
+    );
+    expect(screen.getByText(/3 outros membros perderão/i)).toBeInTheDocument();
+  });
 });

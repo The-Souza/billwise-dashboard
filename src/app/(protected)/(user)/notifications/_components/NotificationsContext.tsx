@@ -12,7 +12,8 @@ type FilterType =
   | "due_soon"
   | "budget_exceeded"
   | "recurring_generated"
-  | "workspace_invite";
+  | "workspace_invite"
+  | "workspace_deleted";
 
 type NotificationsContextValue = {
   notifications: NotificationItem[];

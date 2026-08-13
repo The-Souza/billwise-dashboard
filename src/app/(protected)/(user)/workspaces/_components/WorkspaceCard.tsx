@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -28,6 +29,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useWorkspaceCard } from "../_hooks/useWorkspaceCard";
+import { WorkspaceBulkRemoveAlert } from "./WorkspaceBulkRemoveAlert";
 import { WorkspaceDeleteAlert } from "./WorkspaceDeleteAlert";
 import { WorkspaceInviteDialog } from "./WorkspaceInviteDialog";
 import { WorkspaceLeaveAlert } from "./WorkspaceLeaveAlert";
@@ -79,6 +81,7 @@ export function WorkspaceCard({
   currentUserId,
 }: WorkspaceCardProps) {
   const isOwner = workspace.role === "owner";
+  const canBulkSelect = isOwner && !workspace.isPersonal;
 
   const [inviteOpen, setInviteOpen] = useState(false);
   const [transferOpen, setTransferOpen] = useState(false);
@@ -91,6 +94,12 @@ export function WorkspaceCard({
     removing,
     removeTarget,
     setRemoveTarget,
+    selectedIds,
+    toggleSelect,
+    bulkRemoving,
+    bulkRemoveOpen,
+    setBulkRemoveOpen,
+    confirmBulkRemove,
     deleting,
     leaving,
     renameOpen,
@@ -218,9 +227,32 @@ export function WorkspaceCard({
         >
           <div className="overflow-hidden min-h-0">
             <Separator className="mb-3" />
-            <div className="flex items-center gap-1.5 mb-3">
-              <UsersIcon className="size-4 text-muted-foreground" />
-              <span className="text-sm font-medium">Membros</span>
+            <div className="flex items-center justify-between gap-2 mb-3 min-h-7">
+              <div className="flex items-center gap-1.5">
+                <UsersIcon className="size-4 text-muted-foreground" />
+                <span className="text-sm font-medium">Membros</span>
+              </div>
+              {canBulkSelect && (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground">
+                    {selectedIds.size}{" "}
+                    {selectedIds.size === 1 ? "selecionado" : "selecionados"}
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 px-2 text-xs text-destructive hover:text-destructive hover:bg-destructive/10"
+                    disabled={selectedIds.size === 0}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setBulkRemoveOpen(true);
+                    }}
+                  >
+                    <UserMinusIcon className="size-3.5" />
+                    Remover selecionados
+                  </Button>
+                </div>
+              )}
             </div>
 
             <div className="flex flex-col">
@@ -233,8 +265,14 @@ export function WorkspaceCard({
                   }).map((_, i) => (
                     <div
                       key={i}
-                      className="grid grid-cols-[2rem_1fr_2rem] min-h-13.5 items-center gap-3 border-b border-border/60 px-2 py-2 last:border-0"
+                      className={cn(
+                        "grid items-center gap-3 border-b border-border/60 min-h-13.5 px-2 py-2 last:border-0",
+                        canBulkSelect
+                          ? "grid-cols-[1.25rem_2rem_1fr_2rem]"
+                          : "grid-cols-[2rem_1fr_2rem]",
+                      )}
                     >
+                      {canBulkSelect && <Skeleton className="h-4 w-4 rounded" />}
                       <Skeleton className="h-8 w-8 rounded-md" />
                       <div className="flex flex-col gap-1.5">
                         <Skeleton className="h-3 w-28 rounded" />
@@ -246,8 +284,29 @@ export function WorkspaceCard({
                 : (members ?? []).map((m) => (
                     <div
                       key={m.userId}
-                      className="grid grid-cols-[2rem_1fr_2rem] items-center gap-3 border-b min-h-13.5 border-border/60 p-2 transition-colors last:border-0 hover:bg-muted/50"
+                      className={cn(
+                        "grid items-center gap-3 border-b min-h-13.5 border-border/60 p-2 transition-colors last:border-0 hover:bg-muted/50",
+                        canBulkSelect
+                          ? "grid-cols-[1.25rem_2rem_1fr_2rem]"
+                          : "grid-cols-[2rem_1fr_2rem]",
+                      )}
                     >
+                      {canBulkSelect &&
+                        (m.userId !== currentUserId ? (
+                          <Checkbox
+                            checked={selectedIds.has(m.userId)}
+                            onCheckedChange={() => toggleSelect(m.userId)}
+                            onClick={(e) => e.stopPropagation()}
+                            aria-label={`Selecionar ${m.name}`}
+                          />
+                        ) : (
+                          <Checkbox
+                            checked={false}
+                            disabled
+                            onClick={(e) => e.stopPropagation()}
+                            aria-label="Você não pode se remover"
+                          />
+                        ))}
                       <Avatar className="h-8 w-8 rounded-md shrink-0">
                         <AvatarImage
                           src={m.avatarUrl ?? undefined}
@@ -324,6 +383,13 @@ export function WorkspaceCard({
         onOpenChange={setInviteOpen}
         workspaceId={workspace.id}
       />
+      <WorkspaceBulkRemoveAlert
+        open={bulkRemoveOpen}
+        targets={(members ?? []).filter((m) => selectedIds.has(m.userId))}
+        removing={bulkRemoving}
+        onClose={() => setBulkRemoveOpen(false)}
+        onConfirm={confirmBulkRemove}
+      />
       <WorkspaceRemoveMemberAlert
         target={removeTarget}
         removing={removing}
@@ -335,6 +401,7 @@ export function WorkspaceCard({
         onOpenChange={setDeleteOpen}
         deleting={deleting}
         onConfirm={handleDelete}
+        otherMembersCount={Math.max(workspace.memberCount - 1, 0)}
       />
       <WorkspaceLeaveAlert
         open={leaveOpen}

@@ -22,6 +22,7 @@ import {
   CheckCheckIcon,
   CheckIcon,
   RefreshCwIcon,
+  Trash2Icon,
   TrendingUpIcon,
   UsersIcon,
   XIcon,
@@ -30,49 +31,56 @@ import Link from "next/link";
 import { useState } from "react";
 import { useNotifications } from "./NotificationsContext";
 
-const TYPE_CONFIG: Record<string, { label: string; icon: React.ReactNode }> =
-  {
-    overdue: {
-      label: "Vencida",
-      icon: (
-        <div className="p-2 rounded-md bg-destructive/10 shrink-0">
-          <AlertTriangleIcon className="size-4 text-destructive" />
-        </div>
-      ),
-    },
-    due_soon: {
-      label: "Prestes a vencer",
-      icon: (
-        <div className="p-2 rounded-md bg-primary/10 shrink-0">
-          <AlertCircleIcon className="size-4 text-primary" />
-        </div>
-      ),
-    },
-    budget_exceeded: {
-      label: "Orçamento",
-      icon: (
-        <div className="p-2 rounded-md bg-destructive/10 shrink-0">
-          <TrendingUpIcon className="size-4 text-destructive" />
-        </div>
-      ),
-    },
-    recurring_generated: {
-      label: "Recorrente",
-      icon: (
-        <div className="p-2 rounded-md bg-primary/10 shrink-0">
-          <RefreshCwIcon className="size-4 text-primary" />
-        </div>
-      ),
-    },
-    workspace_invite: {
-      label: "Convite",
-      icon: (
-        <div className="p-2 rounded-md bg-secondary shrink-0">
-          <UsersIcon className="size-4 text-foreground" />
-        </div>
-      ),
-    },
-  };
+const TYPE_CONFIG: Record<string, { label: string; icon: React.ReactNode }> = {
+  overdue: {
+    label: "Vencida",
+    icon: (
+      <div className="p-2 rounded-md bg-destructive/10 shrink-0">
+        <AlertTriangleIcon className="size-4 text-destructive" />
+      </div>
+    ),
+  },
+  due_soon: {
+    label: "Prestes a vencer",
+    icon: (
+      <div className="p-2 rounded-md bg-primary/10 shrink-0">
+        <AlertCircleIcon className="size-4 text-primary" />
+      </div>
+    ),
+  },
+  budget_exceeded: {
+    label: "Orçamento",
+    icon: (
+      <div className="p-2 rounded-md bg-destructive/10 shrink-0">
+        <TrendingUpIcon className="size-4 text-destructive" />
+      </div>
+    ),
+  },
+  recurring_generated: {
+    label: "Recorrente",
+    icon: (
+      <div className="p-2 rounded-md bg-primary/10 shrink-0">
+        <RefreshCwIcon className="size-4 text-primary" />
+      </div>
+    ),
+  },
+  workspace_invite: {
+    label: "Convite",
+    icon: (
+      <div className="p-2 rounded-md bg-secondary shrink-0">
+        <UsersIcon className="size-4 text-foreground" />
+      </div>
+    ),
+  },
+  workspace_deleted: {
+    label: "Workspace removido",
+    icon: (
+      <div className="p-2 rounded-md bg-destructive/10 shrink-0">
+        <Trash2Icon className="size-4 text-destructive" />
+      </div>
+    ),
+  },
+};
 
 function WorkspaceInviteActions({
   inviteId,
@@ -137,10 +145,7 @@ function WorkspaceInviteActions({
         {loading === "declined" ? <Spinner /> : <XIcon />}
       </Button>
 
-      <AlertDialog
-        open={confirmingDecline}
-        onOpenChange={setConfirmingDecline}
-      >
+      <AlertDialog open={confirmingDecline} onOpenChange={setConfirmingDecline}>
         <AlertDialogContent onClick={(e) => e.stopPropagation()}>
           <AlertDialogHeader>
             <AlertDialogTitle>Recusar convite?</AlertDialogTitle>
@@ -209,7 +214,7 @@ export function NotificationsClient() {
 
         const card = (
           <Card
-            className={`relative flex min-h-32.5 items-start gap-3 rounded-md px-4 py-3 text-sm transition-colors ${
+            className={`relative flex min-h-32.5 h-full items-start gap-3 rounded-md px-4 py-3 text-sm transition-colors ${
               n.accountId ? "hover:bg-muted/50 cursor-pointer" : ""
             } ${isUnread ? "bg-muted/40" : ""}`}
           >
@@ -226,7 +231,7 @@ export function NotificationsClient() {
               </div>
             )}
 
-            <div className="flex flex-col gap-1 flex-1 min-w-0 pr-4">
+            <div className="flex flex-col gap-1 flex-1 h-full min-w-0 pr-4">
               {config?.label && (
                 <span className="text-xs font-medium text-muted-foreground">
                   {config.label}
@@ -237,7 +242,7 @@ export function NotificationsClient() {
               </span>
 
               {n.body && (
-                <span className="text-muted-foreground text-xs leading-relaxed">
+                <span className="flex-1 text-muted-foreground text-xs leading-relaxed">
                   {n.body}
                 </span>
               )}

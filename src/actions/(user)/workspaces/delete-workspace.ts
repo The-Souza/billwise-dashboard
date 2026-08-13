@@ -34,7 +34,25 @@ export async function deleteWorkspaceAction(workspaceId: string): Promise<Result
       return { success: false, error: "Não é possível deletar o workspace pessoal" };
     }
 
-    await prisma.workspaces.delete({ where: { id: workspaceId } });
+    const otherMembers = await prisma.workspace_members.findMany({
+      where: { workspace_id: workspaceId, user_id: { not: user.id } },
+      select: { user_id: true },
+    });
+
+    await prisma.$transaction(async (tx) => {
+      if (otherMembers.length > 0) {
+        await tx.notifications.createMany({
+          data: otherMembers.map((m) => ({
+            user_id: m.user_id,
+            title: "Workspace removido",
+            body: `O workspace "${workspace.name}" foi deletado pelo proprietário e você perdeu o acesso.`,
+            type: "workspace_deleted",
+          })),
+        });
+      }
+
+      await tx.workspaces.delete({ where: { id: workspaceId } });
+    });
 
     const cookieStore = await cookies();
     if (cookieStore.get("active_workspace_id")?.value === workspaceId) {

@@ -11,7 +11,8 @@ type FilterType =
   | "due_soon"
   | "budget_exceeded"
   | "recurring_generated"
-  | "workspace_invite";
+  | "workspace_invite"
+  | "workspace_deleted";
 
 const FILTER_OPTIONS: { value: FilterType; label: string }[] = [
   { value: "all", label: "Todas" },
@@ -20,6 +21,7 @@ const FILTER_OPTIONS: { value: FilterType; label: string }[] = [
   { value: "budget_exceeded", label: "Orçamento" },
   { value: "recurring_generated", label: "Recorrentes" },
   { value: "workspace_invite", label: "Convites" },
+  { value: "workspace_deleted", label: "Workspaces removidos" },
 ];
 
 export function NotificationsToolbar() {
@@ -44,9 +46,9 @@ export function NotificationsToolbar() {
         <Tabs
           value={filter}
           onValueChange={(v) => setFilter(v as FilterType)}
-          className="w-full lg:w-auto"
+          className="w-full xl:w-auto"
         >
-          <TabsList className="w-full lg:w-auto overflow-x-auto justify-start">
+          <TabsList className="w-full overflow-x-auto justify-start">
             {FILTER_OPTIONS.map((opt) => (
               <TabsTrigger
                 key={opt.value}
@@ -77,8 +79,8 @@ export function NotificationsToolbar() {
 
       {notifications.length >= 50 && (
         <p className="text-xs text-muted-foreground">
-          Mostrando as 50 notificações mais recentes. Notificações mais
-          antigas não aparecem aqui.
+          Mostrando as 50 notificações mais recentes. Notificações mais antigas
+          não aparecem aqui.
         </p>
       )}
     </div>
