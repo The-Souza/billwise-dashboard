@@ -155,8 +155,13 @@ export function AccountsDataTable({
                   className="*:border-border [&>:not(:last-child)]:border-r odd:bg-muted/50 odd:hover:bg-muted/50 hover:bg-transparent h-11"
                 >
                   {skeletonWidths.map((width, index) => (
-                    <TableCell key={index}>
-                      <Skeleton className={`h-5 ${width}`} />
+                    <TableCell
+                      key={index}
+                      className={index === 0 ? "w-10 text-center" : undefined}
+                    >
+                      <Skeleton
+                        className={`h-5 ${width}${index === 0 ? " mx-auto" : ""}`}
+                      />
                     </TableCell>
                   ))}
                 </TableRow>
