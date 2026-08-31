@@ -22,13 +22,21 @@ export default function AnalyticsPage() {
     isFetching: summaryFetching,
     refetch: refetchSummary,
   } = useQuery({
-    queryKey: ["analytics-summary", startMonth, startYear, endMonth, endYear],
+    queryKey: [
+      "analytics-summary",
+      startMonth,
+      startYear,
+      endMonth,
+      endYear,
+      type,
+    ],
     queryFn: async () => {
       const r = await getAnalyticsSummaryAction(
         startMonth,
         startYear,
         endMonth,
         endYear,
+        type,
       );
       if (!r.success) throw new Error(r.error);
       return r;
@@ -55,9 +63,22 @@ export default function AnalyticsPage() {
   });
 
   const { data: evolutionResult, isLoading: evolutionLoading } = useQuery({
-    queryKey: ["analytics-evolution", startMonth, startYear, endMonth, endYear],
+    queryKey: [
+      "analytics-evolution",
+      startMonth,
+      startYear,
+      endMonth,
+      endYear,
+      type,
+    ],
     queryFn: () =>
-      getAnalyticsEvolutionAction(startMonth, startYear, endMonth, endYear),
+      getAnalyticsEvolutionAction(
+        startMonth,
+        startYear,
+        endMonth,
+        endYear,
+        type,
+      ),
   });
 
   const summary = summaryResult?.success ? summaryResult.data : undefined;

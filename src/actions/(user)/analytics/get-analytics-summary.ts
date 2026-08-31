@@ -1,5 +1,6 @@
 "use server";
 
+import { Prisma } from "@/generated/prisma/client";
 import { requireWorkspace } from "@/lib/auth/workspace";
 import { prisma } from "@/lib/prisma/client";
 import { analyticsFiltersSchema } from "@/schemas/analytics/analytics-filters";
@@ -22,13 +23,14 @@ export async function getAnalyticsSummaryAction(
   startYear: number,
   endMonth: number,
   endYear: number,
+  type: "all" | "income" | "expense",
 ): Promise<Result> {
   const parsed = analyticsFiltersSchema.safeParse({
     startMonth,
     startYear,
     endMonth,
     endYear,
-    type: "all",
+    type,
   });
   if (!parsed.success) return { success: false, error: "Parâmetros inválidos" };
 
@@ -39,22 +41,28 @@ export async function getAnalyticsSummaryAction(
       startYear: sy,
       endMonth: em,
       endYear: ey,
+      type: t,
     } = parsed.data;
 
+    const typeCondition =
+      t !== "all" ? Prisma.sql`AND c.type = ${t}` : Prisma.sql``;
+
     const rows = await prisma.$queryRaw<
-      { total_income: number; total_expense: number; balance: number }[]
+      { total_income: number; total_expense: number }[]
     >`
       SELECT
-        COALESCE(SUM(total_income), 0)::float  AS total_income,
-        COALESCE(SUM(total_expense), 0)::float AS total_expense,
-        COALESCE(SUM(balance), 0)::float       AS balance
-      FROM public.income_vs_expense
-      WHERE workspace_id = ${ctx.workspaceId}::uuid
-        AND (year * 100 + month) >= (${sy} * 100 + ${sm})
-        AND (year * 100 + month) <= (${ey} * 100 + ${em})
+        COALESCE(SUM(CASE WHEN c.type = 'income' THEN a.amount ELSE 0 END), 0)::float  AS total_income,
+        COALESCE(SUM(CASE WHEN c.type = 'expense' THEN a.amount ELSE 0 END), 0)::float AS total_expense
+      FROM accounts a
+      JOIN categories c ON a.category_id = c.id
+      WHERE a.workspace_id = ${ctx.workspaceId}::uuid
+        AND (a.year * 100 + a.month) >= (${sy} * 100 + ${sm})
+        AND (a.year * 100 + a.month) <= (${ey} * 100 + ${em})
+        ${typeCondition}
     `;
 
-    const row = rows[0] ?? { total_income: 0, total_expense: 0, balance: 0 };
+    const row = rows[0] ?? { total_income: 0, total_expense: 0 };
+    const balance = row.total_income - row.total_expense;
 
     let monthCount = 0;
     let m = sm;
@@ -74,7 +82,7 @@ export async function getAnalyticsSummaryAction(
       data: {
         totalIncome: row.total_income,
         totalExpense: row.total_expense,
-        balance: row.balance,
+        balance,
         monthCount,
         avgMonthlyIncome: monthCount > 0 ? row.total_income / monthCount : 0,
         avgMonthlyExpense: monthCount > 0 ? row.total_expense / monthCount : 0,

@@ -25,13 +25,14 @@ export async function getAnalyticsEvolutionAction(
   startYear: number,
   endMonth: number,
   endYear: number,
+  type: "all" | "income" | "expense",
 ): Promise<Result> {
   const parsed = analyticsFiltersSchema.safeParse({
     startMonth,
     startYear,
     endMonth,
     endYear,
-    type: "all",
+    type,
   });
   if (!parsed.success) return { success: false, error: "Parâmetros inválidos" };
 
@@ -42,6 +43,7 @@ export async function getAnalyticsEvolutionAction(
       startYear: sy,
       endMonth: em,
       endYear: ey,
+      type: t,
     } = parsed.data;
 
     const monthsToFetch: { month: number; year: number }[] = [];
@@ -59,6 +61,9 @@ export async function getAnalyticsEvolutionAction(
 
     if (monthsToFetch.length === 0) return { success: true, data: [] };
 
+    const typeCondition =
+      t !== "all" ? Prisma.sql`AND c.type = ${t}` : Prisma.sql``;
+
     const rows = await prisma.$queryRaw<
       {
         month: number;
@@ -68,20 +73,23 @@ export async function getAnalyticsEvolutionAction(
       }[]
     >`
       SELECT
-        month,
-        year,
-        COALESCE(total_income, 0)::float  AS total_income,
-        COALESCE(total_expense, 0)::float AS total_expense
-      FROM public.income_vs_expense
-      WHERE workspace_id = ${ctx.workspaceId}::uuid
+        a.month,
+        a.year,
+        COALESCE(SUM(CASE WHEN c.type = 'income' THEN a.amount ELSE 0 END), 0)::float  AS total_income,
+        COALESCE(SUM(CASE WHEN c.type = 'expense' THEN a.amount ELSE 0 END), 0)::float AS total_expense
+      FROM accounts a
+      JOIN categories c ON a.category_id = c.id
+      WHERE a.workspace_id = ${ctx.workspaceId}::uuid
         AND (
           ${Prisma.join(
             monthsToFetch.map(
-              (p) => Prisma.sql`(year = ${p.year} AND month = ${p.month})`,
+              (p) => Prisma.sql`(a.year = ${p.year} AND a.month = ${p.month})`,
             ),
             " OR ",
           )}
         )
+        ${typeCondition}
+      GROUP BY a.year, a.month
     `;
 
     const data: EvolutionDataPoint[] = monthsToFetch.map(({ month, year }) => {
