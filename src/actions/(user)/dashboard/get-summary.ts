@@ -1,6 +1,7 @@
 "use server";
 
 import { requireWorkspace } from "@/lib/auth/workspace";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 import { monthYearSchema } from "@/schemas/shared/params";
 
@@ -81,6 +82,7 @@ export async function getSummaryAction(
       },
     };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in getSummaryAction:", error);
     return { success: false, error: "Erro ao buscar resumo do mês" };
   }

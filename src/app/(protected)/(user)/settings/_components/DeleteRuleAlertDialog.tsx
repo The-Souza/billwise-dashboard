@@ -47,7 +47,12 @@ export function DeleteRuleAlertDialog({
   }
 
   return (
-    <AlertDialog open={!!rule}>
+    <AlertDialog
+      open={!!rule}
+      onOpenChange={(o) => {
+        if (!o && !isDeleting) onClose();
+      }}
+    >
       <AlertDialogContent className="w-[calc(100vw-2rem)] rounded-md max-w-md">
         <AlertDialogHeader>
           <AlertDialogTitle className="font-heading">
@@ -61,13 +66,15 @@ export function DeleteRuleAlertDialog({
         <AlertDialogFooter>
           <AlertDialogCancel
             className="transition-transform ease-in hover:scale-103 active:scale-97"
-            onClick={onClose}
             disabled={isDeleting}
           >
             Cancelar
           </AlertDialogCancel>
           <AlertDialogAction
-            onClick={handleConfirm}
+            onClick={(e) => {
+              e.preventDefault();
+              handleConfirm();
+            }}
             disabled={isDeleting}
             className="bg-destructive hover:bg-destructive/90 text-destructive-foreground transition-transform ease-in hover:scale-103 active:scale-97"
           >

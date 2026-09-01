@@ -14,10 +14,13 @@ export type DashboardMonth = {
   setYear: (year: number) => void;
 };
 
-export function useDashboardMonth(): DashboardMonth {
+export function useDashboardMonth(
+  initialMonth?: number,
+  initialYear?: number,
+): DashboardMonth {
   const now = new Date();
-  const [month, setMonth] = useState(now.getMonth() + 1);
-  const [year, setYear] = useState(now.getFullYear());
+  const [month, setMonth] = useState(initialMonth ?? now.getMonth() + 1);
+  const [year, setYear] = useState(initialYear ?? now.getFullYear());
 
   const isCurrentMonth =
     month === now.getMonth() + 1 && year === now.getFullYear();

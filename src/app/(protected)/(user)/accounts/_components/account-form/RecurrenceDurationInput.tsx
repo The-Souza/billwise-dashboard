@@ -58,6 +58,9 @@ export function RecurrenceDurationInput({
             meses
           </span>
           <Switch
+            aria-label={
+              unit === "anos" ? "Alternar para meses" : "Alternar para anos"
+            }
             checked={unit === "anos"}
             onCheckedChange={handleUnitChange}
             disabled={disabled}

@@ -4,6 +4,7 @@ import { resendConfirmationAction } from "@/actions/auth/verify-email";
 import { Button } from "@/components/ui/button";
 import {
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -56,33 +57,33 @@ export function VerifyEmail({ email }: VerifyEmailProps) {
 
   return (
     <div className="w-full">
-      <CardHeader>
-        <CardTitle className="text-3xl font-semibold font-heading text-center">
+      <CardHeader className="flex flex-col items-center gap-2 text-center">
+        <CardTitle as="h1" className="text-2xl font-heading">
           Verifique seu email
         </CardTitle>
-      </CardHeader>
-
-      <CardContent className="flex flex-col gap-2 text-lg text-center">
-        <p className="text-muted-foreground">
-          O link de ativação da conta foi enviado para:{" "}
+        <CardDescription className="text-md text-muted-foreground">
+          O link de ativação da conta foi enviado para{" "}
           <span className="font-medium text-primary">
             {email || "seu@email.com"}
           </span>
-        </p>
-        <p className="text-lg text-muted-foreground">
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent className="text-center">
+        <CardDescription className="text-md text-muted-foreground">
           Clique no link enviado para ativar sua conta. Se não encontrar o
           email, verifique a caixa de spam.
-        </p>
+        </CardDescription>
       </CardContent>
 
-      <CardFooter className="flex flex-col gap-4 text-lg text-muted-foreground w-full justify-center">
+      <CardFooter className="flex flex-col gap-4 text-md text-muted-foreground w-full justify-center">
         <span>
           Não recebeu o email?{" "}
           <Button
             disabled={isResending}
             variant="link"
             onClick={handleResend}
-            className="p-0 text-lg"
+            className="p-0 text-md"
           >
             {isResending ? "Reenviando..." : "Reenviar"}
           </Button>

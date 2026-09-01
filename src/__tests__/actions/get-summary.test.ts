@@ -1,12 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@/lib/auth/workspace", () => ({ requireWorkspace: vi.fn() }));
+vi.mock("@/lib/is-redirect-error", () => ({
+  isRedirectError: vi.fn().mockReturnValue(false),
+}));
 vi.mock("@/lib/prisma/client", () => ({
   prisma: { $queryRaw: vi.fn() },
 }));
 
 import { getSummaryAction } from "@/actions/(user)/dashboard/get-summary";
 import { requireWorkspace } from "@/lib/auth/workspace";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 
 const mockWorkspace = vi.mocked(requireWorkspace);
@@ -109,5 +113,15 @@ describe("getSummaryAction", () => {
     const result = await getSummaryAction(3, 2024);
 
     expect(result.success).toBe(false);
+  });
+
+  it("propaga o erro de redirect do requireWorkspace em vez de engolir (ex: logout em andamento)", async () => {
+    const redirectError = Object.assign(new Error("NEXT_REDIRECT"), {
+      digest: "NEXT_REDIRECT;push;/auth/sign-in;307;",
+    });
+    mockWorkspace.mockRejectedValue(redirectError);
+    vi.mocked(isRedirectError).mockReturnValue(true);
+
+    await expect(getSummaryAction(3, 2024)).rejects.toBe(redirectError);
   });
 });

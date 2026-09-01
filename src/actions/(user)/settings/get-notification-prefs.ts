@@ -1,6 +1,7 @@
 "use server";
 
 import { requireAuth } from "@/lib/auth/guards";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { createServerSupabase } from "@/lib/supabase/server";
 import {
   DEFAULT_NOTIFICATION_PREFS,
@@ -36,6 +37,7 @@ export async function getNotificationPrefsAction(): Promise<GetNotificationPrefs
       data: parsed.success ? parsed.data : DEFAULT_NOTIFICATION_PREFS,
     };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in getNotificationPrefsAction:", error);
     return { success: false, error: "Erro ao buscar preferências de notificação" };
   }

@@ -19,9 +19,11 @@ vi.mock("next/navigation", () => ({ useRouter: () => ({ replace: mockReplace }) 
 
 import { UpdatePasswordForm } from "@/app/(reset)/auth/reset-password/_components/UpdatePasswordForm";
 import { updatePasswordAction } from "@/actions/auth/update-password";
+import { logoutAction } from "@/actions/auth/logout";
 import { appToast } from "@/utils/app-toast";
 
 const mockUpdate = vi.mocked(updatePasswordAction);
+const mockLogout = vi.mocked(logoutAction);
 const mockToast = vi.mocked(appToast);
 
 const VALID_PASSWORD = "NovaSenha@1";
@@ -47,19 +49,17 @@ describe("UpdatePasswordForm", () => {
     const user = userEvent.setup();
     render(<UpdatePasswordForm />);
 
-    const [togglePassword, toggleConfirm] = screen.getAllByRole("button", {
-      name: /view-password/i,
-    });
-
     const passwordInput = screen.getByLabelText("Senha");
     const confirmInput = screen.getByLabelText("Confirmar Senha");
 
-    await user.click(togglePassword);
+    await user.click(screen.getByRole("button", { name: "Mostrar senha" }));
     expect(passwordInput).toHaveAttribute("type", "text");
     expect(confirmInput).toHaveAttribute("type", "password");
 
     // clicar no segundo toggle muda visibleField para "confirmPassword" — password volta para oculto
-    await user.click(toggleConfirm);
+    await user.click(
+      screen.getByRole("button", { name: "Mostrar confirmação de senha" }),
+    );
     expect(confirmInput).toHaveAttribute("type", "text");
     expect(passwordInput).toHaveAttribute("type", "password");
   });
@@ -90,6 +90,59 @@ describe("UpdatePasswordForm", () => {
 
     await waitFor(() => {
       expect(mockToast.error).toHaveBeenCalledWith("Token inválido");
+    });
+  });
+
+  it("desconecta e redireciona para login ao clicar em 'Voltar para login'", async () => {
+    mockLogout.mockResolvedValueOnce({ success: true });
+    const user = userEvent.setup();
+    render(<UpdatePasswordForm />);
+
+    await user.click(screen.getByRole("button", { name: /voltar para login/i }));
+
+    await waitFor(() => {
+      expect(mockLogout).toHaveBeenCalledOnce();
+      expect(mockReplace).toHaveBeenCalledWith("/auth/sign-in");
+    });
+  });
+
+  it("exibe toast de erro e não redireciona quando o logout falha", async () => {
+    mockLogout.mockResolvedValueOnce({
+      success: false,
+      error: "Erro ao encerrar sessão",
+    });
+    const user = userEvent.setup();
+    render(<UpdatePasswordForm />);
+
+    await user.click(screen.getByRole("button", { name: /voltar para login/i }));
+
+    await waitFor(() => {
+      expect(mockToast.error).toHaveBeenCalledWith("Erro ao encerrar sessão");
+    });
+    expect(mockReplace).not.toHaveBeenCalled();
+  });
+
+  it("desabilita o botão 'Voltar para login' enquanto o logout está em andamento (guarda contra duplo clique)", async () => {
+    let resolveLogout: (value: { success: true }) => void = () => {};
+    mockLogout.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveLogout = resolve;
+        }),
+    );
+    const user = userEvent.setup();
+    render(<UpdatePasswordForm />);
+
+    const backButton = screen.getByRole("button", {
+      name: /voltar para login/i,
+    });
+    await user.click(backButton);
+
+    expect(backButton).toBeDisabled();
+
+    resolveLogout({ success: true });
+    await waitFor(() => {
+      expect(mockReplace).toHaveBeenCalledWith("/auth/sign-in");
     });
   });
 });

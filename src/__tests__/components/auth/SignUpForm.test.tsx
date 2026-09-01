@@ -1,8 +1,25 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { useEffect } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@marsidev/react-turnstile", () => ({ Turnstile: () => null }));
+let autoResolveCaptcha = true;
+let triggerCaptchaError = false;
+vi.mock("@marsidev/react-turnstile", () => ({
+  Turnstile: ({
+    onSuccess,
+    onError,
+  }: {
+    onSuccess?: (token: string) => void;
+    onError?: () => void;
+  }) => {
+    useEffect(() => {
+      if (autoResolveCaptcha) onSuccess?.("test-captcha-token");
+      if (triggerCaptchaError) onError?.();
+    }, [onSuccess, onError]);
+    return null;
+  },
+}));
 vi.mock("next-themes", () => ({ useTheme: () => ({ resolvedTheme: "light" }) }));
 
 const mockReplace = vi.fn();
@@ -44,6 +61,8 @@ async function fillForm(user: ReturnType<typeof userEvent.setup>, data = VALID_D
 describe("SignUpForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    autoResolveCaptcha = true;
+    triggerCaptchaError = false;
   });
 
   it("renderiza todos os campos do formulário", () => {
@@ -63,10 +82,10 @@ describe("SignUpForm", () => {
     render(<SignUpForm />);
 
     const [passwordInput] = screen.getAllByLabelText(/^Senha$/i);
-    const toggleButtons = screen.getAllByRole("button", { name: /view-password/i });
+    const toggleButton = screen.getByRole("button", { name: "Mostrar senha" });
 
     expect(passwordInput).toHaveAttribute("type", "password");
-    await user.click(toggleButtons[0]);
+    await user.click(toggleButton);
     expect(passwordInput).toHaveAttribute("type", "text");
   });
 
@@ -75,6 +94,24 @@ describe("SignUpForm", () => {
     render(<SignUpForm />);
     await fillForm(user);
     expect(screen.getByRole("button", { name: /criar conta/i })).toBeEnabled();
+  });
+
+  it("mantém o botão desabilitado se o captcha ainda não foi resolvido", async () => {
+    autoResolveCaptcha = false;
+    const user = userEvent.setup();
+    render(<SignUpForm />);
+    await fillForm(user);
+    expect(screen.getByRole("button", { name: /criar conta/i })).toBeDisabled();
+  });
+
+  it("mostra mensagem inline quando a verificação de segurança falha ao carregar", () => {
+    autoResolveCaptcha = false;
+    triggerCaptchaError = true;
+    render(<SignUpForm />);
+
+    expect(
+      screen.getByText(/não foi possível carregar a verificação de segurança/i),
+    ).toBeInTheDocument();
   });
 
   it("chama signUpAction e redireciona para verify-email em sucesso", async () => {

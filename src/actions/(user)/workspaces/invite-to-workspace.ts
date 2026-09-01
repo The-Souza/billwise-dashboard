@@ -24,7 +24,7 @@ export async function inviteToWorkspaceAction(
 
     const requesterMembership = await prisma.workspace_members.findUnique({
       where: { workspace_id_user_id: { workspace_id: workspaceId, user_id: user.id } },
-      include: { workspace: { select: { name: true } } },
+      include: { workspace: { select: { name: true, is_personal: true } } },
     });
 
     if (!requesterMembership) {
@@ -32,6 +32,12 @@ export async function inviteToWorkspaceAction(
     }
     if (requesterMembership.role !== "owner") {
       return { success: false, error: "Sem permissão para convidar membros" };
+    }
+    if (requesterMembership.workspace.is_personal) {
+      return {
+        success: false,
+        error: "Não é possível convidar membros para um workspace pessoal",
+      };
     }
 
     const rows = await prisma.$queryRaw<{ id: string }[]>(

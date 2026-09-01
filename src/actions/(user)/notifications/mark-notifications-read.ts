@@ -1,6 +1,7 @@
 "use server";
 
 import { requireAuth } from "@/lib/auth/guards";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 import { markReadIdsSchema } from "@/schemas/notifications/mark-read";
 
@@ -31,6 +32,7 @@ export async function markNotificationsReadAction(
 
     return { success: true };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in markNotificationsReadAction:", error);
     return { success: false, error: "Erro ao marcar notificações" };
   }

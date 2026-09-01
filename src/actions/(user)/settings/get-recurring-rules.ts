@@ -1,6 +1,7 @@
 "use server";
 
 import { requireWorkspace } from "@/lib/auth/workspace";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 
 export type RecurringRuleRow = {
@@ -52,6 +53,7 @@ export async function getRecurringRulesAction(): Promise<GetRecurringRulesResult
 
     return { success: true, data };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in getRecurringRulesAction:", error);
     return { success: false, error: "Erro ao buscar regras recorrentes" };
   }

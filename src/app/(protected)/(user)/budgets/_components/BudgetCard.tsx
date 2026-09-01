@@ -34,7 +34,7 @@ export function BudgetCard({ budget, onEdit, onDelete }: BudgetCardProps) {
           <span className="truncate">{budget.categoryName}</span>
         </span>
 
-        <div className="flex shrink-0 items-center gap-0.5">
+        <div className="flex shrink-0 items-center gap-3">
           <Button
             variant="ghost"
             size="icon-sm"

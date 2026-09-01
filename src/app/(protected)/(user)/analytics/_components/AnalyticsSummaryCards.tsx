@@ -5,6 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { QueryErrorState } from "@/components/ui/query-error-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency } from "@/utils/format-currency";
 import { CalendarIcon, TrendingDown, TrendingUp, Wallet } from "lucide-react";
@@ -12,6 +13,9 @@ import { CalendarIcon, TrendingDown, TrendingUp, Wallet } from "lucide-react";
 interface AnalyticsSummaryCardsProps {
   data?: AnalyticsSummary;
   isLoading?: boolean;
+  isError?: boolean;
+  isRetrying?: boolean;
+  onRetry?: () => void;
 }
 
 const CARDS = [
@@ -52,13 +56,33 @@ const CARDS = [
 export function AnalyticsSummaryCards({
   data,
   isLoading,
+  isError,
+  isRetrying,
+  onRetry,
 }: AnalyticsSummaryCardsProps) {
+  if (isError) {
+    return (
+      <Card className="col-span-full">
+        <CardContent className="pt-6">
+          <QueryErrorState
+            message="Não foi possível carregar o resumo do período."
+            onRetry={() => onRetry?.()}
+            isRetrying={isRetrying}
+          />
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <>
       {CARDS.map((item) => (
         <Card key={item.id}>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-md font-heading text-muted-foreground">
+            <CardTitle
+              as="h2"
+              className="text-md font-heading text-muted-foreground"
+            >
               {item.title}
             </CardTitle>
             <div className={`p-2 rounded-md ${item.bgClass}`}>

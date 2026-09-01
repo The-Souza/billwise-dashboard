@@ -53,11 +53,34 @@ describe("NotificationPrefsSection", () => {
     expect(screen.getByRole("button", { name: /salvar/i })).toBeInTheDocument();
   });
 
+  it("mantém o botão de salvar desabilitado quando não há alterações", () => {
+    render(<NotificationPrefsSection />);
+    expect(screen.getByRole("button", { name: /salvar/i })).toBeDisabled();
+  });
+
+  it("não mostra o aviso de alterações não salvas quando nada mudou", () => {
+    render(<NotificationPrefsSection />);
+    expect(
+      screen.queryByText("Alterações não salvas"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("habilita o botão de salvar e mostra o aviso ao alterar uma preferência", async () => {
+    const user = userEvent.setup();
+    render(<NotificationPrefsSection />);
+
+    await user.click(screen.getAllByRole("switch")[0]);
+
+    expect(screen.getByText("Alterações não salvas")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /salvar/i })).toBeEnabled();
+  });
+
   it("chama updateNotificationPrefsAction e exibe toast de sucesso ao salvar", async () => {
     mockUpdate.mockResolvedValueOnce({ success: true });
     const user = userEvent.setup();
     render(<NotificationPrefsSection />);
 
+    await user.click(screen.getAllByRole("switch")[0]);
     await user.click(screen.getByRole("button", { name: /salvar/i }));
 
     await waitFor(() => {
@@ -68,6 +91,22 @@ describe("NotificationPrefsSection", () => {
     });
   });
 
+  it("volta a desabilitar o botão e some com o aviso depois de salvar com sucesso", async () => {
+    mockUpdate.mockResolvedValueOnce({ success: true });
+    const user = userEvent.setup();
+    render(<NotificationPrefsSection />);
+
+    await user.click(screen.getAllByRole("switch")[0]);
+    await user.click(screen.getByRole("button", { name: /salvar/i }));
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /salvar/i })).toBeDisabled();
+    });
+    expect(
+      screen.queryByText("Alterações não salvas"),
+    ).not.toBeInTheDocument();
+  });
+
   it("exibe toast de erro quando action retorna falha", async () => {
     mockUpdate.mockResolvedValueOnce({
       success: false,
@@ -76,6 +115,7 @@ describe("NotificationPrefsSection", () => {
     const user = userEvent.setup();
     render(<NotificationPrefsSection />);
 
+    await user.click(screen.getAllByRole("switch")[0]);
     await user.click(screen.getByRole("button", { name: /salvar/i }));
 
     await waitFor(() => {

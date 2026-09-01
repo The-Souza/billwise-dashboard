@@ -17,6 +17,7 @@ interface WorkspaceDeleteAlertProps {
   onOpenChange: (o: boolean) => void;
   deleting: boolean;
   onConfirm: () => void;
+  otherMembersCount?: number;
 }
 
 export function WorkspaceDeleteAlert({
@@ -24,6 +25,7 @@ export function WorkspaceDeleteAlert({
   onOpenChange,
   deleting,
   onConfirm,
+  otherMembersCount = 0,
 }: WorkspaceDeleteAlertProps) {
   return (
     <AlertDialog
@@ -38,6 +40,14 @@ export function WorkspaceDeleteAlert({
           <AlertDialogDescription>
             Todos os dados deste workspace serão removidos permanentemente. Esta
             ação não pode ser desfeita.
+            {otherMembersCount > 0 && (
+              <span className="block mt-2 text-destructive">
+                {otherMembersCount === 1
+                  ? "1 outro membro perderá"
+                  : `${otherMembersCount} outros membros perderão`}{" "}
+                acesso imediatamente.
+              </span>
+            )}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -48,7 +58,10 @@ export function WorkspaceDeleteAlert({
             Cancelar
           </AlertDialogCancel>
           <AlertDialogAction
-            onClick={onConfirm}
+            onClick={(e) => {
+              e.preventDefault();
+              onConfirm();
+            }}
             disabled={deleting}
             className="bg-destructive hover:bg-destructive/90 text-destructive-foreground transition-transform ease-in hover:scale-103 active:scale-97"
           >

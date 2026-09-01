@@ -1,5 +1,6 @@
 "use client";
 
+import { PasswordRequirementsChecklist } from "@/components/auth/PasswordRequirementsChecklist";
 import { Button } from "@/components/ui/button";
 import {
   CardContent,
@@ -36,10 +37,26 @@ import * as z from "zod";
 
 export function UpdatePasswordForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [visibleField, setVisibleField] = useState<
     "password" | "confirmPassword" | null
   >(null);
   const router = useRouter();
+
+  async function handleBackToLogin() {
+    if (isLoggingOut) return;
+
+    setIsLoggingOut(true);
+    const result = await logoutAction();
+
+    if (!result.success) {
+      appToast.error(result.error);
+      setIsLoggingOut(false);
+      return;
+    }
+
+    router.replace("/auth/sign-in");
+  }
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -75,7 +92,9 @@ export function UpdatePasswordForm() {
   return (
     <div className="w-full">
       <CardHeader className="flex flex-col items-center gap-2 text-center">
-        <CardTitle className="text-2xl font-heading">Redefinir senha</CardTitle>
+        <CardTitle as="h1" className="text-2xl font-heading">
+          Redefinir senha
+        </CardTitle>
         <CardDescription className="text-md text-muted-foreground">
           Insira sua nova senha para atualizar a segurança da sua conta
         </CardDescription>
@@ -98,10 +117,18 @@ export function UpdatePasswordForm() {
                       type={visibleField === "password" ? "text" : "password"}
                       placeholder="Digite sua senha"
                       aria-invalid={fieldState.invalid}
+                      aria-describedby={
+                        fieldState.invalid ? `${field.name}-error` : undefined
+                      }
                     />
                     <InputGroupAddon align="inline-end">
                       <InputGroupButton
-                        aria-label="view-password"
+                        aria-label={
+                          visibleField === "password"
+                            ? "Ocultar senha"
+                            : "Mostrar senha"
+                        }
+                        aria-pressed={visibleField === "password"}
                         size="icon-xs"
                         onClick={() =>
                           setVisibleField((prevState) =>
@@ -118,7 +145,10 @@ export function UpdatePasswordForm() {
                     </InputGroupAddon>
                   </InputGroup>
                   {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
+                    <FieldError
+                      id={`${field.name}-error`}
+                      errors={[fieldState.error]}
+                    />
                   )}
                 </Field>
               )}
@@ -140,10 +170,18 @@ export function UpdatePasswordForm() {
                       }
                       placeholder="Confirme sua senha"
                       aria-invalid={fieldState.invalid}
+                      aria-describedby={
+                        fieldState.invalid ? `${field.name}-error` : undefined
+                      }
                     />
                     <InputGroupAddon align="inline-end">
                       <InputGroupButton
-                        aria-label="view-password"
+                        aria-label={
+                          visibleField === "confirmPassword"
+                            ? "Ocultar confirmação de senha"
+                            : "Mostrar confirmação de senha"
+                        }
+                        aria-pressed={visibleField === "confirmPassword"}
                         size="icon-xs"
                         onClick={() =>
                           setVisibleField((prevState) =>
@@ -162,13 +200,21 @@ export function UpdatePasswordForm() {
                     </InputGroupAddon>
                   </InputGroup>
                   {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
+                    <FieldError
+                      id={`${field.name}-error`}
+                      errors={[fieldState.error]}
+                    />
                   )}
                 </Field>
               )}
             />
           </FieldGroup>
         </form>
+        <div className="mt-4">
+          <PasswordRequirementsChecklist
+            password={form.watch("password") || ""}
+          />
+        </div>
       </CardContent>
       <CardFooter className="flex flex-col gap-4">
         <Field>
@@ -176,7 +222,7 @@ export function UpdatePasswordForm() {
             type="submit"
             form="form-update-password"
             disabled={!form.formState.isValid || isSubmitting}
-            className="flex items-center justify-center gap-2 transition-transform ease-in hover:scale-103 active:scale-97 text-md"
+            className="flex items-center justify-center gap-2 transition-transform ease-in motion-safe:hover:scale-103 motion-safe:active:scale-97 text-md"
           >
             {isSubmitting ? (
               <>
@@ -193,11 +239,10 @@ export function UpdatePasswordForm() {
           type="button"
           variant="link"
           className="text-md"
-          onClick={async () => {
-            await logoutAction();
-            router.replace("/auth/sign-in");
-          }}
+          disabled={isLoggingOut}
+          onClick={handleBackToLogin}
         >
+          {isLoggingOut ? <Spinner data-icon="inline-start" /> : null}
           Voltar para login
         </Button>
       </CardFooter>

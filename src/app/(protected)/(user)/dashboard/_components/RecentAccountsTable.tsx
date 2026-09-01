@@ -62,7 +62,7 @@ export function RecentAccountTable({
     <Card className="flex flex-col flex-1">
       <CardHeader className="flex flex-row items-start justify-between">
         <div>
-          <CardTitle className="text-md font-heading">
+          <CardTitle as="h2" className="text-md font-heading">
             Contas recentes
           </CardTitle>
           <CardDescription>Contas em {label}</CardDescription>

@@ -2,6 +2,7 @@
 
 import { category_type } from "@/generated/prisma/enums";
 import { requireAuth } from "@/lib/auth/guards";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 
 export type CategoryOption = {
@@ -41,6 +42,7 @@ export async function getCategoriesAction(): Promise<GetCategoriesResult> {
 
     return { success: true, data };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in getCategoriesAction:", error);
     return { success: false, error: "Erro ao buscar categorias" };
   }

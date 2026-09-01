@@ -2,6 +2,7 @@
 
 import { Prisma } from "@/generated/prisma/client";
 import { requireWorkspace } from "@/lib/auth/workspace";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 import { chartParamsSchema } from "@/schemas/dashboard/chart-params";
 
@@ -83,6 +84,7 @@ export async function getChartDataAction(
 
     return { success: true, data };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in getChartDataAction:", error);
     return { success: false, error: "Erro ao buscar dados do gráfico" };
   }

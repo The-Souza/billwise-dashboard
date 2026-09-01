@@ -1,20 +1,26 @@
 "use client";
 
+import { copyBudgetsFromPreviousMonthAction } from "@/actions/(user)/budgets/copy-budgets-from-previous-month";
 import { deleteBudgetAction } from "@/actions/(user)/budgets/delete-budget";
 import {
   BudgetRow,
   getBudgetsAction,
 } from "@/actions/(user)/budgets/get-budgets";
+import { Button } from "@/components/ui/button";
 import { MonthPicker } from "@/components/ui/month-picker";
+import { Spinner } from "@/components/ui/spinner";
 import { useDashboardMonth } from "@/hooks/use-dashboard-month";
 import { appToast } from "@/utils/app-toast";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { CopyIcon } from "lucide-react";
+import { useRef, useState } from "react";
 import { AddBudgetCard } from "./_components/AddBudgetCard";
 import { BudgetCard } from "./_components/BudgetCard";
 import { BudgetFormDialog } from "./_components/BudgetFormDialog";
 import { BudgetsSkeleton } from "./_components/BudgetsSkeleton";
 import { DeleteBudgetDialog } from "./_components/DeleteBudgetDialog";
+
+const DELETE_UNDO_WINDOW_MS = 5000;
 
 export default function BudgetsPage() {
   const dashboardMonth = useDashboardMonth();
@@ -40,8 +46,39 @@ export default function BudgetsPage() {
   const [deleteDialog, setDeleteDialog] = useState<{
     open: boolean;
     budget: BudgetRow | null;
-    isDeleting: boolean;
-  }>({ open: false, budget: null, isDeleting: false });
+  }>({ open: false, budget: null });
+
+  const [pendingDeleteIds, setPendingDeleteIds] = useState<Set<string>>(
+    new Set(),
+  );
+  const deleteTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(
+    new Map(),
+  );
+
+  const [isCopying, setIsCopying] = useState(false);
+
+  async function handleCopyFromPreviousMonth() {
+    setIsCopying(true);
+    const result = await copyBudgetsFromPreviousMonthAction(month, year);
+    setIsCopying(false);
+
+    if (!result.success) {
+      appToast.error(result.error);
+      return;
+    }
+
+    if (result.copied === 0) {
+      appToast.info("Nenhum orçamento novo para copiar.");
+      return;
+    }
+
+    refetch();
+    appToast.success(
+      `${result.copied} orçamento${result.copied === 1 ? "" : "s"} copiado${
+        result.copied === 1 ? "" : "s"
+      } do mês anterior.`,
+    );
+  }
 
   function handleMonthSelect(m: number, y: number) {
     dashboardMonth.setMonth(m);
@@ -53,29 +90,66 @@ export default function BudgetsPage() {
   }
 
   function openEdit(budget: BudgetRow) {
-    setFormDialog({ open: true, mode: "edit", budget });
+    setFormDialog({
+      open: true,
+      mode: "edit",
+      budget,
+      categoryType: budget.categoryType,
+    });
   }
 
   function openDelete(budget: BudgetRow) {
-    setDeleteDialog({ open: true, budget, isDeleting: false });
+    setDeleteDialog({ open: true, budget });
   }
 
-  async function handleDeleteConfirm() {
-    if (!deleteDialog.budget) return;
-    setDeleteDialog((prev) => ({ ...prev, isDeleting: true }));
-    const result = await deleteBudgetAction(deleteDialog.budget.id);
-    if (result.success) {
-      refetch();
-      setDeleteDialog({ open: false, budget: null, isDeleting: false });
-      appToast.success("Orçamento excluído.");
-    } else {
-      setDeleteDialog((prev) => ({ ...prev, isDeleting: false }));
-      appToast.error(result.error);
+  function cancelPendingDelete(id: string) {
+    const timer = deleteTimers.current.get(id);
+    if (timer) {
+      clearTimeout(timer);
+      deleteTimers.current.delete(id);
     }
+    setPendingDeleteIds((prev) => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
   }
 
-  const expense = (budgets ?? []).filter((b) => b.categoryType === "expense");
-  const income = (budgets ?? []).filter((b) => b.categoryType === "income");
+  function handleDeleteConfirm() {
+    const budget = deleteDialog.budget;
+    if (!budget) return;
+    setDeleteDialog({ open: false, budget: null });
+    setPendingDeleteIds((prev) => new Set(prev).add(budget.id));
+
+    const timer = setTimeout(async () => {
+      deleteTimers.current.delete(budget.id);
+      const result = await deleteBudgetAction(budget.id);
+      if (result.success) {
+        refetch();
+      } else {
+        setPendingDeleteIds((prev) => {
+          const next = new Set(prev);
+          next.delete(budget.id);
+          return next;
+        });
+        appToast.error(result.error);
+      }
+    }, DELETE_UNDO_WINDOW_MS);
+    deleteTimers.current.set(budget.id, timer);
+
+    appToast.undo(`"${budget.categoryName}" excluído.`, {
+      label: "Desfazer",
+      duration: DELETE_UNDO_WINDOW_MS,
+      onClick: () => cancelPendingDelete(budget.id),
+    });
+  }
+
+  const expense = (budgets ?? []).filter(
+    (b) => b.categoryType === "expense" && !pendingDeleteIds.has(b.id),
+  );
+  const income = (budgets ?? []).filter(
+    (b) => b.categoryType === "income" && !pendingDeleteIds.has(b.id),
+  );
 
   return (
     <div className="flex flex-col gap-6 pb-8">
@@ -86,10 +160,30 @@ export default function BudgetsPage() {
             Defina e acompanhe limites de gastos por categoria.
           </p>
         </div>
+
         <MonthPicker {...dashboardMonth} onSelect={handleMonthSelect} />
       </div>
 
       <div className="flex flex-col gap-6">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleCopyFromPreviousMonth}
+          disabled={isCopying}
+          className="self-start transition-transform ease-in hover:scale-103 active:scale-97"
+        >
+          {isCopying ? (
+            <>
+              <Spinner data-icon="inline-start" />
+              Copiando do mês anterior...
+            </>
+          ) : (
+            <>
+              <CopyIcon className="h-3.5 w-3.5" />
+              Copiar do mês anterior
+            </>
+          )}
+        </Button>
         <section className="flex flex-col gap-3">
           <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
             Despesas
@@ -155,11 +249,8 @@ export default function BudgetsPage() {
       <DeleteBudgetDialog
         open={deleteDialog.open}
         budget={deleteDialog.budget}
-        isDeleting={deleteDialog.isDeleting}
         onConfirm={handleDeleteConfirm}
-        onCancel={() =>
-          setDeleteDialog({ open: false, budget: null, isDeleting: false })
-        }
+        onCancel={() => setDeleteDialog({ open: false, budget: null })}
       />
     </div>
   );

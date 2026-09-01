@@ -1,6 +1,7 @@
 "use server";
 
 import { requireWorkspace } from "@/lib/auth/workspace";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 import { budgetFormSchema } from "@/schemas/budgets/budget-form";
 import { z } from "zod";
@@ -19,7 +20,7 @@ export async function updateBudgetAction(
       return { success: false, error: "Dados inválidos" };
     }
 
-    const { limitAmount } = parsed.data;
+    const { categoryId, limitAmount, month, year } = parsed.data;
 
     const budget = await prisma.budgets.findFirst({
       where: { id, workspace_id: ctx.workspaceId },
@@ -30,13 +31,32 @@ export async function updateBudgetAction(
       return { success: false, error: "Orçamento não encontrado" };
     }
 
+    const duplicate = await prisma.budgets.findFirst({
+      where: {
+        workspace_id: ctx.workspaceId,
+        category_id: categoryId,
+        month,
+        year,
+        id: { not: id },
+      },
+      select: { id: true },
+    });
+
+    if (duplicate) {
+      return {
+        success: false,
+        error: "Já existe um orçamento para esta categoria neste mês",
+      };
+    }
+
     await prisma.budgets.update({
       where: { id },
-      data: { limit_amount: limitAmount },
+      data: { category_id: categoryId, limit_amount: limitAmount },
     });
 
     return { success: true };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in updateBudgetAction:", error);
     return { success: false, error: "Erro ao atualizar orçamento" };
   }

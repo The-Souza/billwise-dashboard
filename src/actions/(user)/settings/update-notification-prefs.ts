@@ -1,6 +1,7 @@
 "use server";
 
 import { requireAuth } from "@/lib/auth/guards";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { createServerSupabase } from "@/lib/supabase/server";
 import {
   NotificationPrefs,
@@ -36,6 +37,7 @@ export async function updateNotificationPrefsAction(
     revalidatePath("/settings");
     return { success: true };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in updateNotificationPrefsAction:", error);
     return { success: false, error: "Erro ao salvar preferências de notificação" };
   }

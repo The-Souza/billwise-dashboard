@@ -1,6 +1,7 @@
 "use server";
 
 import { requireWorkspace } from "@/lib/auth/workspace";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 import { deleteAccountsSchema } from "@/schemas/accounts/delete-accounts";
 
@@ -72,6 +73,7 @@ export async function deleteAccountsAction(
 
     return { success: true, deleted: allIds.length };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in deleteAccountsAction:", error);
     return { success: false, error: "Erro ao excluir contas" };
   }

@@ -62,7 +62,7 @@ export function CategoryTable({ data = [], isLoading }: CategoryTableProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-heading text-md">
+        <CardTitle as="h2" className="font-heading text-md">
           Detalhamento por categoria
         </CardTitle>
         <CardDescription>Clique nos cabeçalhos para ordenar</CardDescription>
@@ -74,11 +74,20 @@ export function CategoryTable({ data = [], isLoading }: CategoryTableProps) {
               {headers.map((h) => (
                 <TableHead
                   key={h.key}
-                  onClick={() => handleSort(h.key)}
-                  className={`cursor-pointer select-none hover:text-foreground transition-colors whitespace-nowrap ${h.className ?? ""}`}
+                  className={`whitespace-nowrap ${h.className ?? ""}`}
                 >
-                  {h.label}{" "}
-                  <SortIcon active={sortKey === h.key} dir={sortDir} />
+                  <button
+                    type="button"
+                    onClick={() => handleSort(h.key)}
+                    className={`inline-flex items-center gap-1 cursor-pointer select-none hover:text-foreground transition-colors ${
+                      h.className?.includes("text-right")
+                        ? "justify-end w-full"
+                        : ""
+                    }`}
+                  >
+                    {h.label}{" "}
+                    <SortIcon active={sortKey === h.key} dir={sortDir} />
+                  </button>
                 </TableHead>
               ))}
             </TableRow>

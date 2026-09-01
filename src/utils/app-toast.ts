@@ -45,4 +45,26 @@ export const appToast = {
         "--normal-border": "var(--primary)",
       } as React.CSSProperties,
     }),
+
+  undo: (
+    message: string,
+    options: { label: string; onClick: () => void; duration?: number },
+  ) =>
+    toast(message, {
+      ...baseOptions,
+      duration: options.duration,
+      action: {
+        label: options.label,
+        onClick: options.onClick,
+      },
+      actionButtonStyle: {
+        background: "var(--primary)",
+        color: "var(--primary-foreground)",
+      } as React.CSSProperties,
+      style: {
+        "--normal-bg": "var(--secondary)",
+        "--normal-text": "var(--foreground)",
+        "--normal-border": "var(--border)",
+      } as React.CSSProperties,
+    }),
 };
