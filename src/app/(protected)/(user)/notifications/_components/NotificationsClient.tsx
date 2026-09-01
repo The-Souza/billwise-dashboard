@@ -117,7 +117,7 @@ function WorkspaceInviteActions({
   }
 
   return (
-    <div className="flex items-center gap-1.5 shrink-0">
+    <div className="flex items-center gap-3 shrink-0">
       <Button
         size="icon-sm"
         variant="ghost"
