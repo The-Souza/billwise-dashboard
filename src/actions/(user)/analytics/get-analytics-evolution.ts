@@ -2,6 +2,7 @@
 
 import { Prisma } from "@/generated/prisma/client";
 import { requireWorkspace } from "@/lib/auth/workspace";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 import { analyticsFiltersSchema } from "@/schemas/analytics/analytics-filters";
 
@@ -103,6 +104,7 @@ export async function getAnalyticsEvolutionAction(
 
     return { success: true, data };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in getAnalyticsEvolutionAction:", error);
     return { success: false, error: "Erro ao buscar evolução mensal" };
   }

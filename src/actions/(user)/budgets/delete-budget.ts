@@ -1,6 +1,7 @@
 "use server";
 
 import { requireWorkspace } from "@/lib/auth/workspace";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 import { uuidSchema } from "@/schemas/shared/params";
 
@@ -30,6 +31,7 @@ export async function deleteBudgetAction(
 
     return { success: true };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in deleteBudgetAction:", error);
     return { success: false, error: "Erro ao excluir orçamento" };
   }

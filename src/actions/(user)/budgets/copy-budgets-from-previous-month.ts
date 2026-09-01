@@ -1,6 +1,7 @@
 "use server";
 
 import { requireWorkspace } from "@/lib/auth/workspace";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 import { monthYearSchema } from "@/schemas/shared/params";
 
@@ -80,6 +81,7 @@ export async function copyBudgetsFromPreviousMonthAction(
 
     return { success: true, copied: toCopy.length, skipped };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in copyBudgetsFromPreviousMonthAction:", error);
     return {
       success: false,

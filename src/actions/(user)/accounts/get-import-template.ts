@@ -1,6 +1,7 @@
 "use server";
 
 import { requireAuth } from "@/lib/auth/guards";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 import * as XLSX from "xlsx";
 
@@ -182,6 +183,7 @@ export async function getImportTemplateAction(): Promise<GetImportTemplateResult
       filename: "template-importacao.xlsx",
     };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in getImportTemplateAction:", error);
     return { success: false, error: "Erro ao gerar template" };
   }

@@ -1,6 +1,7 @@
 "use server";
 
 import { requireWorkspace } from "@/lib/auth/workspace";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 import { importRowSchema } from "@/schemas/accounts/import-row";
 import type { ImportRowInput } from "@/schemas/accounts/import-row";
@@ -81,6 +82,7 @@ export async function importAccountsAction(
 
     return { success: true, created: validRows.length };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in importAccountsAction:", error);
     return { success: false, error: "Erro ao importar contas" };
   }

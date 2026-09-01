@@ -1,6 +1,7 @@
 "use server";
 
 import { requireWorkspace } from "@/lib/auth/workspace";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 import { updateRecurringRuleSchema } from "@/schemas/settings/update-recurring-rule";
 import { revalidatePath } from "next/cache";
@@ -42,6 +43,7 @@ export async function updateRecurringRuleAction(
     revalidatePath("/settings");
     return { success: true };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in updateRecurringRuleAction:", error);
     return { success: false, error: "Erro ao atualizar regra recorrente" };
   }

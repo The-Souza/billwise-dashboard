@@ -2,6 +2,7 @@
 
 import { account_status } from "@/generated/prisma/enums";
 import { requireWorkspace } from "@/lib/auth/workspace";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 import { updateAccountsStatusSchema } from "@/schemas/accounts/update-accounts-status";
 
@@ -49,6 +50,7 @@ export async function updateAccountsStatusAction(
 
     return { success: true, updated: accounts.length };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in updateAccountsStatusAction:", error);
     return { success: false, error: "Erro ao atualizar status das contas" };
   }

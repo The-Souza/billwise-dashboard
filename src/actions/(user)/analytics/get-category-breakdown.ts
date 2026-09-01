@@ -2,6 +2,7 @@
 
 import { Prisma } from "@/generated/prisma/client";
 import { requireWorkspace } from "@/lib/auth/workspace";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 import { analyticsFiltersSchema } from "@/schemas/analytics/analytics-filters";
 
@@ -98,6 +99,7 @@ export async function getCategoryBreakdownAction(
 
     return { success: true, data };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in getCategoryBreakdownAction:", error);
     return {
       success: false,

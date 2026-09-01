@@ -1,6 +1,7 @@
 "use server";
 
 import { requireWorkspace } from "@/lib/auth/workspace";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 import { uuidSchema } from "@/schemas/shared/params";
 
@@ -56,6 +57,7 @@ export async function getBudgetByIdAction(
       },
     };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in getBudgetByIdAction:", error);
     return { success: false, error: "Erro ao buscar orçamento" };
   }

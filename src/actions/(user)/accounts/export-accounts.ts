@@ -1,6 +1,7 @@
 "use server";
 
 import { requireWorkspace } from "@/lib/auth/workspace";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 import { exportParamsSchema } from "@/schemas/accounts/export-params";
 import type { ExportParamsInput } from "@/schemas/accounts/export-params";
@@ -95,6 +96,7 @@ export async function exportAccountsAction(
 
     return { success: true, data: base64, filename: `contas-${label}.xlsx` };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in exportAccountsAction:", error);
     return { success: false, error: "Erro ao exportar contas" };
   }

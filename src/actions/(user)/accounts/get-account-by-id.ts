@@ -2,6 +2,7 @@
 
 import { account_status, category_type } from "@/generated/prisma/enums";
 import { requireWorkspace } from "@/lib/auth/workspace";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 import { uuidSchema } from "@/schemas/shared/params";
 
@@ -142,6 +143,7 @@ export async function getAccountByIdAction(
       },
     };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in getAccountByIdAction:", error);
     return { success: false, error: "Erro ao buscar conta" };
   }
