@@ -36,4 +36,17 @@ describe("parseCurrencyInput", () => {
   it("ignora espaços nas bordas", () => {
     expect(parseCurrencyInput("  1.500,00  ")).toBe(1500);
   });
+
+  it("trata um único ponto seguido de 1-2 dígitos como separador decimal (teclado com '.' como tecla decimal)", () => {
+    expect(parseCurrencyInput("150.50")).toBe(150.5);
+    expect(parseCurrencyInput("10.5")).toBe(10.5);
+  });
+
+  it("trata um único ponto seguido de 3 dígitos como separador de milhar (nunca decimal em pt-BR)", () => {
+    expect(parseCurrencyInput("1.500")).toBe(1500);
+  });
+
+  it("trata múltiplos pontos sem vírgula como separadores de milhar", () => {
+    expect(parseCurrencyInput("12.345.678")).toBe(12345678);
+  });
 });
