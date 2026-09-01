@@ -5,15 +5,18 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 let autoResolveCaptcha = true;
 let triggerCaptchaError = false;
+let triggerCaptchaExpire = false;
 const resetMock = vi.fn();
 vi.mock("@marsidev/react-turnstile", () => ({
   Turnstile: ({
     onSuccess,
     onError,
+    onExpire,
     ref,
   }: {
     onSuccess?: (token: string) => void;
     onError?: () => void;
+    onExpire?: () => void;
     ref?: { current: unknown };
   }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only fire once, like the real widget's script callback
@@ -21,6 +24,7 @@ vi.mock("@marsidev/react-turnstile", () => ({
       if (ref) ref.current = { reset: resetMock };
       if (autoResolveCaptcha) onSuccess?.("test-captcha-token");
       if (triggerCaptchaError) onError?.();
+      if (triggerCaptchaExpire) onExpire?.();
     }, []);
     return null;
   },
@@ -33,6 +37,7 @@ describe("TurnstileField", () => {
     vi.clearAllMocks();
     autoResolveCaptcha = true;
     triggerCaptchaError = false;
+    triggerCaptchaExpire = false;
   });
 
   it("chama onTokenChange com o token em caso de sucesso", () => {
@@ -50,7 +55,9 @@ describe("TurnstileField", () => {
   it("mostra mensagem de erro e botão de retry quando o widget falha", () => {
     autoResolveCaptcha = false;
     triggerCaptchaError = true;
-    render(<TurnstileField action="sign-in" theme="light" onTokenChange={vi.fn()} />);
+    render(
+      <TurnstileField action="sign-in" theme="light" onTokenChange={vi.fn()} />,
+    );
 
     expect(
       screen.getByText(/não foi possível carregar a verificação de segurança/i),
@@ -78,7 +85,25 @@ describe("TurnstileField", () => {
     expect(resetMock).toHaveBeenCalledOnce();
     expect(onTokenChange).toHaveBeenCalledWith(undefined);
     expect(
-      screen.queryByText(/não foi possível carregar a verificação de segurança/i),
+      screen.queryByText(
+        /não foi possível carregar a verificação de segurança/i,
+      ),
     ).not.toBeInTheDocument();
+  });
+
+  it("reseta o widget quando o token expira, para que um novo token possa ser emitido", () => {
+    autoResolveCaptcha = false;
+    triggerCaptchaExpire = true;
+    const onTokenChange = vi.fn();
+    render(
+      <TurnstileField
+        action="sign-in"
+        theme="light"
+        onTokenChange={onTokenChange}
+      />,
+    );
+
+    expect(onTokenChange).toHaveBeenCalledWith(undefined);
+    expect(resetMock).toHaveBeenCalledOnce();
   });
 });

@@ -34,7 +34,10 @@ export function TurnstileField({
           setHasError(false);
           onTokenChange(token);
         }}
-        onExpire={() => onTokenChange(undefined)}
+        onExpire={() => {
+          onTokenChange(undefined);
+          turnstileRef.current?.reset();
+        }}
         onError={() => {
           onTokenChange(undefined);
           setHasError(true);
