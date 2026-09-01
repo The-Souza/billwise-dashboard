@@ -19,7 +19,8 @@ export function NotificationsSkeleton() {
                 disabled
                 className="shrink-0 flex-1 gap-1.5"
               >
-                <Skeleton className="h-4 w-24 rounded" />
+                {opt.label}
+                <span className="text-xs tabular-nums opacity-70">(0)</span>
               </TabsTrigger>
             ))}
           </TabsList>
