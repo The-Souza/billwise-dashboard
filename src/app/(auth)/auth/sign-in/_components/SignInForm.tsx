@@ -21,27 +21,30 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { Spinner } from "@/components/ui/spinner";
+import { TurnstileField } from "@/components/auth/TurnstileField";
 
 import { signInAction } from "@/actions/auth/sign-in";
 import { formSchema } from "@/schemas/auth/sign-in";
 
 import { appToast } from "@/utils/app-toast";
 
-import { TURNSTILE_SITE_KEY } from "@/config/turnstile";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Turnstile } from "@marsidev/react-turnstile";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 
 export function SignInForm() {
   const [isVisible, setIsVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const captchaToken = useRef<string | undefined>(undefined);
+  const [captchaToken, setCaptchaToken] = useState<string | undefined>(
+    undefined,
+  );
   const { resolvedTheme } = useTheme();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -57,7 +60,7 @@ export function SignInForm() {
     setIsSubmitting(true);
 
     try {
-      const result = await signInAction(data, captchaToken.current);
+      const result = await signInAction(data, captchaToken);
 
       if (!result.success) {
         form.setError("password", {
@@ -71,9 +74,10 @@ export function SignInForm() {
         return;
       }
 
-      appToast.success(`Bem vindo!, ${result.user || "Usuário"}`);
+      appToast.success(`Bem-vindo, ${result.user || "Usuário"}!`);
 
       form.reset({ email: data.email, password: "" });
+      router.replace("/dashboard");
     } catch {
       appToast.error("Algo deu errado. Tente novamente em instantes.");
       form.setValue("password", "");
@@ -85,14 +89,14 @@ export function SignInForm() {
   return (
     <div className="w-full">
       <CardHeader className="flex flex-col items-center gap-2 text-center">
-        <CardTitle className="text-2xl font-heading">
+        <CardTitle as="h1" className="text-2xl font-heading">
           Bem-vindo ao Billwise
         </CardTitle>
         <CardDescription className="text-muted-foreground text-md">
           Gerencie suas finanças de forma simples e inteligente
         </CardDescription>
       </CardHeader>
-      <CardContent className="pb-4">
+      <CardContent>
         <form id="form-sign-in" onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
             <Controller
@@ -109,12 +113,18 @@ export function SignInForm() {
                       id={field.name}
                       type="email"
                       aria-invalid={fieldState.invalid}
+                      aria-describedby={
+                        fieldState.invalid ? `${field.name}-error` : undefined
+                      }
                       placeholder="seu@email.com"
                       autoComplete="email"
                     />
                   </InputGroup>
                   {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
+                    <FieldError
+                      id={`${field.name}-error`}
+                      errors={[fieldState.error]}
+                    />
                   )}
                 </Field>
               )}
@@ -143,10 +153,16 @@ export function SignInForm() {
                       autoComplete="current-password"
                       placeholder="Digite sua senha"
                       aria-invalid={fieldState.invalid}
+                      aria-describedby={
+                        fieldState.invalid ? `${field.name}-error` : undefined
+                      }
                     />
                     <InputGroupAddon align="inline-end">
                       <InputGroupButton
-                        aria-label="view-password"
+                        aria-label={
+                          isVisible ? "Ocultar senha" : "Mostrar senha"
+                        }
+                        aria-pressed={isVisible}
                         size="icon-xs"
                         onClick={() => setIsVisible((prevState) => !prevState)}
                       >
@@ -155,7 +171,10 @@ export function SignInForm() {
                     </InputGroupAddon>
                   </InputGroup>
                   {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
+                    <FieldError
+                      id={`${field.name}-error`}
+                      errors={[fieldState.error]}
+                    />
                   )}
                 </Field>
               )}
@@ -164,28 +183,17 @@ export function SignInForm() {
         </form>
       </CardContent>
       <CardFooter className="flex flex-col gap-4">
-        <Turnstile
-          siteKey={TURNSTILE_SITE_KEY}
-          onSuccess={(token) => {
-            captchaToken.current = token;
-          }}
-          onExpire={() => {
-            captchaToken.current = undefined;
-          }}
-          options={{
-            theme: (resolvedTheme as "dark" | "light") ?? "light",
-            language: "pt-br",
-            appearance: "interaction-only",
-            size: "flexible",
-            action: "sign-in",
-          }}
+        <TurnstileField
+          action="sign-in"
+          theme={(resolvedTheme as "dark" | "light") ?? "light"}
+          onTokenChange={setCaptchaToken}
         />
         <Field>
           <Button
             type="submit"
             form="form-sign-in"
-            disabled={!form.formState.isValid || isSubmitting}
-            className="flex items-center justify-center gap-2 transition-transform ease-in hover:scale-103 active:scale-97 text-md"
+            disabled={!form.formState.isValid || isSubmitting || !captchaToken}
+            className="flex items-center justify-center gap-2 transition-transform ease-in motion-safe:hover:scale-103 motion-safe:active:scale-97 text-md"
           >
             {isSubmitting ? (
               <>
@@ -196,6 +204,11 @@ export function SignInForm() {
               "Faça login no Billwise"
             )}
           </Button>
+          {!captchaToken && form.formState.isValid && !isSubmitting && (
+            <p className="text-xs text-muted-foreground text-center">
+              Aguardando verificação de segurança para habilitar o envio.
+            </p>
+          )}
         </Field>
 
         <nav className="flex w-full gap-2 text-md justify-center items-center">

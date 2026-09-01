@@ -10,6 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -50,18 +51,29 @@ export function NotificationPrefsSection() {
   });
 
   const [prefs, setPrefs] = useState<NotificationPrefs>(DEFAULT_PREFS);
+  const [savedPrefs, setSavedPrefs] = useState<NotificationPrefs>(DEFAULT_PREFS);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (result?.success) setPrefs(result.data);
+    if (result?.success) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setPrefs(result.data);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSavedPrefs(result.data);
+    }
   }, [result]);
+
+  const hasUnsavedChanges =
+    prefs.dueDaysAhead !== savedPrefs.dueDaysAhead ||
+    prefs.onRecurringGenerated !== savedPrefs.onRecurringGenerated ||
+    prefs.onBudgetExceeded !== savedPrefs.onBudgetExceeded;
 
   async function handleSave() {
     setIsSaving(true);
     const res = await updateNotificationPrefsAction(prefs);
     if (res.success) {
       appToast.success("Preferências salvas com sucesso.");
+      setSavedPrefs(prefs);
       refetch();
     } else {
       appToast.error(res.error);
@@ -72,7 +84,10 @@ export function NotificationPrefsSection() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-sm font-heading flex items-center gap-2">
+        <CardTitle
+          as="h2"
+          className="text-sm font-heading flex items-center gap-2"
+        >
           <div className="p-1.5 rounded-md bg-muted">
             <BellIcon className="h-3.5 w-3.5 text-muted-foreground" />
           </div>
@@ -95,7 +110,10 @@ export function NotificationPrefsSection() {
                 </div>
                 <div className="flex flex-col sm:flex-row justify-between gap-2 w-full">
                   <div className="flex flex-col min-w-0 flex-1">
-                    <span className="text-sm font-medium">
+                    <span
+                      id="due-days-ahead-label"
+                      className="text-sm font-medium"
+                    >
                       Avisar antes do vencimento
                     </span>
                     <span className="text-xs text-muted-foreground">
@@ -114,7 +132,10 @@ export function NotificationPrefsSection() {
                         }))
                       }
                     >
-                      <SelectTrigger className="w-36 h-8 text-xs shrink-0">
+                      <SelectTrigger
+                        aria-labelledby="due-days-ahead-label"
+                        className="w-36 h-8 text-xs shrink-0"
+                      >
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -137,9 +158,9 @@ export function NotificationPrefsSection() {
                   <RefreshCw className="h-4 w-4 text-primary" />
                 </div>
                 <div className="flex flex-col min-w-0 flex-1">
-                  <span className="text-sm font-medium">
+                  <Label htmlFor="on-recurring" className="text-sm font-medium">
                     Conta recorrente gerada
-                  </span>
+                  </Label>
                   <span className="text-xs text-muted-foreground">
                     Quando o sistema criar automaticamente uma conta recorrente
                   </span>
@@ -162,9 +183,9 @@ export function NotificationPrefsSection() {
                   <TrendingUpIcon className="h-4 w-4 text-destructive" />
                 </div>
                 <div className="flex flex-col min-w-0 flex-1">
-                  <span className="text-sm font-medium">
+                  <Label htmlFor="on-budget" className="text-sm font-medium">
                     Orçamento ultrapassado
-                  </span>
+                  </Label>
                   <span className="text-xs text-muted-foreground">
                     Quando os gastos de uma categoria superarem o limite
                     definido
@@ -184,10 +205,15 @@ export function NotificationPrefsSection() {
               </div>
             </div>
 
-            <div className="flex justify-end mt-2">
+            <div className="flex items-center justify-end gap-3 mt-2">
+              {hasUnsavedChanges && !isSaving && (
+                <span className="text-xs text-muted-foreground">
+                  Alterações não salvas
+                </span>
+              )}
               <Button
                 onClick={handleSave}
-                disabled={isSaving || isLoading}
+                disabled={isSaving || isLoading || !hasUnsavedChanges}
                 className="transition-transform ease-in hover:scale-103 active:scale-97"
               >
                 {isSaving ? (

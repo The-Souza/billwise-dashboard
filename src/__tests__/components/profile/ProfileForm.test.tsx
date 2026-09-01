@@ -38,6 +38,16 @@ describe("ProfileForm", () => {
     vi.clearAllMocks();
   });
 
+  it("usa 'Seu Perfil' como h1 da página e 'Dados Pessoais' como h2 de seção (ordem de heading correta)", () => {
+    render(<ProfileForm user={user} />);
+    expect(
+      screen.getByRole("heading", { level: 1, name: "Seu Perfil" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 2, name: "Dados Pessoais" }),
+    ).toBeInTheDocument();
+  });
+
   it("renderiza informações do usuário", () => {
     render(<ProfileForm user={user} />);
     expect(screen.getByDisplayValue("Guilherme Souza")).toBeInTheDocument();
@@ -73,6 +83,23 @@ describe("ProfileForm", () => {
 
     expect(screen.getByLabelText("Nome Completo", { exact: false })).toBeDisabled();
     expect(screen.getByRole("button", { name: /editar/i })).toBeInTheDocument();
+  });
+
+  it("desfaz a edição não salva ao clicar em Cancelar (form.reset)", async () => {
+    const userEvent_ = userEvent.setup();
+    render(<ProfileForm user={user} />);
+
+    await userEvent_.click(screen.getByRole("button", { name: /editar/i }));
+    const nameInput = screen.getByLabelText("Nome Completo", {
+      exact: false,
+    });
+    await userEvent_.clear(nameInput);
+    await userEvent_.type(nameInput, "Nome Editado Não Salvo");
+    expect(nameInput).toHaveValue("Nome Editado Não Salvo");
+
+    await userEvent_.click(screen.getByRole("button", { name: /cancelar/i }));
+
+    expect(screen.getByDisplayValue("Guilherme Souza")).toBeInTheDocument();
   });
 
   it("chama updateAccountAction e exibe toast de sucesso ao salvar", async () => {

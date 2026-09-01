@@ -1,8 +1,25 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { useEffect } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@marsidev/react-turnstile", () => ({ Turnstile: () => null }));
+let autoResolveCaptcha = true;
+let triggerCaptchaError = false;
+vi.mock("@marsidev/react-turnstile", () => ({
+  Turnstile: ({
+    onSuccess,
+    onError,
+  }: {
+    onSuccess?: (token: string) => void;
+    onError?: () => void;
+  }) => {
+    useEffect(() => {
+      if (autoResolveCaptcha) onSuccess?.("test-captcha-token");
+      if (triggerCaptchaError) onError?.();
+    }, [onSuccess, onError]);
+    return null;
+  },
+}));
 vi.mock("next-themes", () => ({ useTheme: () => ({ resolvedTheme: "light" }) }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ replace: vi.fn() }) }));
 
@@ -24,6 +41,8 @@ const mockToast = vi.mocked(appToast);
 describe("ForgotPasswordForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    autoResolveCaptcha = true;
+    triggerCaptchaError = false;
   });
 
   it("renderiza campo de email e botão de envio", () => {
@@ -49,6 +68,24 @@ describe("ForgotPasswordForm", () => {
     expect(screen.getByRole("button", { name: /enviar email/i })).toBeEnabled();
   });
 
+  it("mantém o botão desabilitado se o captcha ainda não foi resolvido", async () => {
+    autoResolveCaptcha = false;
+    const user = userEvent.setup();
+    render(<ForgotPasswordForm />);
+    await user.type(screen.getByLabelText("Email"), "guilherme@test.com");
+    expect(screen.getByRole("button", { name: /enviar email/i })).toBeDisabled();
+  });
+
+  it("mostra mensagem inline quando a verificação de segurança falha ao carregar", () => {
+    autoResolveCaptcha = false;
+    triggerCaptchaError = true;
+    render(<ForgotPasswordForm />);
+
+    expect(
+      screen.getByText(/não foi possível carregar a verificação de segurança/i),
+    ).toBeInTheDocument();
+  });
+
   it("chama forgotPasswordAction e exibe toast de sucesso", async () => {
     mockForgotPassword.mockResolvedValueOnce({ success: true });
     const user = userEvent.setup();
@@ -59,7 +96,7 @@ describe("ForgotPasswordForm", () => {
     await waitFor(() => {
       expect(mockForgotPassword).toHaveBeenCalledWith(
         { email: "guilherme@test.com" },
-        undefined,
+        "test-captcha-token",
       );
       expect(mockToast.success).toHaveBeenCalledWith(
         "Email de redefinição de senha enviado. Verifique sua caixa de entrada.",
@@ -77,6 +114,20 @@ describe("ForgotPasswordForm", () => {
     await waitFor(() => {
       expect(mockToast.error).toHaveBeenCalledWith("Email não encontrado");
     });
+  });
+
+  it("preserva o email digitado quando forgotPasswordAction retorna falha", async () => {
+    mockForgotPassword.mockResolvedValueOnce({ success: false, error: "Email não encontrado" });
+    const user = userEvent.setup();
+    render(<ForgotPasswordForm />);
+    await user.type(screen.getByLabelText("Email"), "guilherme@test.com");
+    await user.click(screen.getByRole("button", { name: /enviar email/i }));
+
+    await waitFor(() => {
+      expect(mockToast.error).toHaveBeenCalledWith("Email não encontrado");
+    });
+
+    expect(screen.getByLabelText("Email")).toHaveValue("guilherme@test.com");
   });
 
   it("exibe toast de erro genérico quando action lança exceção", async () => {

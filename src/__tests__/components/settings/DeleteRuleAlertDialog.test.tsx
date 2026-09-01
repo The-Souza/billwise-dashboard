@@ -94,6 +94,33 @@ describe("DeleteRuleAlertDialog", () => {
     });
   });
 
+  it("mantém o dialog aberto e mostra o spinner enquanto a exclusão está em andamento", async () => {
+    let resolveDelete: (value: { success: true }) => void = () => {};
+    mockDelete.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveDelete = resolve;
+        }),
+    );
+    const user = userEvent.setup();
+    render(
+      <DeleteRuleAlertDialog
+        rule={rule}
+        onClose={vi.fn()}
+        onDeleted={vi.fn()}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: /^excluir$/i }));
+
+    expect(screen.getByRole("alertdialog")).toBeInTheDocument();
+    expect(screen.getByText(/excluindo/i)).toBeInTheDocument();
+
+    resolveDelete({ success: true });
+    await waitFor(() => {
+      expect(screen.queryByText(/excluindo/i)).not.toBeInTheDocument();
+    });
+  });
+
   it("exibe toast de erro quando action retorna falha", async () => {
     mockDelete.mockResolvedValueOnce({
       success: false,

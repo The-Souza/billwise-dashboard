@@ -28,4 +28,21 @@ describe("useDashboardMonth", () => {
 
     expect(result.current.label).toBe("Dezembro de 2025");
   });
+
+  it("usa month/year iniciais explícitos em vez da data atual, quando fornecidos", () => {
+    vi.setSystemTime(new Date(2026, 6, 15));
+    const { result } = renderHook(() => useDashboardMonth(3, 2024));
+
+    expect(result.current.month).toBe(3);
+    expect(result.current.year).toBe(2024);
+    expect(result.current.label).toBe("Março de 2024");
+  });
+
+  it("volta a usar a data atual quando month/year iniciais não são fornecidos", () => {
+    vi.setSystemTime(new Date(2026, 6, 15));
+    const { result } = renderHook(() => useDashboardMonth());
+
+    expect(result.current.month).toBe(7);
+    expect(result.current.year).toBe(2026);
+  });
 });

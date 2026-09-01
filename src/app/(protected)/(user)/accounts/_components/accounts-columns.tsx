@@ -10,7 +10,13 @@ import { formatCurrency } from "@/utils/format-currency";
 import { formatDate } from "@/utils/format-date";
 import { capitalizeFirst } from "@/utils/format-text";
 import { ColumnDef } from "@tanstack/react-table";
-import { PencilIcon, RefreshCw, Trash2Icon } from "lucide-react";
+import {
+  PencilIcon,
+  RefreshCw,
+  Trash2Icon,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
 import Link from "next/link";
 
 interface SortState {
@@ -74,7 +80,7 @@ export function accountColumns(
             className="bg-background"
             checked={row.getIsSelected()}
             onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Selecionar linha"
+            aria-label={`Selecionar ${row.original.title}`}
           />
         </div>
       ),
@@ -191,12 +197,15 @@ export function accountColumns(
         ),
       cell: ({ row }) => {
         const isIncome = row.original.categoryType === "income";
+        const isOverdue = row.original.status === "overdue";
+        const TrendIcon = isIncome ? TrendingUp : TrendingDown;
         return (
           <span
-            className={`block text-right font-medium ${
-              isIncome ? "text-foreground" : "text-destructive"
+            className={`flex items-center justify-end gap-1 font-medium ${
+              isOverdue ? "text-destructive" : "text-foreground"
             }`}
           >
+            <TrendIcon className="h-3.5 w-3.5" aria-hidden="true" />
             {isIncome ? "+" : "-"} {formatCurrency(row.getValue("amount"))}
           </span>
         );
@@ -208,7 +217,7 @@ export function accountColumns(
       meta: { className: "w-16 whitespace-nowrap" },
       header: () => <span className="block text-center">Ações</span>,
       cell: ({ row }) => (
-        <div className="flex items-center justify-center gap-1">
+        <div className="flex items-center justify-center gap-3">
           <Button
             variant="ghost"
             size="icon-sm"

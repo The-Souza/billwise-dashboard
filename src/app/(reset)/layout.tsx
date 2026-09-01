@@ -5,5 +5,7 @@ export default function ResetLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <AuthLayoutWrapper>{children}</AuthLayoutWrapper>;
+  return (
+    <AuthLayoutWrapper variant="reassurance">{children}</AuthLayoutWrapper>
+  );
 }

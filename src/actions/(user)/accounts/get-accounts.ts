@@ -2,6 +2,7 @@
 
 import { account_status, category_type } from "@/generated/prisma/enums";
 import { requireWorkspace } from "@/lib/auth/workspace";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 import { getAccountsFiltersSchema } from "@/schemas/accounts/get-accounts";
 import z from "zod";
@@ -130,6 +131,7 @@ export async function getAccountsAction(
 
     return { success: true, data, total };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in getAccountsAction:", error);
     return { success: false, error: "Erro ao buscar contas" };
   }

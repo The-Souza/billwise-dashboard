@@ -36,7 +36,12 @@ export function DeleteAccountDialog({
   const hasRecurring = accounts.some((a) => a.isRecurring);
 
   return (
-    <AlertDialog open={open}>
+    <AlertDialog
+      open={open}
+      onOpenChange={(o) => {
+        if (!o && !isDeleting) onCancel();
+      }}
+    >
       <AlertDialogContent className="w-[calc(100vw-2rem)] rounded-md max-w-md">
         <AlertDialogHeader>
           <AlertDialogTitle className="font-heading">
@@ -73,13 +78,15 @@ export function DeleteAccountDialog({
         <AlertDialogFooter>
           <AlertDialogCancel
             className="transition-transform ease-in hover:scale-103 active:scale-97"
-            onClick={onCancel}
             disabled={isDeleting}
           >
             Cancelar
           </AlertDialogCancel>
           <AlertDialogAction
-            onClick={onConfirm}
+            onClick={(e) => {
+              e.preventDefault();
+              onConfirm();
+            }}
             disabled={isDeleting}
             className="bg-destructive hover:bg-destructive/90 text-destructive-foreground transition-transform ease-in hover:scale-103 active:scale-97"
           >

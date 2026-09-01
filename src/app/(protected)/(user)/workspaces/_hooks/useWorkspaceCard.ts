@@ -1,5 +1,6 @@
 "use client";
 
+import { bulkRemoveMembersAction } from "@/actions/(user)/workspaces/bulk-remove-members";
 import { deleteWorkspaceAction } from "@/actions/(user)/workspaces/delete-workspace";
 import {
   getWorkspaceMembersAction,
@@ -19,6 +20,9 @@ export function useWorkspaceCard(workspace: WorkspaceSummary) {
   const [members, setMembers] = useState<MemberSummary[] | null>(null);
   const [removing, setRemoving] = useState<string | null>(null);
   const [removeTarget, setRemoveTarget] = useState<MemberSummary | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkRemoving, setBulkRemoving] = useState(false);
+  const [bulkRemoveOpen, setBulkRemoveOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const [renameOpen, setRenameOpen] = useState(false);
@@ -30,6 +34,8 @@ export function useWorkspaceCard(workspace: WorkspaceSummary) {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setMembers(null);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSelectedIds(new Set());
   }, [workspace.role, workspace.id]);
 
   useEffect(() => {
@@ -61,6 +67,36 @@ export function useWorkspaceCard(workspace: WorkspaceSummary) {
     appToast.success("Membro removido");
     setMembers((prev) => (prev ?? []).filter((m) => m.userId !== userId));
     setRemoveTarget(null);
+  }
+
+  function toggleSelect(userId: string) {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(userId)) next.delete(userId);
+      else next.add(userId);
+      return next;
+    });
+  }
+
+  async function confirmBulkRemove() {
+    if (selectedIds.size === 0) return;
+    const ids = Array.from(selectedIds);
+
+    setBulkRemoving(true);
+    const result = await bulkRemoveMembersAction(workspace.id, ids);
+    setBulkRemoving(false);
+
+    if (!result.success) {
+      appToast.error(result.error);
+      return;
+    }
+
+    appToast.success(
+      `${result.removed} ${result.removed === 1 ? "membro removido" : "membros removidos"}`,
+    );
+    setMembers((prev) => (prev ?? []).filter((m) => !selectedIds.has(m.userId)));
+    setSelectedIds(new Set());
+    setBulkRemoveOpen(false);
   }
 
   async function handleDelete() {
@@ -101,6 +137,12 @@ export function useWorkspaceCard(workspace: WorkspaceSummary) {
     removing,
     removeTarget,
     setRemoveTarget,
+    selectedIds,
+    toggleSelect,
+    bulkRemoving,
+    bulkRemoveOpen,
+    setBulkRemoveOpen,
+    confirmBulkRemove,
     deleting,
     leaving,
     renameOpen,

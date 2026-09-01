@@ -16,23 +16,24 @@ import {
 } from "@/components/ui/field";
 import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
 import { Spinner } from "@/components/ui/spinner";
+import { TurnstileField } from "@/components/auth/TurnstileField";
 
 import { appToast } from "@/utils/app-toast";
 
 import { forgotPasswordAction } from "@/actions/auth/forgot-password";
-import { TURNSTILE_SITE_KEY } from "@/config/turnstile";
 import { formSchema } from "@/schemas/auth/forgot-password";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Turnstile } from "@marsidev/react-turnstile";
 import { useTheme } from "next-themes";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 
 export function ForgotPasswordForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const captchaToken = useRef<string | undefined>(undefined);
+  const [captchaToken, setCaptchaToken] = useState<string | undefined>(
+    undefined,
+  );
   const { resolvedTheme } = useTheme();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -49,7 +50,7 @@ export function ForgotPasswordForm() {
     setIsSubmitting(true);
 
     try {
-      const result = await forgotPasswordAction(data, captchaToken.current);
+      const result = await forgotPasswordAction(data, captchaToken);
       if (!result.success) {
         appToast.error(result.error);
 
@@ -58,7 +59,6 @@ export function ForgotPasswordForm() {
             type: "manual",
             message: result.error,
           });
-        form.reset();
         return;
       }
 
@@ -76,14 +76,14 @@ export function ForgotPasswordForm() {
   return (
     <div className="w-full">
       <CardHeader className="flex flex-col items-center gap-2 text-center">
-        <CardTitle className="text-2xl font-heading">
+        <CardTitle as="h1" className="text-2xl font-heading">
           Esqueceu sua senha?
         </CardTitle>
         <CardDescription className="text-md text-muted-foreground">
           Insira seu email para redefinir sua senha
         </CardDescription>
       </CardHeader>
-      <CardContent className="pb-4">
+      <CardContent>
         <form id="form-forgot-password" onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
             <Controller
@@ -100,12 +100,18 @@ export function ForgotPasswordForm() {
                       id={field.name}
                       type="email"
                       aria-invalid={fieldState.invalid}
+                      aria-describedby={
+                        fieldState.invalid ? `${field.name}-error` : undefined
+                      }
                       placeholder="seu@email.com"
                       autoComplete="email"
                     />
                   </InputGroup>
                   {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
+                    <FieldError
+                      id={`${field.name}-error`}
+                      errors={[fieldState.error]}
+                    />
                   )}
                 </Field>
               )}
@@ -114,28 +120,19 @@ export function ForgotPasswordForm() {
         </form>
       </CardContent>
       <CardFooter className="flex flex-col gap-4">
-        <Turnstile
-          siteKey={TURNSTILE_SITE_KEY}
-          onSuccess={(token) => {
-            captchaToken.current = token;
-          }}
-          onExpire={() => {
-            captchaToken.current = undefined;
-          }}
-          options={{
-            theme: (resolvedTheme as "dark" | "light") ?? "light",
-            language: "pt-br",
-            appearance: "interaction-only",
-            size: "flexible",
-            action: "forgot-password",
-          }}
+        <TurnstileField
+          action="forgot-password"
+          theme={(resolvedTheme as "dark" | "light") ?? "light"}
+          onTokenChange={setCaptchaToken}
         />
         <Field>
           <Button
             type="submit"
             form="form-forgot-password"
-            disabled={!form.formState.isValid || isSubmitting}
-            className="flex items-center justify-center gap-2 transition-transform ease-in hover:scale-103 active:scale-97 text-md"
+            disabled={
+              !form.formState.isValid || isSubmitting || !captchaToken
+            }
+            className="flex items-center justify-center gap-2 transition-transform ease-in motion-safe:hover:scale-103 motion-safe:active:scale-97 text-md"
           >
             {isSubmitting ? (
               <>
@@ -146,6 +143,11 @@ export function ForgotPasswordForm() {
               "Enviar email"
             )}
           </Button>
+          {!captchaToken && form.formState.isValid && !isSubmitting && (
+            <p className="text-xs text-muted-foreground text-center">
+              Aguardando verificação de segurança para habilitar o envio.
+            </p>
+          )}
         </Field>
 
         <Button className="text-md" variant="link" asChild>

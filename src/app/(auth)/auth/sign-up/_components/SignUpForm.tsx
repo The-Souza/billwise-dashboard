@@ -1,5 +1,6 @@
 "use client";
 
+import { PasswordRequirementsChecklist } from "@/components/auth/PasswordRequirementsChecklist";
 import { Button } from "@/components/ui/button";
 import {
   CardContent,
@@ -21,19 +22,18 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { Spinner } from "@/components/ui/spinner";
+import { TurnstileField } from "@/components/auth/TurnstileField";
 
 import { appToast } from "@/utils/app-toast";
 
 import { signUpAction } from "@/actions/auth/sign-up";
-import { TURNSTILE_SITE_KEY } from "@/config/turnstile";
 import { formSchema } from "@/schemas/auth/sign-up";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Turnstile } from "@marsidev/react-turnstile";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 
@@ -42,7 +42,9 @@ export function SignUpForm() {
     "password" | "confirmPassword" | null
   >(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const captchaToken = useRef<string | undefined>(undefined);
+  const [captchaToken, setCaptchaToken] = useState<string | undefined>(
+    undefined,
+  );
   const router = useRouter();
   const { resolvedTheme } = useTheme();
 
@@ -63,7 +65,7 @@ export function SignUpForm() {
     setIsSubmitting(true);
 
     try {
-      const result = await signUpAction(data, captchaToken.current);
+      const result = await signUpAction(data, captchaToken);
       if (!result.success) {
         appToast.error(result.error);
 
@@ -92,19 +94,21 @@ export function SignUpForm() {
   return (
     <div className="w-full">
       <CardHeader className="flex flex-col items-center gap-2 text-center">
-        <CardTitle className="text-2xl font-heading">Crie sua conta</CardTitle>
+        <CardTitle as="h1" className="text-2xl font-heading">
+          Crie sua conta
+        </CardTitle>
         <CardDescription className="text-md text-muted-foreground">
           Comece a organizar suas finanças hoje mesmo
         </CardDescription>
       </CardHeader>
-      <CardContent className="pb-4">
+      <CardContent>
         <form id="form-sign-up" onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
             <Controller
               name="name"
               control={form.control}
               render={({ field, fieldState }) => (
-                <Field>
+                <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor={field.name} className="text-md">
                     Nome Completo
                   </FieldLabel>
@@ -115,11 +119,17 @@ export function SignUpForm() {
                       type="text"
                       autoComplete="name"
                       aria-invalid={fieldState.invalid}
+                      aria-describedby={
+                        fieldState.invalid ? `${field.name}-error` : undefined
+                      }
                       placeholder="Digite seu nome e sobrenome"
                     />
                   </InputGroup>
                   {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
+                    <FieldError
+                      id={`${field.name}-error`}
+                      errors={[fieldState.error]}
+                    />
                   )}
                 </Field>
               )}
@@ -138,12 +148,18 @@ export function SignUpForm() {
                       id={field.name}
                       type="email"
                       aria-invalid={fieldState.invalid}
+                      aria-describedby={
+                        fieldState.invalid ? `${field.name}-error` : undefined
+                      }
                       placeholder="seu@email.com"
                       autoComplete="email"
                     />
                   </InputGroup>
                   {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
+                    <FieldError
+                      id={`${field.name}-error`}
+                      errors={[fieldState.error]}
+                    />
                   )}
                 </Field>
               )}
@@ -164,10 +180,18 @@ export function SignUpForm() {
                       autoComplete="new-password"
                       placeholder="Digite sua senha"
                       aria-invalid={fieldState.invalid}
+                      aria-describedby={
+                        fieldState.invalid ? `${field.name}-error` : undefined
+                      }
                     />
                     <InputGroupAddon align="inline-end">
                       <InputGroupButton
-                        aria-label="view-password"
+                        aria-label={
+                          visibleField === "password"
+                            ? "Ocultar senha"
+                            : "Mostrar senha"
+                        }
+                        aria-pressed={visibleField === "password"}
                         size="icon-xs"
                         onClick={() =>
                           setVisibleField((prevState) =>
@@ -184,7 +208,10 @@ export function SignUpForm() {
                     </InputGroupAddon>
                   </InputGroup>
                   {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
+                    <FieldError
+                      id={`${field.name}-error`}
+                      errors={[fieldState.error]}
+                    />
                   )}
                 </Field>
               )}
@@ -207,10 +234,18 @@ export function SignUpForm() {
                       autoComplete="new-password"
                       placeholder="Confirme sua senha"
                       aria-invalid={fieldState.invalid}
+                      aria-describedby={
+                        fieldState.invalid ? `${field.name}-error` : undefined
+                      }
                     />
                     <InputGroupAddon align="inline-end">
                       <InputGroupButton
-                        aria-label="view-password"
+                        aria-label={
+                          visibleField === "confirmPassword"
+                            ? "Ocultar confirmação de senha"
+                            : "Mostrar confirmação de senha"
+                        }
+                        aria-pressed={visibleField === "confirmPassword"}
                         size="icon-xs"
                         onClick={() =>
                           setVisibleField((prevState) =>
@@ -229,37 +264,34 @@ export function SignUpForm() {
                     </InputGroupAddon>
                   </InputGroup>
                   {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
+                    <FieldError
+                      id={`${field.name}-error`}
+                      errors={[fieldState.error]}
+                    />
                   )}
                 </Field>
               )}
             />
           </FieldGroup>
         </form>
+        <div className="mt-6">
+          <PasswordRequirementsChecklist
+            password={form.watch("password") || ""}
+          />
+        </div>
       </CardContent>
       <CardFooter className="flex flex-col gap-4">
-        <Turnstile
-          siteKey={TURNSTILE_SITE_KEY}
-          onSuccess={(token) => {
-            captchaToken.current = token;
-          }}
-          onExpire={() => {
-            captchaToken.current = undefined;
-          }}
-          options={{
-            theme: (resolvedTheme as "dark" | "light") ?? "light",
-            language: "pt-br",
-            appearance: "interaction-only",
-            size: "flexible",
-            action: "sign-up",
-          }}
+        <TurnstileField
+          action="sign-up"
+          theme={(resolvedTheme as "dark" | "light") ?? "light"}
+          onTokenChange={setCaptchaToken}
         />
         <Field>
           <Button
             type="submit"
             form="form-sign-up"
-            disabled={!form.formState.isValid || isSubmitting}
-            className="flex items-center justify-center gap-2 transition-transform ease-in hover:scale-103 active:scale-97 text-md"
+            disabled={!form.formState.isValid || isSubmitting || !captchaToken}
+            className="flex items-center justify-center gap-2 transition-transform ease-in motion-safe:hover:scale-103 motion-safe:active:scale-97 text-md"
           >
             {isSubmitting ? (
               <>
@@ -270,6 +302,11 @@ export function SignUpForm() {
               "Criar Conta"
             )}
           </Button>
+          {!captchaToken && form.formState.isValid && !isSubmitting && (
+            <p className="text-xs text-muted-foreground text-center">
+              Aguardando verificação de segurança para habilitar o envio.
+            </p>
+          )}
         </Field>
 
         <nav className="flex w-full gap-2 text-md justify-center items-center">

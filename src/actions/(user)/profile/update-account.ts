@@ -1,6 +1,7 @@
 "use server";
 
 import { requireAuth } from "@/lib/auth/guards";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { updateAccountSchema } from "@/schemas/profile/update-account";
 import { revalidatePath } from "next/cache";
@@ -51,6 +52,7 @@ export async function updateAccountAction(
 
     return { success: true };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in updateAccountAction:", error);
     return { success: false, error: "Erro ao atualizar dados. Tente novamente." };
   }

@@ -4,6 +4,7 @@ import { account_status } from "@/generated/prisma/enums";
 import { calcRecurringEndDate } from "@/helper/calc-recurring-end-date";
 import { parseDateParts } from "@/helper/parse-date";
 import { requireWorkspace } from "@/lib/auth/workspace";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 import { accountFormSchema } from "@/schemas/accounts/account-form";
 import { randomUUID } from "crypto";
@@ -183,6 +184,7 @@ export async function createAccountAction(
 
     return { success: true };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in createAccountAction:", error);
     return { success: false, error: "Erro ao criar conta" };
   }

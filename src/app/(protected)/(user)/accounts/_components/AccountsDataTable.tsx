@@ -155,8 +155,13 @@ export function AccountsDataTable({
                   className="*:border-border [&>:not(:last-child)]:border-r odd:bg-muted/50 odd:hover:bg-muted/50 hover:bg-transparent h-11"
                 >
                   {skeletonWidths.map((width, index) => (
-                    <TableCell key={index}>
-                      <Skeleton className={`h-5 ${width}`} />
+                    <TableCell
+                      key={index}
+                      className={index === 0 ? "w-10 text-center" : undefined}
+                    >
+                      <Skeleton
+                        className={`h-5 ${width}${index === 0 ? " mx-auto" : ""}`}
+                      />
                     </TableCell>
                   ))}
                 </TableRow>
@@ -212,6 +217,7 @@ export function AccountsDataTable({
           <Button
             variant="outline"
             size="icon-sm"
+            aria-label="Página anterior"
             className="transition-transform ease-in hover:scale-103 active:scale-97"
             onClick={() => handleFiltersChange({ page: page - 1 })}
             disabled={page <= 1 || isLoading}
@@ -224,6 +230,7 @@ export function AccountsDataTable({
           <Button
             variant="outline"
             size="icon-sm"
+            aria-label="Próxima página"
             className="transition-transform ease-in hover:scale-103 active:scale-97"
             onClick={() => handleFiltersChange({ page: page + 1 })}
             disabled={page >= totalPages || isLoading}

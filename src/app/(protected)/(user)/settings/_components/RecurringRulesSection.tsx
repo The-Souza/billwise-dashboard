@@ -43,7 +43,10 @@ export function RecurringRulesSection() {
     <>
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm font-heading flex items-center gap-2">
+          <CardTitle
+            as="h2"
+            className="text-sm font-heading flex items-center gap-2"
+          >
             <div className="p-1.5 rounded-md bg-muted">
               <RefreshCw className="h-3.5 w-3.5 text-muted-foreground" />
             </div>
@@ -114,14 +117,14 @@ export function RecurringRulesSection() {
                       >
                         {formatCurrency(rule.amount)}
                       </span>
-                      <span className="hidden sm:block text-xs text-muted-foreground">
+                      <span className="text-xs text-muted-foreground">
                         {rule.endDate
                           ? `Até ${formatRuleEndDate(rule.endDate)}`
                           : "Sem prazo"}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-0.5 shrink-0">
+                    <div className="flex items-center gap-3 shrink-0">
                       <Button
                         variant="ghost"
                         size="icon-sm"

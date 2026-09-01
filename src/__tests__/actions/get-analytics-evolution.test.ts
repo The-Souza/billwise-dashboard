@@ -34,14 +34,14 @@ afterEach(() => {
 
 describe("getAnalyticsEvolutionAction", () => {
   it("retorna erro para parâmetros inválidos", async () => {
-    const result = await getAnalyticsEvolutionAction(0, 2024, 12, 2024);
+    const result = await getAnalyticsEvolutionAction(0, 2024, 12, 2024, "all");
     expect(result).toEqual({ success: false, error: "Parâmetros inválidos" });
     expect(mockWorkspace).not.toHaveBeenCalled();
   });
 
   it("gera label correto para mês e ano", async () => {
     mockQueryRaw.mockResolvedValue([{ month: 3, year: 2024, total_income: 1000, total_expense: 500 }]);
-    const result = await getAnalyticsEvolutionAction(3, 2024, 3, 2024);
+    const result = await getAnalyticsEvolutionAction(3, 2024, 3, 2024, "all");
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data[0].month).toBe("Mar/24");
@@ -50,7 +50,7 @@ describe("getAnalyticsEvolutionAction", () => {
 
   it("gera um ponto por mês no intervalo", async () => {
     mockQueryRaw.mockResolvedValue([]);
-    const result = await getAnalyticsEvolutionAction(1, 2024, 6, 2024);
+    const result = await getAnalyticsEvolutionAction(1, 2024, 6, 2024, "all");
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data).toHaveLength(6);
@@ -63,7 +63,7 @@ describe("getAnalyticsEvolutionAction", () => {
   it("gera pontos corretamente ao cruzar virada de ano", async () => {
     mockQueryRaw.mockResolvedValue([]);
     // Nov/2024 → Fev/2025 = 4 meses
-    const result = await getAnalyticsEvolutionAction(11, 2024, 2, 2025);
+    const result = await getAnalyticsEvolutionAction(11, 2024, 2, 2025, "all");
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data).toHaveLength(4);
@@ -75,7 +75,7 @@ describe("getAnalyticsEvolutionAction", () => {
     mockQueryRaw.mockResolvedValue([
       { month: 3, year: 2024, total_income: 2000, total_expense: 800 },
     ]);
-    const result = await getAnalyticsEvolutionAction(1, 2024, 3, 2024);
+    const result = await getAnalyticsEvolutionAction(1, 2024, 3, 2024, "all");
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data[0]).toMatchObject({ month: "Jan/24", income: 0, expense: 0 });
@@ -84,9 +84,31 @@ describe("getAnalyticsEvolutionAction", () => {
     }
   });
 
+  it("repassa apenas receitas quando type é income", async () => {
+    mockQueryRaw.mockResolvedValue([
+      { month: 3, year: 2024, total_income: 1500, total_expense: 0 },
+    ]);
+    const result = await getAnalyticsEvolutionAction(3, 2024, 3, 2024, "income");
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data[0]).toMatchObject({ month: "Mar/24", income: 1500, expense: 0 });
+    }
+  });
+
+  it("repassa apenas despesas quando type é expense", async () => {
+    mockQueryRaw.mockResolvedValue([
+      { month: 3, year: 2024, total_income: 0, total_expense: 900 },
+    ]);
+    const result = await getAnalyticsEvolutionAction(3, 2024, 3, 2024, "expense");
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data[0]).toMatchObject({ month: "Mar/24", income: 0, expense: 900 });
+    }
+  });
+
   it("retorna erro genérico quando queryRaw lança exceção", async () => {
     mockQueryRaw.mockRejectedValue(new Error("DB error"));
-    const result = await getAnalyticsEvolutionAction(1, 2024, 12, 2024);
+    const result = await getAnalyticsEvolutionAction(1, 2024, 12, 2024, "all");
     expect(result).toEqual({ success: false, error: "Erro ao buscar evolução mensal" });
   });
 });

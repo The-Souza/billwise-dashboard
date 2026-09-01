@@ -100,6 +100,23 @@ describe("DeleteAccountDialog", () => {
     expect(onConfirm).toHaveBeenCalledOnce();
   });
 
+  it("não chama onCancel ao clicar em Excluir (dialog não fecha antes da ação assíncrona resolver)", async () => {
+    const user = userEvent.setup();
+    const onConfirm = vi.fn();
+    const onCancel = vi.fn();
+    render(
+      <DeleteAccountDialog
+        open={true}
+        accounts={[baseAccount]}
+        onConfirm={onConfirm}
+        onCancel={onCancel}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: /^excluir$/i }));
+    expect(onConfirm).toHaveBeenCalledOnce();
+    expect(onCancel).not.toHaveBeenCalled();
+  });
+
   it("chama onCancel ao clicar em Cancelar", async () => {
     const user = userEvent.setup();
     const onCancel = vi.fn();

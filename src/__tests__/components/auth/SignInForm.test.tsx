@@ -1,10 +1,31 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { useEffect } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@marsidev/react-turnstile", () => ({ Turnstile: () => null }));
+let autoResolveCaptcha = true;
+let triggerCaptchaError = false;
+vi.mock("@marsidev/react-turnstile", () => ({
+  Turnstile: ({
+    onSuccess,
+    onError,
+  }: {
+    onSuccess?: (token: string) => void;
+    onError?: () => void;
+  }) => {
+    useEffect(() => {
+      if (autoResolveCaptcha) onSuccess?.("test-captcha-token");
+      if (triggerCaptchaError) onError?.();
+    }, [onSuccess, onError]);
+    return null;
+  },
+}));
 vi.mock("next-themes", () => ({ useTheme: () => ({ resolvedTheme: "light" }) }));
-vi.mock("next/navigation", () => ({ useRouter: () => ({ replace: vi.fn() }) }));
+
+const mockReplace = vi.fn();
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ replace: mockReplace }),
+}));
 
 vi.mock("@/actions/auth/sign-in", () => ({
   signInAction: vi.fn(),
@@ -24,6 +45,8 @@ const mockToast = vi.mocked(appToast);
 describe("SignInForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    autoResolveCaptcha = true;
+    triggerCaptchaError = false;
   });
 
   it("renderiza campos de email, senha e botão de submit", () => {
@@ -51,11 +74,45 @@ describe("SignInForm", () => {
     const passwordInput = screen.getByLabelText("Senha");
     expect(passwordInput).toHaveAttribute("type", "password");
 
-    await user.click(screen.getByRole("button", { name: /view-password/i }));
+    await user.click(screen.getByRole("button", { name: "Mostrar senha" }));
     expect(passwordInput).toHaveAttribute("type", "text");
 
-    await user.click(screen.getByRole("button", { name: /view-password/i }));
+    await user.click(screen.getByRole("button", { name: "Ocultar senha" }));
     expect(passwordInput).toHaveAttribute("type", "password");
+  });
+
+  it("mantém o botão desabilitado se o captcha ainda não foi resolvido", async () => {
+    autoResolveCaptcha = false;
+    const user = userEvent.setup();
+    render(<SignInForm />);
+
+    await user.type(screen.getByLabelText("Email"), "guilherme@test.com");
+    await user.type(screen.getByLabelText("Senha"), "minhasenha");
+
+    expect(screen.getByRole("button", { name: /faça login/i })).toBeDisabled();
+  });
+
+  it("explica por que o botão está desabilitado quando só falta o captcha resolver", async () => {
+    autoResolveCaptcha = false;
+    const user = userEvent.setup();
+    render(<SignInForm />);
+
+    await user.type(screen.getByLabelText("Email"), "guilherme@test.com");
+    await user.type(screen.getByLabelText("Senha"), "minhasenha");
+
+    expect(
+      screen.getByText(/aguardando verificação de segurança/i),
+    ).toBeInTheDocument();
+  });
+
+  it("mostra mensagem inline quando a verificação de segurança falha ao carregar", () => {
+    autoResolveCaptcha = false;
+    triggerCaptchaError = true;
+    render(<SignInForm />);
+
+    expect(
+      screen.getByText(/não foi possível carregar a verificação de segurança/i),
+    ).toBeInTheDocument();
   });
 
   it("chama signInAction com credenciais válidas e exibe toast de sucesso", async () => {
@@ -70,9 +127,10 @@ describe("SignInForm", () => {
     await waitFor(() => {
       expect(mockSignIn).toHaveBeenCalledWith(
         { email: "guilherme@test.com", password: "minhasenha" },
-        undefined,
+        "test-captcha-token",
       );
-      expect(mockToast.success).toHaveBeenCalledWith("Bem vindo!, Guilherme");
+      expect(mockToast.success).toHaveBeenCalledWith("Bem-vindo, Guilherme!");
+      expect(mockReplace).toHaveBeenCalledWith("/dashboard");
     });
   });
 

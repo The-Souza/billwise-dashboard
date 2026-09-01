@@ -49,6 +49,17 @@ describe("budgetFormSchema", () => {
     expect(result.success).toBe(false);
   });
 
+  it("rejeita limitAmount absurdamente alto (defesa contra corrupção de valor)", () => {
+    const result = budgetFormSchema.safeParse({
+      categoryId: validId,
+      limitAmount: 1_234_560,
+      month: 4,
+      year: 2026,
+    });
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0].message).toBe("Valor muito alto");
+  });
+
   it("rejeita mês fora do intervalo", () => {
     const result = budgetFormSchema.safeParse({
       categoryId: validId,

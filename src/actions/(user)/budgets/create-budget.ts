@@ -1,6 +1,7 @@
 "use server";
 
 import { requireWorkspace } from "@/lib/auth/workspace";
+import { isRedirectError } from "@/lib/is-redirect-error";
 import { prisma } from "@/lib/prisma/client";
 import { budgetFormSchema } from "@/schemas/budgets/budget-form";
 import { z } from "zod";
@@ -45,6 +46,7 @@ export async function createBudgetAction(
 
     return { success: true };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
     console.error("Error in createBudgetAction:", error);
     return { success: false, error: "Erro ao criar orçamento" };
   }

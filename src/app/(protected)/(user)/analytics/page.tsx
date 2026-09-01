@@ -15,10 +15,32 @@ export default function AnalyticsPage() {
   const filters = useAnalyticsFilters();
   const { startMonth, startYear, endMonth, endYear, type } = filters;
 
-  const { data: summaryResult, isLoading: summaryLoading } = useQuery({
-    queryKey: ["analytics-summary", startMonth, startYear, endMonth, endYear],
-    queryFn: () =>
-      getAnalyticsSummaryAction(startMonth, startYear, endMonth, endYear),
+  const {
+    data: summaryResult,
+    isLoading: summaryLoading,
+    isError: summaryError,
+    isFetching: summaryFetching,
+    refetch: refetchSummary,
+  } = useQuery({
+    queryKey: [
+      "analytics-summary",
+      startMonth,
+      startYear,
+      endMonth,
+      endYear,
+      type,
+    ],
+    queryFn: async () => {
+      const r = await getAnalyticsSummaryAction(
+        startMonth,
+        startYear,
+        endMonth,
+        endYear,
+        type,
+      );
+      if (!r.success) throw new Error(r.error);
+      return r;
+    },
   });
 
   const { data: breakdownResult, isLoading: breakdownLoading } = useQuery({
@@ -41,9 +63,22 @@ export default function AnalyticsPage() {
   });
 
   const { data: evolutionResult, isLoading: evolutionLoading } = useQuery({
-    queryKey: ["analytics-evolution", startMonth, startYear, endMonth, endYear],
+    queryKey: [
+      "analytics-evolution",
+      startMonth,
+      startYear,
+      endMonth,
+      endYear,
+      type,
+    ],
     queryFn: () =>
-      getAnalyticsEvolutionAction(startMonth, startYear, endMonth, endYear),
+      getAnalyticsEvolutionAction(
+        startMonth,
+        startYear,
+        endMonth,
+        endYear,
+        type,
+      ),
   });
 
   const summary = summaryResult?.success ? summaryResult.data : undefined;
@@ -62,7 +97,13 @@ export default function AnalyticsPage() {
       <AnalyticsFilters filters={filters} />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        <AnalyticsSummaryCards data={summary} isLoading={summaryLoading} />
+        <AnalyticsSummaryCards
+          data={summary}
+          isLoading={summaryLoading}
+          isError={summaryError}
+          isRetrying={summaryFetching}
+          onRetry={refetchSummary}
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
