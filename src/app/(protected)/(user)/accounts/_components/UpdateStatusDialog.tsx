@@ -94,7 +94,10 @@ export function UpdateStatusDialog({
             Cancelar
           </AlertDialogCancel>
           <AlertDialogAction
-            onClick={() => onConfirm(status)}
+            onClick={(e) => {
+              e.preventDefault();
+              onConfirm(status);
+            }}
             disabled={isUpdating}
             className="transition-transform ease-in hover:scale-103 active:scale-97"
           >
