@@ -3,17 +3,9 @@
 import { NotificationItem } from "@/actions/(user)/notifications/get-notifications";
 import { respondToInviteAction } from "@/actions/(user)/workspaces/respond-to-invite";
 import { markNotificationsReadAction } from "@/actions/(user)/notifications/mark-notifications-read";
+import type { NotificationFilterType as FilterType } from "@/config/notification-filters";
 import { appToast } from "@/utils/app-toast";
 import { createContext, useContext, useState } from "react";
-
-type FilterType =
-  | "all"
-  | "overdue"
-  | "due_soon"
-  | "budget_exceeded"
-  | "recurring_generated"
-  | "workspace_invite"
-  | "workspace_deleted";
 
 type NotificationsContextValue = {
   notifications: NotificationItem[];
