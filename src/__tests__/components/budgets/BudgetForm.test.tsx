@@ -81,6 +81,32 @@ describe("BudgetForm — edição de categoria", () => {
     expect(categoryInput).not.toBeDisabled();
   });
 
+  it("filtra por categoryType ao editar (categorias de outro tipo não aparecem)", () => {
+    const incomeCategories: CategoryForBudget[] = [
+      { id: "cat-salario", name: "Salário", type: "income", icon: null },
+    ];
+
+    render(
+      <BudgetForm
+        month={5}
+        year={2026}
+        budget={budget}
+        categoryType="expense"
+        expenseCategories={[]}
+        incomeCategories={incomeCategories}
+        onSuccess={vi.fn()}
+        onCancel={vi.fn()}
+        onSubmit={vi.fn()}
+      />,
+    );
+
+    // Sem categorias de despesa disponíveis e com as de receita filtradas
+    // por categoryType, a lista fica vazia — prova que o filtro é aplicado.
+    expect(
+      screen.getByText(/todas as categorias já possuem orçamento neste mês/i),
+    ).toBeInTheDocument();
+  });
+
   it("mostra um skeleton no campo de categoria enquanto as categorias carregam", () => {
     const { container } = render(
       <BudgetForm

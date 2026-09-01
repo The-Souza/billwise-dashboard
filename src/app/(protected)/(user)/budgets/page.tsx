@@ -90,7 +90,12 @@ export default function BudgetsPage() {
   }
 
   function openEdit(budget: BudgetRow) {
-    setFormDialog({ open: true, mode: "edit", budget });
+    setFormDialog({
+      open: true,
+      mode: "edit",
+      budget,
+      categoryType: budget.categoryType,
+    });
   }
 
   function openDelete(budget: BudgetRow) {
