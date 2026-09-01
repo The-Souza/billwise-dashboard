@@ -45,7 +45,7 @@ describe("copyBudgetsFromPreviousMonthAction", () => {
   });
 
   it("retorna erro quando não há orçamentos no mês anterior", async () => {
-    mockFindMany.mockResolvedValueOnce([]);
+    mockFindMany.mockResolvedValueOnce([]).mockResolvedValueOnce([]);
 
     const result = await copyBudgetsFromPreviousMonthAction(5, 2026);
     expect(result).toEqual({

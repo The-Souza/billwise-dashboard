@@ -28,14 +28,24 @@ export async function copyBudgetsFromPreviousMonthAction(
 
     const prev = previousMonthYear(parsed.data.month, parsed.data.year);
 
-    const previousBudgets = await prisma.budgets.findMany({
-      where: {
-        workspace_id: ctx.workspaceId,
-        month: prev.month,
-        year: prev.year,
-      },
-      select: { category_id: true, limit_amount: true },
-    });
+    const [previousBudgets, currentBudgets] = await Promise.all([
+      prisma.budgets.findMany({
+        where: {
+          workspace_id: ctx.workspaceId,
+          month: prev.month,
+          year: prev.year,
+        },
+        select: { category_id: true, limit_amount: true },
+      }),
+      prisma.budgets.findMany({
+        where: {
+          workspace_id: ctx.workspaceId,
+          month: parsed.data.month,
+          year: parsed.data.year,
+        },
+        select: { category_id: true },
+      }),
+    ]);
 
     if (previousBudgets.length === 0) {
       return {
@@ -43,15 +53,6 @@ export async function copyBudgetsFromPreviousMonthAction(
         error: "Nenhum orçamento encontrado no mês anterior",
       };
     }
-
-    const currentBudgets = await prisma.budgets.findMany({
-      where: {
-        workspace_id: ctx.workspaceId,
-        month: parsed.data.month,
-        year: parsed.data.year,
-      },
-      select: { category_id: true },
-    });
 
     const existingCategoryIds = new Set(
       currentBudgets.map((b) => b.category_id),
